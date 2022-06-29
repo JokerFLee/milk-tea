@@ -6,9 +6,9 @@
                     <p><span class="spaan">x</span><span class="spaan">x</span><span class="spaan">x</span><span
                             class="spaan">奶</span><span class="spaan">茶</span><span class="spaan">管</span><span
                             class="spaan">理</span><span class="spaan">系</span><span class="spaan">统</span></p>
-                    <input type="text" name="username" placeholder="请输入用户名/邮箱/手机号码">
-                    <input type="password" name="passwd" placeholder="请输入密码">
-                    <button>登陆</button>
+                    <input type="text" v-model="username" placeholder="请输入用户名/邮箱/手机号码">
+                    <input type="password" v-model="passwd" @keydown.enter="submit" placeholder="请输入密码">
+                    <button @click="submit">登陆</button>
                 </div>
             </div>
             <div class="container c12">
@@ -21,8 +21,22 @@
 </template>
 
 <script>
-export default {
+import { ref } from 'vue'
 
+export default {
+    name: "login",
+    setup() {
+        let username = ref("")
+        let passwd = ref("")
+        function submit(e) {
+            alert("submit success! 用户名:"+ this.username +" @@@ 密码:" +this.passwd)
+        }
+        return {
+            username,
+            passwd,
+            submit
+        }
+    }
 }
 </script>
 
