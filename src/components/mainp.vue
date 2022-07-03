@@ -8,7 +8,7 @@
 import { ref } from 'vue'
 
 export default {
-	name: "main",
+	name: "mainp",
 	setup() {
 		let ss = ref(88);
 		function mmplus() {

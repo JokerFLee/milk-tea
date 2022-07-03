@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+	font-family: "nailao";
+	src: url("./assets/font/nailao.woff");
+}
+
+@font-face {
+	font-family: "kkt";
+	src: url("./assets/font/kkt.woff");
+}
