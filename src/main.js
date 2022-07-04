@@ -9,12 +9,17 @@ import router from "./router/index.js"
 
 // import "./index.css"
 
-
-
 // createApp(App).mount('#app')
+
+import VueChartkick from 'vue-chartkick'
+import 'chartkick/chart.js'
+
+
 
 
 const app = createApp(framep)
+
+app.use(VueChartkick)
 
 app.use(router)
 

@@ -8,9 +8,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^0.27.2",
+    "chart.js": "^3.8.0",
+    "echarts": "^5.3.3",
     "sass": "^1.53.0",
     "scss": "^0.2.4",
     "vue": "^3.2.25",
+    "vue-chart-3": "^3.1.8",
+    "vue-chartkick": "^1.1.0",
+    "vue-echarts": "^6.1.0",
     "vue-router": "^4.0.16"
   },
   "devDependencies": {

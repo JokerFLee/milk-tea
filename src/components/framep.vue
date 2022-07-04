@@ -3,8 +3,9 @@
 
 		<div class="outbox">
 
+			<!-- <div class="out1div" @click="kfc"> -->
 			<div class="out1div" @click="sideshow = !sideshow">
-				<div>{{ xxx }},下午好</div>
+				<div title="点击可显示/隐藏菜单栏">{{ xxx }},下午好</div>
 			</div>
 
 			<div class="navga">
@@ -29,19 +30,16 @@
 
 				<div class="op1div-common" @click="v1 = !v1;[v2, v3, v4] = [false]">
 					<div class="op1div-title">
-						<div class="image-common b21"></div> <span>食品原材料</span>
+						<div class="image-common b21"></div> <span>奶茶&原材料</span>
 					</div>
 					<ul v-show="v1">
 						<router-link to="/">
-							<li>库存总览</li>
+							<li>数据总览</li>
 						</router-link>
 						<router-link to="blog">
-							<li>消耗记录</li>
+							<li>奶茶销售记录</li>
 						</router-link>
-						<router-link to="/">
-							<li>供货记录</li>
-						</router-link>
-						<router-link to="/">
+						<router-link to="/login">
 							<li>临期提醒</li>
 						</router-link>
 						<router-link to="/">
@@ -113,22 +111,46 @@
 	</div>
 </template>
 
-<script>
+<script >
 import { ref } from 'vue';
-import mm from "./mainp.vue";
+// import mm from "./mainp.vue";
 
+function reque(url, method) {
+
+	const kx = axios({
+		url: url,
+		method: method,
+		params: {
+			fi: "ok",
+			sec: "23"
+		}
+	}).then(res => {
+		let sv = res.data
+		return sv
+	})
+	return kx
+}
 
 export default {
 	components: {
-		mm
+		// mm
 	},
 	setup() {
 		let v1 = ref(true);
 		let v2 = ref(false);
 		let v3 = ref(false);
 		let v4 = ref(false);
-		let sideshow = ref(true)
+		let sideshow = ref(true);
 		let xxx = ref("liming");
+		function kfc(url, method) {
+			reque("src/assets/test.json", "get").then(//因为axios是异步加载的,所以在返回值后面再套一个then,
+				//表示执行完前异步操作以后再执行本次异步操作,就可以获取到正确的值了,而非 **Promise {<pending>}**
+				(e) => {
+					console.log(e);
+				}
+			);
+		}
+
 		return {
 			v1,
 			v2,
@@ -136,10 +158,9 @@ export default {
 			v4,
 			sideshow,
 			xxx,
+			kfc
 		}
 	},
-
-
 }
 </script>
 
@@ -163,6 +184,7 @@ export default {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
+	overflow: hidden;
 
 	.outbox {
 		width: 100%;
@@ -170,6 +192,9 @@ export default {
 		user-select: none;
 		background: #5b61c9;
 		display: flex;
+		user-select: none;
+
+
 
 		.out1div {
 			width: 15%;
@@ -282,9 +307,6 @@ export default {
 		height: 95%;
 		display: flex;
 		flex-direction: row;
-		overflow: hidden;
-
-
 		.op1div {
 			width: 15%;
 			min-width: 165px;
@@ -294,13 +316,15 @@ export default {
 			align-items: center;
 			flex-direction: column;
 			color: #000000;
-			
+			user-select: none;
+
 
 			.op1div-common {
 				width: 100%;
 				height: auto;
 				margin-top: 20px;
 				margin-bottom: 10px;
+
 				.op1div-title {
 					width: 90%;
 					height: auto;
@@ -341,7 +365,7 @@ export default {
 					}
 
 					.b23 {
-						background-image: url(../assets/stuff.svg);
+						background-image: url(../assets/staff.svg);
 					}
 
 					.b24 {
@@ -367,6 +391,7 @@ export default {
 						width: 100%;
 						display: block;
 						text-decoration: none;
+						color: #111;
 					}
 
 					li {

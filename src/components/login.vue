@@ -1,5 +1,5 @@
 <template>
-    <div class="outbox">
+    <div class="mapge">
         <div class="seven">
             <div class="container c11">
                 <div class="d11">
@@ -41,7 +41,7 @@ export default {
 </script>
 
 <style scoped>
-.outbox {
+.mapge {
     width: 100%;
     height: 100%;
     display: flex;
@@ -49,6 +49,7 @@ export default {
     justify-content: center;
     background-color: #e2e3e7;
     min-width: 720px;
+		user-select: none;
 }
 
 .seven {

@@ -4,6 +4,7 @@ import {createRouter, createWebHashHistory} from "vue-router"
 
 import mainp from "../components/mainp.vue"
 import blogp from "../components/blogp.vue"
+import loginp from "../components/login.vue"
 
 
 export default createRouter({
@@ -16,7 +17,11 @@ export default createRouter({
 		{
 			path:"/blog",
 			component:blogp
+		},{
+			path:"/login",
+			component:loginp
 		}
+
 	]
 
 })
