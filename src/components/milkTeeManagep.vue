@@ -31,6 +31,14 @@
 			</div>
 
 			<div class="mask_cont">
+
+				<div class="main_input">
+					<div class="ssbox"></div>
+					<div class="ssbox"></div>
+					<div class="ssbox"></div>
+					<div class="ssbox"></div>
+
+				</div>
 				
 				<button @click="disableMask">submit</button>
 			</div>
@@ -51,7 +59,7 @@ let blurSta = ref("0px")
 function teadit(e) {
 	mask_state.value = true
 	console.log(e);
-	blurSta.value = "6px"
+	blurSta.value = "15px"
 }
 
 function disableMask (){
@@ -122,7 +130,7 @@ onBeforeMount(() => {
 				// border-radius: 5px;
 
 				.head_common {
-					background-color: #005d5e;
+					background-color: #9974ff;
 					color: #fff;
 					width: 100%;
 					display: flex;
@@ -149,8 +157,9 @@ onBeforeMount(() => {
 			.body {
 				height: 80px;
 				margin: 3px 0 3px 0;
-				background-color: #50bcbb;
+				background-color: #53c0ff;
 				padding: 2px 0 2px 0;
+				color: #fff;
 
 				.item_son {
 					width: 100%;
@@ -159,6 +168,7 @@ onBeforeMount(() => {
 					flex-direction: row;
 					justify-content: center;
 					align-items: center;
+					padding: 0 3px 0 3px;
 
 					.b_common {
 						width: 20%;
@@ -186,12 +196,12 @@ onBeforeMount(() => {
 							justify-content: center;
 							white-space: nowrap;
 							cursor: pointer;
-							background-color: #31e446;
+							background-color: hsl(127, 58%, 34%);
 							font-family: nailao;
 						}
 
 						.option1:hover {
-							background-color: #05a718;
+							background-color: hsl(127, 70%, 45%);
 						}
 
 						.option2 {
@@ -241,14 +251,32 @@ onBeforeMount(() => {
 
 		.mask_cont {
 			z-index: 20;
-			position: absolute;
-			top: 0;
-			width: 80%;
-			max-width: 600px;
-			height: 90%;
-			max-height: 700px;
-			background-color: #ff9900;
+			width: 85%;
+			max-width: 470px;
+			height: 70%;
+			max-height: 550px;
+			background-color: #ffffff31;
+			box-shadow: -1px -1px 10px #fff, 1px 1px 10px #babebc;
+			// border: dashed 1px #eee;
 			border-radius: 30px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+
+			.main_input{
+				width: 90%;
+				height: 60%;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+
+				.ssbox{
+					width: 100%;
+					height: 100%;
+				}
+			}
 		}
 	}
 }
