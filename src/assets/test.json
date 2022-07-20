@@ -46,17 +46,42 @@
 		],
 		[
 			{
-				"name": "丧彪",
-				"number": 5399.78
+				"name": "芋泥啵啵",
+				"number": 12
 			},
 			{
-				"name": "刘婧",
-				"number": 13386.25
+				"name": "葡萄🍇桶",
+				"number": 8
 			},
 			{
-				"name": "白玉",
-				"number": 8740.43
+				"name": "杨枝甘露",
+				"number": 6
 			}
-		]
+		],
+		[{
+			"name":"杨枝甘露",
+			"price":35,
+			"isale":1,
+			"discount":0.97,
+			"picurl":"http://192.168.31.100:8111/imgs/kwk/kwk1.png"
+		},{
+			"name":"芋泥啵啵",
+			"price":27,
+			"isale":1,
+			"discount":0.97,
+			"picurl":"http://192.168.31.100:8111/imgs/kwk/kwk2.png"
+		},{
+			"name":"葡萄🍇桶",
+			"price":45,
+			"isale":1,
+			"discount":0.97,
+			"picurl":"http://192.168.31.100:8111/imgs/kwk/kwk3.png"
+		},{
+			"name":"菠萝🍍派",
+			"price":39,
+			"isale":0,
+			"discount":0.97,
+			"picurl":"http://192.168.31.100:8111/imgs/kwk/kwk4.png"
+		}]
 	]
 }

@@ -5,6 +5,8 @@ import {createRouter, createWebHashHistory} from "vue-router"
 import mainp from "../components/mainp.vue"
 import blogp from "../components/blogp.vue"
 import loginp from "../components/login.vue"
+import newTypeMilkTeep from "../components/newTypeMilkTeep.vue"
+import milkTeeManagep from "../components/milkTeeManagep.vue"
 
 
 export default createRouter({
@@ -20,6 +22,12 @@ export default createRouter({
 		},{
 			path:"/login",
 			component:loginp
+		},{
+			path:"/newTypeMilkTee",
+			component:newTypeMilkTeep
+		},{
+			path:"/milkTeeManage",
+			component:milkTeeManagep
 		}
 
 	]

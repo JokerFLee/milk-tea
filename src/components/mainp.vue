@@ -3,14 +3,14 @@
 
 		<div class="food">
 			<div class="itema">
-				<div class="item title">食品原材料</div>
+				<div class="item title">水果库存</div>
 				<div class="item" v-for="item in foods">
 					<span>{{ item.name }}</span> <span> : </span> <span> {{ item.number }}</span>
 				</div>
 			</div>
 
 			<div class="itemb">
-				<p>原料消耗占比</p>
+				<p>本月奶茶销售占比</p>
 				<!-- <DoughnutChart :chartData="testData" /> -->
 				<pie-chart
 					:data="[['Blueberry', 44], ['Strawberry', 23], ['Instgram', 10], ['Facboot', 10], ['Youtuae', 60], ['Tiktok', 210]]">
@@ -20,7 +20,7 @@
 
 		<div class="thing">
 			<div class="itema">
-				<div class="item title">耗材原材料</div>
+				<div class="item title">日耗库存</div>
 				<div class="item" v-for="item in thing">
 					<span>{{ item.name }}</span> <span> : </span> <span> {{ item.number }}</span>
 				</div>
@@ -29,14 +29,14 @@
 
 		<div class="staff">
 			<div class="itema">
-				<div class="item title">员工工资榜</div>
+				<div class="item title">今日奶茶畅销榜</div>
 				<div class="item" v-for="item in staff">
 					<span>{{ item.name }}</span> <span> : </span> <span> {{ item.number }}</span>
 				</div>
 			</div>
 
 			<div class="itemb">
-				<p>销售量</p>
+				<p>营业额</p>
 				<line-chart
 					:data="{ '2017-05-13': 32, '2017-05-14': 15, '2017-05-15': 97, '2017-05-16': 102, '2017-05-17': 68, '2017-05-18': 58, '2017-05-19': 33 }">
 				</line-chart>
@@ -50,29 +50,13 @@
 import { ref } from 'vue'
 import axios from "axios"
 
-// import { DoughnutChart } from 'vue-chart-3';
-// import { Chart, registerables } from "chart.js";
-
-// Chart.register(...registerables);
-
-
 export default {
 	name: "mainp",
-	// components: { DoughnutChart },
 	setup() {
 
 		let foods = ref([]);
 		let thing = ref([]);
 		let staff = ref([]);
-		const testData = ref({
-			labels: ['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre'],
-			datasets: [
-				{
-					data: [30, 40, 60, 70, 5],
-					backgroundColor: ['#a52a2a', '#87ceeb', '#12326B', '#9756C4', '#ebc139'],
-				},
-			],
-		});
 
 		function adds() {
 			this.foods = [111, 222, 333, 4456, 444]
@@ -97,7 +81,6 @@ export default {
 			thing,
 			staff,
 			axget,
-			testData,
 			adds
 		}
 	},
