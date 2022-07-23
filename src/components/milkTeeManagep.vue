@@ -33,14 +33,35 @@
 			<div class="mask_cont">
 
 				<div class="main_input">
-					<div class="ssbox"></div>
-					<div class="ssbox"></div>
-					<div class="ssbox"></div>
-					<div class="ssbox"></div>
+
+					<div class="ssbox">
+						<span>名称:</span> <label><input type="text" disabled :value="itemdt.name" style="cursor: no-drop;"></label>
+					</div>
+
+					<div class="ssbox">
+						<span>价格:</span> <label><input type="number" v-model="itemdt.price"></label>
+					</div>
+
+					<div class="ssbox">
+						<span>折扣:</span> <label><input min="0" max="1" step="0.01" type="number" v-model="itemdt.discount"></label>
+					</div>
+
+					<div class="ssbox">
+						<span>现价:</span> <label><input :value="now_price" disabled style="cursor: no-drop;"></label>
+					</div>
+
+					<div class="ssbox">
+						<span>图片:</span>
+						<div> <input type="file" accept="image/jpg,image/JPG,image/jpeg,image/JPEG,image/png,image/PNG,image/gif"
+								single @change="changepic"> <img :src="itemdt.picurl"> </div>
+					</div>
 
 				</div>
-				
-				<button @click="disableMask">submit</button>
+
+				<div class="btn">
+					<button id="bt1" @click="disableMask(true)">提交</button>
+					<button id="bt2" @click="disableMask(false)">取消</button>
+				</div>
 			</div>
 
 		</div>
@@ -49,22 +70,60 @@
 
 <script setup>
 import axios from 'axios';
-import { onBeforeMount, ref } from 'vue';
+import { computed, reactive, onBeforeMount, ref, toRaw, watch } from 'vue';
 
 let mask_state = ref(false)
 let sdata = ref()
 let blurSta = ref("0px")
+let itemdt = ref("")
+let item_tmp = null
 
+
+let now_price = computed(() => (itemdt.value.price * itemdt.value.discount).toFixed(2))
+
+watch(
+	() => itemdt.value.discount,
+	(now, pre) => {
+		if (now > 1 || now < 0) {
+			alert("数值只能在0-1之间取值")
+		}
+	},
+	{ deep: true, immediate: false }
+)
+
+function changepic(args) {
+	var myURL = window.URL.createObjectURL(args.target.files[0])
+	itemdt.value.picurl = myURL
+	// let real = upload pic option
+	// itemdt.value.picurl = real
+
+}
 
 function teadit(e) {
 	mask_state.value = true
-	console.log(e);
 	blurSta.value = "15px"
+	console.log(e);
+	item_tmp = e
+	let stupid_vue = JSON.parse(JSON.stringify(toRaw(e)))
+	itemdt.value = reactive(stupid_vue)
+	// itemdt.value = e
+
 }
 
-function disableMask (){
+function disableMask(e) {
 	mask_state.value = false
 	blurSta.value = "0px"
+	if (e) {
+		console.log("提交lo", item_tmp.target, itemdt.value);
+		// axios(){
+		// success(){
+		item_tmp.discount = itemdt.value.discount
+		item_tmp.price = itemdt.value.price
+		item_tmp.picurl = itemdt.value.picurl
+		// }
+		// }
+
+	}
 }
 
 function req(url, method) {
@@ -111,7 +170,7 @@ onBeforeMount(() => {
 		user-select: none;
 		overflow: hidden;
 		z-index: 0;
-		filter: blur( v-bind(blurSta) );
+		filter: blur(v-bind(blurSta));
 
 		.kwk {
 			width: 95%;
@@ -257,24 +316,101 @@ onBeforeMount(() => {
 			max-height: 550px;
 			background-color: #ffffff31;
 			box-shadow: -1px -1px 10px #fff, 1px 1px 10px #babebc;
-			// border: dashed 1px #eee;
+			border: dashed 1px #eee;
 			border-radius: 30px;
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			flex-direction: column;
+			user-select: none;
 
-			.main_input{
+			.btn {
+				width: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: space-evenly;
+				margin-top: 10px;
+
+				button {
+					width: 60px;
+					height: 40px;
+					border-radius: 1rem;
+					border: none;
+					background-color: #ffffff83;
+
+				}
+
+				#bt1:hover {
+					background-color: #53c0ff;
+				}
+
+				#bt2:hover {
+					background-color: #ff5e24;
+				}
+			}
+
+			.main_input {
 				width: 90%;
-				height: 60%;
+				height: 80%;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
 				justify-content: center;
 
-				.ssbox{
+				.ssbox {
 					width: 100%;
 					height: 100%;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+
+					div {
+						width: 70%;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+
+						input {
+							width: 90%;
+							height: auto;
+							text-align: center;
+						}
+
+						img {
+							width: auto;
+							max-width: 200px;
+							height: 170px;
+							object-fit: cover;
+						}
+					}
+
+					span {
+						width: 30%;
+						display: flex;
+						align-items: center;
+						justify-content: space-evenly;
+
+					}
+
+					label {
+						width: 70%;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+
+						input {
+							width: 90%;
+							height: 30px;
+							text-align: center;
+							border: none;
+							border-radius: 4px;
+						}
+
+						input:focus {
+							outline: #0000007c solid 1px;
+							box-shadow: -1px -1px 10px #fff, 1px 1px 10px #babebc;
+						}
+					}
 				}
 			}
 		}
