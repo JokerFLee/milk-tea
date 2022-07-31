@@ -101,7 +101,7 @@ function changepic(args) {
 
 function teadit(e) {
 	mask_state.value = true
-	blurSta.value = "15px"
+	blurSta.value = "5px"
 	console.log(e);
 	item_tmp = e
 	let stupid_vue = JSON.parse(JSON.stringify(toRaw(e)))
@@ -183,42 +183,32 @@ onBeforeMount(() => {
 			}
 
 			.head {
-				// background-color: #3fbe77;
+				background: #ededed;
+				color: #333;
 				height: 35px;
 				margin: 0px;
-				// border-radius: 5px;
+				border-radius: 5px;
+				box-shadow: -2px -2px 5px #e0e0e0, 2px 2px 5px #babebc;
+				// outline: #eee solid 1px;
 
 				.head_common {
-					background-color: #9974ff;
-					color: #fff;
+
 					width: 100%;
 					display: flex;
 					justify-content: center;
 					align-items: center;
-					border-left: #111 solid 1px;
-					border-right: #111 solid 1px;
-					border-radius: 5px;
-				}
 
-				.name {
-					border-left: none;
-				}
-
-				// .original_price {}
-				// .current_price {}
-				// .discount {}
-				// .pic {}
-				.manage {
-					border-right: none;
 				}
 			}
 
 			.body {
-				height: 80px;
-				margin: 3px 0 3px 0;
-				background-color: #53c0ff;
+				height: 60px;
+				margin: 10px 0 15px 0;
+				background-color: #ededed;
+				box-shadow: -2px -2px 5px #fcfcfc, 2px 2px 5px #babebc;
+				border-radius: 5px;
 				padding: 2px 0 2px 0;
-				color: #fff;
+				color: #333;
 
 				.item_son {
 					width: 100%;
@@ -236,8 +226,8 @@ onBeforeMount(() => {
 						align-items: center;
 
 						img {
-							width: 50px;
-							height: 75px;
+							width: 45px;
+							height: 60px;
 							object-fit: cover;
 						}
 					}
@@ -255,12 +245,8 @@ onBeforeMount(() => {
 							justify-content: center;
 							white-space: nowrap;
 							cursor: pointer;
-							background-color: hsl(127, 58%, 34%);
-							font-family: nailao;
-						}
-
-						.option1:hover {
-							background-color: hsl(127, 70%, 45%);
+							background-color: #711cd3;
+							color: #eee;
 						}
 
 						.option2 {
@@ -273,12 +259,8 @@ onBeforeMount(() => {
 							justify-content: center;
 							white-space: nowrap;
 							cursor: pointer;
-							background-color: #ff6f00;
-							font-family: nailao;
-						}
-
-						.option2:hover {
-							background-color: #ff0000
+							background-color: #fd2252;
+							color: #eee;
 						}
 					}
 				}
@@ -314,9 +296,9 @@ onBeforeMount(() => {
 			max-width: 470px;
 			height: 70%;
 			max-height: 550px;
-			background-color: #ffffff31;
-			box-shadow: -1px -1px 10px #fff, 1px 1px 10px #babebc;
-			border: dashed 1px #eee;
+			background-color: #ffffff61;
+			// box-shadow: -1px -1px 10px #fff, 1px 1px 10px #babebc;
+			// border: dashed 1px #eee;
 			border-radius: 30px;
 			display: flex;
 			justify-content: center;

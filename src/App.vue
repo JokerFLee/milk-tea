@@ -5,7 +5,8 @@
 
 			<!-- <div class="out1div" @click="kfc"> -->
 			<div class="out1div" @click="sideshow = !sideshow">
-				<div title="点击可显示/隐藏菜单栏">{{ xxx }},下午好</div>
+				<div class="icon"></div>
+				<div class="name" title="点击可显示/隐藏菜单栏">侧边栏</div>
 			</div>
 
 			<div class="navga">
@@ -28,7 +29,7 @@
 
 			<div class="op1div" v-show="sideshow">
 
-				<div class="op1div-common" >
+				<div class="op1div-common">
 					<div class="op1div-title" @click="willshow(0)">
 						<div class="image-common b20"></div> <span>奶&茶</span>
 					</div>
@@ -39,13 +40,13 @@
 						<router-link to="/milkTeeManage">
 							<li>在售管理</li>
 						</router-link>
-						<router-link to="/login">
+						<router-link to="/orderMT">
 							<li>奶茶点单</li>
 						</router-link>
 					</ul>
 				</div>
 
-				<div class="op1div-common" >
+				<div class="op1div-common">
 					<div class="op1div-title" @click="willshow(1)">
 						<div class="image-common b21"></div> <span>水果原料</span>
 					</div>
@@ -67,7 +68,7 @@
 					</ul>
 				</div>
 
-				<div class="op1div-common" >
+				<div class="op1div-common">
 					<div class="op1div-title" @click="willshow(2)">
 						<div class="image-common b22"></div> <span>日耗品</span>
 					</div>
@@ -83,7 +84,7 @@
 					</ul>
 				</div>
 
-				<div class="op1div-common" >
+				<div class="op1div-common">
 					<div class="op1div-title" @click="willshow(3)">
 						<div class="image-common b23"></div> <span>工作人员</span>
 					</div>
@@ -100,7 +101,7 @@
 					</ul>
 				</div>
 
-				<div class="op1div-common" >
+				<div class="op1div-common">
 					<div class="op1div-title" @click="willshow(4)">
 						<div class="image-common b24"></div> <span>其他杂项</span>
 					</div>
@@ -129,12 +130,12 @@
 </template>
 
 <script setup>
-import {  onMounted,  ref,} from 'vue';
+import { onMounted, ref, } from 'vue';
 
 
-let statement = ref([false,true,false,false,false])
+let statement = ref([false, true, false, false, false])
 let sideshow = ref(true);
-let xxx = ref("liming");
+let xxx = ref("李明");
 
 
 function reque(url, method) {
@@ -162,7 +163,7 @@ function kfc(url, method) {
 	);
 }
 
-function ismobile(){
+function ismobile() {
 	if (screen.availWidth <= 1440) {
 		sideshow.value = false
 	}
@@ -185,13 +186,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @font-face {
-	font-family: "nailao";
-	src: url("./assets/font/nailao.woff");
-	font-weight: normal;
-	font-style: normal;
-}
-
-@font-face {
 	font-family: "kkt";
 	src: url("./assets/font/kkt.woff");
 	font-weight: normal;
@@ -205,38 +199,48 @@ onMounted(() => {
 	flex-direction: column;
 	overflow: hidden;
 
+
 	.outbox {
 		width: 100%;
 		height: 5%;
 		user-select: none;
-		background: #5b61c9;
 		display: flex;
 		user-select: none;
-
-
+		background-color: #ececec;
 
 		.out1div {
-			width: 15%;
+			width: 10%;
 			height: 100%;
-			min-width: 165px;
+			min-width: 120px;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-evenly;
+			align-items: center;
+			padding-left:20px;
 
-			div {
+			.icon {
+				min-width: 20px;
+				height: 20px;
+				background-image: url("./assets/quick_menu.svg");
+				background-repeat: no-repeat;
+				background-size: contain;
+			}
+
+			.name {
 				height: 100%;
 				width: 100%;
-				color: #f1f1f1;
+				color: #333;
 				display: flex;
-				justify-content: center;
 				align-items: center;
-				font-family: "nailao";
-				box-sizing: border-box;
-				padding: 1px;
+				padding-left: 10px;
+				font-family: kkt;
 			}
 		}
 
 		.navga {
-			width: 85%;
+			width: 100%;
 			height: 100%;
-			background: #5b61c9;
+			color: #333;
 			display: flex;
 			box-sizing: border-box;
 			padding: 1px;
@@ -287,9 +291,7 @@ onMounted(() => {
 
 					.user_name :hover {
 						outline: #000 1px dashed;
-
 						border-radius: 50%;
-						box-shadow: -5px -5px 10px #5b61c9, 5px 5px 10px #15162c;
 					}
 				}
 			}
@@ -306,7 +308,6 @@ onMounted(() => {
 			.exit :hover {
 				outline: #000 1px dashed;
 				border-radius: 50%;
-				box-shadow: -5px -5px 10px #5b61c9, 5px 5px 10px #15162c;
 			}
 
 			.exit .img {
@@ -331,11 +332,11 @@ onMounted(() => {
 			width: 15%;
 			min-width: 165px;
 			height: 100%;
-			background: linear-gradient(to bottom, #4e54c8, #FFFDE4);
 			display: flex;
 			align-items: center;
 			flex-direction: column;
-			color: #000000;
+			color: #000;
+			background: linear-gradient(to bottom, #f0e9e9, #588dff);
 			user-select: none;
 
 
@@ -353,13 +354,14 @@ onMounted(() => {
 					flex-wrap: nowrap;
 					align-items: center;
 					margin-left: 5%;
+					padding: 5px 0 5px 0;
+					font-family: kkt;
 
 					span {
 						height: 30px;
 						width: 100%;
 						display: inline-block;
 						font-size: larger;
-						font-family: "kkt";
 						text-align: justify;
 						text-align-last: justify;
 						text-justify: inter-ideograph;
@@ -403,7 +405,7 @@ onMounted(() => {
 				ul {
 					width: 100%;
 					padding: 0;
-					margin: 0;
+					margin: 5px 0 0 0;
 					display: flex;
 					flex-direction: column;
 					align-items: center;
@@ -433,8 +435,8 @@ onMounted(() => {
 					}
 
 					li:hover {
-						background: #8b91ff;
-						color: #e0fffa;
+						background: linear-gradient(to right, #98c8ff, #dec6ec);
+						color: #333;
 					}
 				}
 			}
@@ -443,9 +445,8 @@ onMounted(() => {
 		.op2div {
 			width: 100%;
 			height: 100%;
-			background-color: #dcebfa;
 			float: left;
-
+			overflow: hidden;
 		}
 	}
 }

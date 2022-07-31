@@ -5,19 +5,24 @@
 				新品上架
 			</div>
 			<div class="edge">
+
 				<div class="col">
 					<span>名称:</span>
-					<input type="text" v-model="name" placeholder="请输入新品奶茶名称">
+					<div class="mobo">
+						<input type="text" v-model="name" placeholder="请输入新品奶茶名称">
+					</div>
 				</div>
 
 				<div class="col">
 					<span>价格:</span>
-					<input type="number" v-model="price" placeholder="奶茶总要有个价格吧">
+					<div class="mobo">
+						<input type="number" v-model="price" placeholder="奶茶总要有个价格吧">
+					</div>
 				</div>
 
 				<div class="col">
 					<span title="勾选是以后,会在名称后面自动追加「套餐」二字">套餐:</span>
-					<div>
+					<div class="mobo">
 						<label for="no"><input type="radio" id="no" value="no" v-model="combo">否 </label>
 						<label for="yes"><input type="radio" id="yes" value="yes" v-model="combo">是</label>
 					</div>
@@ -25,7 +30,7 @@
 
 				<div class="col" v-show="combo === 'yes'">
 					<span title="多选时同时按住ctrl键即可">包含:</span>
-					<div>
+					<div class="mobo">
 						<select v-model="select" multiple>
 							<option>香草啵啵</option>
 							<option>鲜榨橙汁</option>
@@ -36,15 +41,25 @@
 						</select>
 					</div>
 				</div>
+
+				<div class="col">
+					<span>文案:</span>
+					<div class="mobo">
+						<textarea cols="10" rows="10" v-model="intro"></textarea>
+					</div>
+				</div>
+
+
 				<div class="col">
 					<span>图片:</span>
-					<div>
+					<div class="mobo">
 						<input type="file" class="ipt"
 							accept="image/jpg,image/JPG,image/jpeg,image/JPEG,image/png,image/PNG,image/gif" single
 							@change="selectImg">
 						<img :src="uri" v-show="uri">
 					</div>
 				</div>
+
 			</div>
 			<button @click="submitthis">submit</button>
 		</div>
@@ -59,6 +74,7 @@ let price = ref()
 let combo = ref("no")
 let select = ref([])
 let uri = ref('')
+let intro = ref("")
 
 function selectImg(args) {
 	var myURL = window.URL.createObjectURL(args.target.files[0])
@@ -66,7 +82,7 @@ function selectImg(args) {
 }
 
 function submitthis() {
-	console.log(name.value, price.value, combo.value, toRaw(select.value) , uri.value);
+	console.log(name.value, price.value, combo.value, toRaw(select.value), uri.value, intro.value);
 }
 
 
@@ -94,7 +110,6 @@ function submitthis() {
 		justify-content: center;
 
 		.top {
-			font-family: kkt;
 			font-weight: bold;
 			font-size: larger;
 		}
@@ -104,7 +119,7 @@ function submitthis() {
 			height: 80%;
 			display: flex;
 			flex-direction: column;
-			justify-content: center;
+			justify-content: space-evenly;
 			align-items: center;
 
 			.col {
@@ -122,16 +137,22 @@ function submitthis() {
 					justify-content: center;
 					align-items: center;
 				}
-
-				div {
+				.mobo {
 					width: 80%;
 					height: auto;
 					display: flex;
 					justify-content: center;
 					align-items: center;
 
-					.ipt {
+					textarea {
+						width: 90%;
+						min-width: 90%;
+						max-width: 90%;
 						height: auto;
+						max-height: 150px;
+						min-height: 50px;
+						padding: 3px;
+						border: none;
 					}
 
 					img {
@@ -142,10 +163,13 @@ function submitthis() {
 						max-height: 100px;
 						object-fit: cover;
 					}
-					select{
-						width: 100%;
-						border: #333 dashed 1px;
+
+					select {
+						width: 90%;
+						border: #333 solid 1px;
 						text-align: center;
+						border-radius: 7px;
+						border: none;
 					}
 
 					label {
@@ -159,21 +183,24 @@ function submitthis() {
 							width: auto;
 						}
 					}
-				}
 
-				input {
-					width: 80%;
-					height: 30px;
-					border-radius: 7px;
-					margin-left: 3px;
-					padding: 1px 5px 1px 5px;
-					text-align: center;
-					font-family: "nailao";
-					font-size: medium;
-				}
+					input {
+						width: 90%;
+						height: 30px;
+						border-radius: 7px;
+						border: none;
+						padding: 1px 5px 1px 5px;
+						text-align: center;
+						font-size: medium;
+					}
 
-				input::placeholder {
-					color: #8b8b8b9a;
+					input::placeholder {
+						color: #8b8b8b9a;
+					}
+
+					.ipt {
+						height: auto;
+					}
 				}
 			}
 		}
@@ -186,7 +213,6 @@ function submitthis() {
 			background-color: #161111;
 			color: #eee;
 			cursor: pointer;
-			font-family: kkt;
 			font-size: medium;
 			font-weight: bold;
 

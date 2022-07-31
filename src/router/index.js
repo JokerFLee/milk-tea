@@ -7,6 +7,7 @@ import blogp from "../components/blogp.vue"
 import loginp from "../components/login.vue"
 import newTypeMilkTeep from "../components/newTypeMilkTeep.vue"
 import milkTeeManagep from "../components/milkTeeManagep.vue"
+import orderMTp from "../components/orderMT.vue"
 
 
 export default createRouter({
@@ -28,8 +29,9 @@ export default createRouter({
 		},{
 			path:"/milkTeeManage",
 			component:milkTeeManagep
+		},{
+			path:"/orderMT",
+			component:orderMTp
 		}
-
 	]
-
 })
