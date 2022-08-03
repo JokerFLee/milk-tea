@@ -5,22 +5,54 @@
 			<div class="topbar">
 				<div class="left com" @click="toleft"></div>
 
-				<div class="managersuggest" v-for="(ms, index) in masu" :index=index v-show="index <= 2">
+				<div class="center">
+					<template v-for="(ms, index) in masu" :index=index>
 
-					<div class="box">
-
-						<div class="pic">
-							<img :src=ms.picurl>
-							<span>{{ ms.topic }}</span>
+						<div class="managersuggest first-one" v-if="index == 0" v-show="index <= 2">
+							<div class="box">
+								<div class="pic">
+									<img :src=ms.picurl>
+									<span>{{ ms.topic }}</span>
+								</div>
+								<div class="info">
+									<div class="name">{{ ms.name }}</div>
+									<div class="intro">{{ ms.intro }}</div>
+								</div>
+							</div>
 						</div>
 
-						<div class="info">
-							<div class="name">{{ ms.name }}</div>
-							<div class="intro">{{ ms.intro }}</div>
+						<div class="managersuggest second toleft" v-else-if="index == 1" v-show="index <= 2">
+							<div class="box">
+								<div class="pic">
+									<img :src=ms.picurl>
+									<span>{{ ms.topic }}</span>
+								</div>
+								<div class="info">
+									<div class="name">{{ ms.name }}</div>
+									<div class="intro">{{ ms.intro }}</div>
+								</div>
+							</div>
 						</div>
 
-					</div>
+						<div class="managersuggest third" v-else v-show="index <= 2">
+							<div class="box">
+								<div class="pic">
+									<img :src=ms.picurl>
+									<span>{{ ms.topic }}</span>
+								</div>
+								<div class="info">
+									<div class="name">{{ ms.name }}</div>
+									<div class="intro">{{ ms.intro }}</div>
+								</div>
+							</div>
+						</div>
+
+					</template>
 				</div>
+
+
+
+
 
 				<div class="right com" @click="toright"></div>
 			</div>
@@ -48,7 +80,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 let index = ref(0)
 let mtinfo = ref([
@@ -71,6 +103,10 @@ let masu = ref([
 let orderinfo = ref([])//名称,数量,温度,甜度,堂食?外带
 
 let itstyle = ref("sidebar")
+
+onMounted(() => {
+
+})
 
 function toleft() {
 	let tmp = []
@@ -116,8 +152,6 @@ function submit(e) {
 	display: flex;
 	flex-direction: column;
 	user-select: none;
-	
-
 
 	.first {
 		width: 100%;
@@ -129,6 +163,8 @@ function submit(e) {
 			width: 100%;
 			height: 100%;
 			display: inline-flex;
+			align-items: center;
+			justify-content: center;
 
 			.com {
 				width: 10%;
@@ -140,7 +176,6 @@ function submit(e) {
 				background-position: 50% 50%;
 				background-repeat: no-repeat;
 				background-size: contain;
-
 			}
 
 			.left {
@@ -151,54 +186,81 @@ function submit(e) {
 				background-image: url("../assets/right.svg");
 			}
 
-			.managersuggest {
-				width: 80%;
+			.center {
+				width: 100%;
 				height: 100%;
-				background-color: rgb(173, 173, 173);
-				border-radius: 7px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				position: relative;
 
-				.box {
-					width: 100%;
+				.first-one {
+					z-index: 0;
+					height: 80%;
+					width: 30%;
+					margin-right: -1%;
+				}
+
+				.second {
+					z-index: 1;
+					width: 40%;
 					height: 100%;
-					overflow: hidden;
-					display: flex;
+				}
 
-					.pic {
-						width: 40%;
+				.third {
+					z-index: 0;
+					height: 80%;
+					width: 30%;
+					margin-left: -1%;
+				}
+
+				.managersuggest {
+					background-color: rgba(173, 173, 173, 0.95);
+					border-radius: 7px;
+
+					.box {
+						width: 100%;
 						height: 100%;
-						position: relative;
+						overflow: hidden;
+						display: flex;
 
-						img {
-							width: 100%;
+						.pic {
+							width: 40%;
 							height: 100%;
-							min-width: 60px;
-							min-height: 100px;
-							object-fit: contain;
+							position: relative;
+
+							img {
+								width: 100%;
+								height: 100%;
+								min-width: 60px;
+								min-height: 100px;
+								object-fit: contain;
+							}
+
+							span {
+								position: absolute;
+								padding: 5px;
+								top: 10px;
+								left: 60%;
+								writing-mode: vertical-lr;
+								background-color: #fa5e2e;
+								border-radius: 50%;
+								font-size: smaller;
+								font-family: kkt;
+							}
 						}
 
-						span {
-							position: absolute;
-							padding: 5px;
-							top: 5px;
-							right: 0px;
-							writing-mode: vertical-lr;
-							background-color: #fa5e2e;
-							border-radius: 50%;
-							font-size:smaller;
-							font-family: kkt;
+						.info {
+							width: 60%;
+							padding: 3px;
+
+							.name {
+								font-size: large;
+								font-weight: 800;
+							}
+
+							.intro {}
 						}
-					}
-
-					.info {
-						width: 60%;
-						padding: 3px;
-
-						.name {
-							font-size: large;
-							font-weight: 800;
-						}
-
-						.intro {}
 					}
 				}
 			}
@@ -209,6 +271,7 @@ function submit(e) {
 		width: 100%;
 		height: 85%;
 		position: relative;
+
 		.sidearea {
 			height: 100%;
 			width: 25%;
@@ -221,9 +284,6 @@ function submit(e) {
 			overflow-y: auto;
 			padding-top: 10px;
 			position: fixed;
-
-
-
 
 			.sidebar:hover {
 				background: linear-gradient(to right, #ffe883, #ffc9b6);
@@ -241,7 +301,6 @@ function submit(e) {
 				margin-top: 5px;
 				border-radius: 7px;
 				color: #eee;
-
 
 				.det {
 					width: 100%;
@@ -263,15 +322,45 @@ function submit(e) {
 			width: 100%;
 			height: 100%;
 
-
-
 			.detail {
 				width: 100%;
-
 			}
-
 		}
 	}
+}
 
+.toleft {
+	animation-name: iphx;
+	animation-duration: 2s;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+}
+
+@keyframes iphx {
+	from {
+		z-index: 1;
+		position: absolute;
+		height: 100%;
+		width: 35%;
+		position: absolute;
+		left: 30%;
+	}
+
+	50% {
+		z-index: 0;
+		position: absolute;
+		height: 90%;
+		width: 35%;
+		position: absolute;
+		left: 15%;
+	}
+
+	to {
+		z-index: -1;
+		position: absolute;
+		left: 0;
+		height: 80%;
+		width: 30%;
+	}
 }
 </style>
