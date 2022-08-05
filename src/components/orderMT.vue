@@ -8,7 +8,7 @@
 				<div class="center">
 					<template v-for="(ms, index) in masu" :index=index>
 
-						<div class="managersuggest first-one" v-if="index == 0" v-show="index <= 2">
+						<div :class="stgrp[0]" v-if="index == 0">
 							<div class="box">
 								<div class="pic">
 									<img :src=ms.picurl>
@@ -21,7 +21,7 @@
 							</div>
 						</div>
 
-						<div class="managersuggest second toleft" v-else-if="index == 1" v-show="index <= 2">
+						<div :class="stgrp[1]" v-else-if="index == 1">
 							<div class="box">
 								<div class="pic">
 									<img :src=ms.picurl>
@@ -34,7 +34,20 @@
 							</div>
 						</div>
 
-						<div class="managersuggest third" v-else v-show="index <= 2">
+						<div :class="stgrp[2]" v-else-if="index == 2">
+							<div class="box">
+								<div class="pic">
+									<img :src=ms.picurl>
+									<span>{{ ms.topic }}</span>
+								</div>
+								<div class="info">
+									<div class="name">{{ ms.name }}</div>
+									<div class="intro">{{ ms.intro }}</div>
+								</div>
+							</div>
+						</div>
+
+						<div :class="stgrp[3]" v-else>
 							<div class="box">
 								<div class="pic">
 									<img :src=ms.picurl>
@@ -49,11 +62,6 @@
 
 					</template>
 				</div>
-
-
-
-
-
 				<div class="right com" @click="toright"></div>
 			</div>
 
@@ -68,9 +76,15 @@
 			</div>
 
 			<div class="marea">
-
 				<div class="detail">
-
+					<div class="milktea" v-for="mk in allproducts">
+						<div class="pic">
+							<img :src="mk.picurl">
+							<span v-show="mk.topic != 'null'">{{ mk.topic }}</span>
+						</div>
+						<div class="intro"></div>
+						<div class="option"></div>
+					</div>
 				</div>
 			</div>
 
@@ -80,9 +94,11 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import axios from 'axios';
+import { onBeforeMount, onMounted, ref } from 'vue';
 
-let index = ref(0)
+let stgrp = ref(["mst first-one", "mst second", "mst third", "mst fouth"])
+
 let mtinfo = ref([
 	"套餐推荐",
 	"最低折扣",
@@ -94,41 +110,89 @@ let mtinfo = ref([
 ])
 
 let masu = ref([
-	{ "name": "手剥葡萄", "picurl": "http://192.168.31.100:8111/imgs/kwk/kwk7.png", "intro": "非常的牛逼!非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
-	{ "name": "牛逼哄哄", "picurl": "http://192.168.31.100:8111/imgs/kwk/kwk9.png", "intro": "非常的牛逼!非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
-	{ "name": "咄咄逼人", "picurl": "http://192.168.31.100:8111/imgs/kwk/kwk18.png", "intro": "非常的牛逼!非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
-	{ "name": "马可菠萝", "picurl": "http://192.168.31.100:8111/imgs/kwk/kwk13.png", "intro": "非常的牛逼!非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "最热" }
+	{ "name": "手剥葡萄", "picurl": "http://192.168.1.4:8111/imgs/kwk/kwk1.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
+	{ "name": "爽口雪梨", "picurl": "http://192.168.1.4:8111/imgs/kwk/kwk2.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
+	{ "name": "冰雪荔枝", "picurl": "http://192.168.1.4:8111/imgs/kwk/kwk3.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
+	{ "name": "菠萝吹雪", "picurl": "http://192.168.1.4:8111/imgs/kwk/kwk4.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "最热" }
 ])
+
+let allproducts = ref([])
 
 let orderinfo = ref([])//名称,数量,温度,甜度,堂食?外带
 
 let itstyle = ref("sidebar")
 
+let nowidth = ref(0)
+
+function req(url, method) {
+	const ax = axios({
+		url: url,
+		method: method,
+		params: {
+			pk: "233",
+			sk: "yc9cbxyo7cs9ca6"
+		}
+	}).then(res => {
+		return res.data
+	})
+	return ax
+}
+function packreq() {
+	let url = "src/assets/test.json";
+	let method = "get"
+	req(url, method).then((e) => {
+		allproducts.value = e.jsp[4]
+	})
+}
+
+onBeforeMount(() => {
+	packreq()
+})
 onMounted(() => {
+	const that = this
+	
+	window.addEventListener('resize', () => {
+		wd = document.body.clientWidth
+		if (wd < 125*4) {
+			nowidth = (wd-125)
+			
+		} else if(wd>200*4){
+			nowidth = (wd-200)
+		}else{
+			nowidth = wd*0.75
+		}
+	})
 
 })
 
-function toleft() {
-	let tmp = []
+const delay = (n) => new Promise(r => setTimeout(r, n * 1000));
 
-	tmp[0] = masu.value[masu.value.length - 1]
-	for (let index = 1; index < masu.value.length; index++) {
-		tmp[index] = masu.value[index - 1]
-		console.log(index, tmp, masu.value[index - 1]);
-	}
+async function toleft() {
+	stgrp.value = ["mst first-one l2n", "mst second c2l", "mst third r2c", "mst fouth n2r"]
 
-	console.log(tmp);
+	await delay(1);
 
-	masu.value = tmp
-}
-
-function toright() {
 	let tmp = []
 	for (let index = 1; index <= masu.value.length; index++) {
 		tmp[index - 1] = masu.value[index]
 	}
 	tmp[masu.value.length - 1] = masu.value[0]
 	masu.value = tmp
+
+	stgrp.value = ["mst first-one", "mst second", "mst third", "mst fouth"]
+}
+
+async function toright() {
+
+	stgrp.value = ["mst first-one l2c", "mst second c2r", "mst third r2n", "mst fouth n2l"]
+	await delay(1);
+	let tmp = []
+	tmp[0] = masu.value[masu.value.length - 1]
+	for (let index = 1; index < masu.value.length; index++) {
+		tmp[index] = masu.value[index - 1]
+	}
+	masu.value = tmp
+	stgrp.value = ["mst first-one", "mst second", "mst third", "mst fouth"]
 }
 
 function add2car(e) {
@@ -167,7 +231,7 @@ function submit(e) {
 			justify-content: center;
 
 			.com {
-				width: 10%;
+				width: auto;
 				min-width: 30px;
 				height: 100%;
 				display: flex;
@@ -176,6 +240,7 @@ function submit(e) {
 				background-position: 50% 50%;
 				background-repeat: no-repeat;
 				background-size: contain;
+				cursor: pointer;
 			}
 
 			.left {
@@ -191,20 +256,24 @@ function submit(e) {
 				height: 100%;
 				display: flex;
 				align-items: center;
-				justify-content: center;
 				position: relative;
+				overflow: hidden;
 
 				.first-one {
 					z-index: 0;
 					height: 80%;
 					width: 30%;
-					margin-right: -1%;
+					margin-left: 1%;
+					position: absolute;
+					left: 0;
 				}
 
 				.second {
 					z-index: 1;
 					width: 40%;
 					height: 100%;
+					position: absolute;
+					left: 30%;
 				}
 
 				.third {
@@ -212,11 +281,22 @@ function submit(e) {
 					height: 80%;
 					width: 30%;
 					margin-left: -1%;
+					position: absolute;
+					left: 70%;
 				}
 
-				.managersuggest {
-					background-color: rgba(173, 173, 173, 0.95);
+				.fouth {
+					z-index: 0;
+					height: 0;
+					width: 0;
+					position: absolute;
+					left: 100%;
+				}
+
+				.mst {
+					background: #2aaaffe8;
 					border-radius: 7px;
+					color: #fff;
 
 					.box {
 						width: 100%;
@@ -225,15 +305,14 @@ function submit(e) {
 						display: flex;
 
 						.pic {
-							width: 40%;
+							width: 30%;
 							height: 100%;
 							position: relative;
 
 							img {
 								width: 100%;
 								height: 100%;
-								min-width: 60px;
-								min-height: 100px;
+								min-width: 50px;
 								object-fit: contain;
 							}
 
@@ -243,6 +322,7 @@ function submit(e) {
 								top: 10px;
 								left: 60%;
 								writing-mode: vertical-lr;
+								white-space: nowrap;
 								background-color: #fa5e2e;
 								border-radius: 50%;
 								font-size: smaller;
@@ -251,7 +331,7 @@ function submit(e) {
 						}
 
 						.info {
-							width: 60%;
+							width: 70%;
 							padding: 3px;
 
 							.name {
@@ -259,7 +339,13 @@ function submit(e) {
 								font-weight: 800;
 							}
 
-							.intro {}
+							.intro {
+								display: -webkit-box;
+								-webkit-box-orient: vertical;
+								-webkit-line-clamp: 2;
+								overflow: hidden;
+								text-overflow: ellipsis;
+							}
 						}
 					}
 				}
@@ -271,6 +357,7 @@ function submit(e) {
 		width: 100%;
 		height: 85%;
 		position: relative;
+		display: flex;
 
 		.sidearea {
 			height: 100%;
@@ -286,7 +373,7 @@ function submit(e) {
 			position: fixed;
 
 			.sidebar:hover {
-				background: linear-gradient(to right, #ffe883, #ffc9b6);
+				background: linear-gradient(to right, #fff1b8, #ffb6b6);
 				color: #444;
 				cursor: pointer;
 			}
@@ -297,7 +384,7 @@ function submit(e) {
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				background: linear-gradient(to left, #e76258, #f1ab92);
+				background: linear-gradient(to left, #5896e7, #0ecfff);
 				margin-top: 5px;
 				border-radius: 7px;
 				color: #eee;
@@ -319,48 +406,274 @@ function submit(e) {
 		}
 
 		.marea {
-			width: 100%;
+			width: 75%;
 			height: 100%;
+			margin-left: 25%;
+
 
 			.detail {
-				width: 100%;
+				width: 95%;
+				height: 100%;
+				overflow: auto;
+
+				.milktea {
+					width: 100%;
+					height: 100%;
+					max-height: 100px;
+					margin-top: 5px;
+					display: flex;
+
+
+					.pic {
+						width: 20%;
+						height: 100%;
+						display: flex;
+						flex-direction: column;
+						flex-wrap: wrap;
+						position: relative;
+
+						img {
+							width: 100%;
+							height: 100%;
+							object-fit: contain;
+						}
+
+						span {
+							position: absolute;
+							padding: 5px;
+							top: 10px;
+							left: 60%;
+							writing-mode: vertical-lr;
+							white-space: nowrap;
+							background-color: #8400ff;
+							border-radius: 50%;
+							font-size: smaller;
+							font-family: kkt;
+							color: white;
+
+						}
+					}
+				}
 			}
 		}
 	}
 }
 
-.toleft {
-	animation-name: iphx;
-	animation-duration: 2s;
-	animation-iteration-count: infinite;
-	animation-direction: alternate;
+.c2l {
+	animation-name: c2l;
+	animation-duration: 0.8s;
+	animation-fill-mode: forwards;
 }
 
-@keyframes iphx {
+.c2r {
+	animation-name: c2r;
+	animation-duration: 0.8s;
+	animation-fill-mode: forwards;
+}
+
+.l2c {
+	animation-name: l2c;
+	animation-duration: 0.8s;
+	animation-fill-mode: forwards;
+}
+
+.r2c {
+	animation-name: r2c;
+	animation-duration: 0.8s;
+	animation-fill-mode: forwards;
+}
+
+.l2n {
+	animation-name: l2n;
+	animation-duration: 0.8s;
+	animation-fill-mode: forwards;
+}
+
+.n2r {
+	animation-name: n2r;
+	animation-duration: 0.8s;
+	animation-fill-mode: forwards;
+}
+
+.r2n {
+	animation-name: r2n;
+	animation-duration: 0.8s;
+	animation-fill-mode: forwards;
+}
+
+.n2l {
+	animation-name: n2l;
+	animation-duration: 0.8s;
+	animation-fill-mode: forwards;
+}
+
+@keyframes l2n {
+
+	50% {
+		height: 40%;
+		width: 15%;
+		left: -7.5%;
+		opacity: 0.5;
+		margin-left: 0;
+	}
+
+	to {
+		width: 0;
+		height: 0;
+		left: 0;
+		opacity: 0;
+		margin-left: 0;
+	}
+}
+
+@keyframes l2c {
+	50% {
+		z-index: -1;
+		height: 90%;
+		width: 35%;
+		left: 15%;
+	}
+
+	to {
+		z-index: 1;
+		height: 100%;
+		width: 40%;
+		left: 30%;
+		margin-left: 0;
+	}
+}
+
+@keyframes c2l {
 	from {
 		z-index: 1;
-		position: absolute;
-		height: 100%;
-		width: 35%;
-		position: absolute;
 		left: 30%;
 	}
 
 	50% {
 		z-index: 0;
-		position: absolute;
 		height: 90%;
 		width: 35%;
-		position: absolute;
 		left: 15%;
 	}
 
 	to {
 		z-index: -1;
-		position: absolute;
 		left: 0;
 		height: 80%;
 		width: 30%;
+		margin-left: 1%;
+	}
+}
+
+@keyframes c2r {
+
+	50% {
+		z-index: 0;
+		height: 90%;
+		width: 35%;
+		left: 55%;
+	}
+
+	to {
+		z-index: -1;
+		left: 70%;
+		height: 80%;
+		width: 30%;
+		margin-left: -1%;
+	}
+}
+
+@keyframes r2c {
+	50% {
+		z-index: 0;
+		height: 90%;
+		width: 35%;
+		left: 55%;
+	}
+
+	to {
+		z-index: 1;
+		height: 100%;
+		width: 40%;
+		left: 30%;
+		margin-left: 0;
+	}
+}
+
+@keyframes r2n {
+	50% {
+		z-index: 0;
+		height: 40%;
+		width: 15%;
+		left: 85%;
+		opacity: 0.5;
+	}
+
+	to {
+		z-index: -1;
+		height: 0%;
+		width: 0%;
+		left: 100%;
+		margin-left: 0;
+		opacity: 0;
+	}
+}
+
+//left center right null
+@keyframes n2r {
+	from {
+		opacity: 0;
+	}
+
+	50% {
+		height: 40%;
+		width: 15%;
+		left: 85%;
+		opacity: 0.5;
+		margin-left: 0;
+		z-index: -1;
+	}
+
+	to {
+		height: 80%;
+		width: 30%;
+		z-index: -1;
+		left: 70%;
+		margin-left: -1%;
+		opacity: 1;
+	}
+
+
+}
+
+@keyframes n2l {
+	from {
+		opacity: 0;
+	}
+
+	25% {
+		height: 0;
+		width: 0;
+		left: 0%;
+		opacity: 0;
+	}
+
+	50% {
+		height: 40%;
+		width: 15%;
+		left: -15%;
+		z-index: -1;
+		opacity: 0;
+	}
+
+
+	to {
+		height: 80%;
+		width: 30%;
+		z-index: -1;
+		left: 0%;
+		margin-left: 1%;
+		opacity: 1;
 	}
 }
 </style>

@@ -114,7 +114,7 @@ function disableMask(e) {
 	mask_state.value = false
 	blurSta.value = "0px"
 	if (e) {
-		console.log("提交lo", item_tmp.target, itemdt.value);
+		console.log("提交咯", item_tmp.target, itemdt.value);
 		// axios(){
 		// success(){
 		item_tmp.discount = itemdt.value.discount
