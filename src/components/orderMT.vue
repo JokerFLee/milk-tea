@@ -82,8 +82,15 @@
 							<img :src="mk.picurl">
 							<span v-show="mk.topic != 'null'">{{ mk.topic }}</span>
 						</div>
-						<div class="intro"></div>
-						<div class="option"></div>
+						<div class="intro">
+							<h3>{{ mk.name }}</h3>
+							<span> {{ mk.intro }}</span>
+						</div>
+						<div class="option">
+							<div class="oks plus" @click="add2car(mk)">+</div>
+							<div class="oks num">{{ orderinfo.get(mk) }}</div>
+							<div class="oks reduce" @click="changeinfo(mk)">-</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -95,7 +102,7 @@
 
 <script setup>
 import axios from 'axios';
-import { onBeforeMount, onMounted, ref } from 'vue';
+import { onBeforeMount, onMounted, reactive, ref } from 'vue';
 
 let stgrp = ref(["mst first-one", "mst second", "mst third", "mst fouth"])
 
@@ -110,19 +117,25 @@ let mtinfo = ref([
 ])
 
 let masu = ref([
-	{ "name": "手剥葡萄", "picurl": "http://192.168.1.4:8111/imgs/kwk/kwk1.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
-	{ "name": "爽口雪梨", "picurl": "http://192.168.1.4:8111/imgs/kwk/kwk2.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
-	{ "name": "冰雪荔枝", "picurl": "http://192.168.1.4:8111/imgs/kwk/kwk3.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
-	{ "name": "菠萝吹雪", "picurl": "http://192.168.1.4:8111/imgs/kwk/kwk4.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "最热" }
+	{ "name": "手剥葡萄", "picurl": "http://192.168.31.100:8111/imgs/kwk/kwk1.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
+	{ "name": "爽口雪梨", "picurl": "http://192.168.31.100:8111/imgs/kwk/kwk2.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
+	{ "name": "冰雪荔枝", "picurl": "http://192.168.31.100:8111/imgs/kwk/kwk3.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
+	{ "name": "菠萝吹雪", "picurl": "http://192.168.31.100:8111/imgs/kwk/kwk4.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "最热" }
 ])
 
 let allproducts = ref([])
 
-let orderinfo = ref([])//名称,数量,温度,甜度,堂食?外带
+let orderinfo = reactive(new Map())//名称,数量,温度,甜度,堂食?外带
 
-let itstyle = ref("sidebar")
+let nowidth = ref("100%")
 
-let nowidth = ref(0)
+let noml = ref("25%")
+
+function makemap() {
+	for (let index = 0; index < allproducts.value.length; index++) {
+		orderinfo.set(allproducts.value[index], 0)
+	}
+}
 
 function req(url, method) {
 	const ax = axios({
@@ -141,29 +154,37 @@ function packreq() {
 	let url = "src/assets/test.json";
 	let method = "get"
 	req(url, method).then((e) => {
-		allproducts.value = e.jsp[4]
+		allproducts.value = e.jsp[4];
+		makemap()
 	})
 }
+
 
 onBeforeMount(() => {
 	packreq()
 })
 onMounted(() => {
-	const that = this
-	
-	window.addEventListener('resize', () => {
-		wd = document.body.clientWidth
-		if (wd < 125*4) {
-			nowidth = (wd-125)
-			
-		} else if(wd>200*4){
-			nowidth = (wd-200)
-		}else{
-			nowidth = wd*0.75
-		}
-	})
 
+	window.addEventListener('resize', () => itwid())
+
+	itwid()
 })
+
+function itwid() {
+	{
+		let wd = document.body.clientWidth
+		if (wd <= 125 * 4) {
+			nowidth.value = (wd - 125) + "px"
+			noml.value = "125px"
+		} else if (wd > 200 * 4) {
+			nowidth.value = (wd - 200) + "px"
+			noml.value = "200px"
+		} else {
+			nowidth.value = wd * 0.75 + "px"
+			noml.value = (wd * 0.25) + "px"
+		}
+	}
+}
 
 const delay = (n) => new Promise(r => setTimeout(r, n * 1000));
 
@@ -196,11 +217,19 @@ async function toright() {
 }
 
 function add2car(e) {
-
+	if (orderinfo.has(e)) {
+		orderinfo.set(e, orderinfo.get(e) + 1)
+	} else {
+		orderinfo.set(e, 1)
+	}
 }
 
 function changeinfo(e) {
-
+	if (orderinfo.has(e)) {
+		if (orderinfo.get(e) > 0) {
+			orderinfo.set(e, orderinfo.get(e) - 1)
+		}
+	}
 }
 
 function submit(e) {
@@ -370,7 +399,7 @@ function submit(e) {
 			justify-content: flex-start;
 			overflow-y: auto;
 			padding-top: 10px;
-			position: fixed;
+			position: absolute;
 
 			.sidebar:hover {
 				background: linear-gradient(to right, #fff1b8, #ffb6b6);
@@ -406,14 +435,25 @@ function submit(e) {
 		}
 
 		.marea {
-			width: 75%;
 			height: 100%;
-			margin-left: 25%;
+			width: v-bind(nowidth);
+			margin-left: v-bind(noml);
+			display: flex;
+			justify-content: center;
+			padding-top: 10px;
+
+
+			::-webkit-scrollbar {
+				display: none;
+				//chrome edge 不显示滚动块
+			}
+
 
 
 			.detail {
 				width: 95%;
 				height: 100%;
+				scrollbar-width: none; //firefox 不显示滚动块
 				overflow: auto;
 
 				.milktea {
@@ -421,11 +461,13 @@ function submit(e) {
 					height: 100%;
 					max-height: 100px;
 					margin-top: 5px;
+					margin-bottom: 20px;
 					display: flex;
-
+					background: #efefef;
+					border-radius: 7px;
 
 					.pic {
-						width: 20%;
+						width: 70px;
 						height: 100%;
 						display: flex;
 						flex-direction: column;
@@ -453,6 +495,60 @@ function submit(e) {
 
 						}
 					}
+
+					.intro {
+						width: 70%;
+						height: 100%;
+						display: flex;
+						align-items: center;
+						justify-content: space-around;
+						padding-left: 10px;
+						flex-direction: column;
+
+						h3 {
+							margin: 3px 0 3px 0;
+						}
+
+						span {
+							display: -webkit-box;
+							-webkit-line-clamp: 2;
+							-webkit-box-orient: vertical;
+							overflow: hidden;
+						}
+					}
+
+					.option {
+						width: 30%;
+						height: 100%;
+						display: flex;
+						flex-direction: row;
+						align-items: center;
+						justify-content: center;
+
+						.oks {
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							font-size: larger;
+							font-weight: bolder;
+						}
+
+						.plus {
+							width: 40%;
+							height: 100%
+						}
+
+						.num {
+							width: 20%;
+							height: 100%;
+						}
+
+						.reduce {
+							width: 40%;
+							height: 100%
+						}
+					}
+
 				}
 			}
 		}
