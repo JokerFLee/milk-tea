@@ -80,7 +80,8 @@
 					<div class="milktea" v-for="mk in allproducts">
 						<div class="pic">
 							<img :src="mk.picurl">
-							<span v-show="mk.topic != 'null'">{{ mk.topic }}</span>
+							<span class="sp1" v-show="mk.topic != 'null'">{{ mk.topic }}</span>
+							<span class="sp2">{{ mk.price }}</span>
 						</div>
 						<div class="intro">
 							<h3>{{ mk.name }}</h3>
@@ -97,6 +98,13 @@
 
 		</div>
 
+		<div class="price">
+			<div class="tw">
+				<div class="car"></div>
+				<div class="cny">结算总金额: <span>{{ cny }} </span>¥</div>
+				<div class="submit">支付</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -131,6 +139,8 @@ let nowidth = ref("100%")
 
 let noml = ref("25%")
 
+let cny = ref(0)
+
 function makemap() {
 	for (let index = 0; index < allproducts.value.length; index++) {
 		orderinfo.set(allproducts.value[index], 0)
@@ -158,7 +168,6 @@ function packreq() {
 		makemap()
 	})
 }
-
 
 onBeforeMount(() => {
 	packreq()
@@ -217,18 +226,14 @@ async function toright() {
 }
 
 function add2car(e) {
-	if (orderinfo.has(e)) {
-		orderinfo.set(e, orderinfo.get(e) + 1)
-	} else {
-		orderinfo.set(e, 1)
-	}
+	orderinfo.set(e, orderinfo.get(e) + 1)
+	cny.value = cny.value + e.price
 }
 
 function changeinfo(e) {
-	if (orderinfo.has(e)) {
-		if (orderinfo.get(e) > 0) {
-			orderinfo.set(e, orderinfo.get(e) - 1)
-		}
+	if (orderinfo.get(e) > 0) {
+		orderinfo.set(e, orderinfo.get(e) - 1)
+		cny.value = cny.value - e.price
 	}
 }
 
@@ -245,6 +250,8 @@ function submit(e) {
 	display: flex;
 	flex-direction: column;
 	user-select: none;
+	position: relative;
+	background-color: #ededed;
 
 	.first {
 		width: 100%;
@@ -416,7 +423,7 @@ function submit(e) {
 				background: linear-gradient(to left, #5896e7, #0ecfff);
 				margin-top: 5px;
 				border-radius: 7px;
-				color: #eee;
+				color: #ececec;
 
 				.det {
 					width: 100%;
@@ -441,33 +448,32 @@ function submit(e) {
 			display: flex;
 			justify-content: center;
 			padding-top: 10px;
-
+			padding-bottom: 200px;
 
 			::-webkit-scrollbar {
 				display: none;
 				//chrome edge 不显示滚动块
 			}
 
-
-
 			.detail {
 				width: 95%;
-				height: 100%;
+				height: 90%;
 				scrollbar-width: none; //firefox 不显示滚动块
 				overflow: auto;
+
 
 				.milktea {
 					width: 100%;
 					height: 100%;
 					max-height: 100px;
 					margin-top: 5px;
-					margin-bottom: 20px;
+					margin-bottom: 10px;
 					display: flex;
-					background: #efefef;
+					background: #fff;
 					border-radius: 7px;
 
 					.pic {
-						width: 70px;
+						width: 110px;
 						height: 100%;
 						display: flex;
 						flex-direction: column;
@@ -480,7 +486,7 @@ function submit(e) {
 							object-fit: contain;
 						}
 
-						span {
+						.sp1 {
 							position: absolute;
 							padding: 5px;
 							top: 10px;
@@ -488,16 +494,36 @@ function submit(e) {
 							writing-mode: vertical-lr;
 							white-space: nowrap;
 							background-color: #8400ff;
-							border-radius: 50%;
+							border-radius: 100%;
 							font-size: smaller;
 							font-family: kkt;
 							color: white;
+						}
 
+						.sp2 {
+							width: 25px;
+							height: 25px;
+							text-align: center;
+							position: absolute;
+							top: 10px;
+							left: 3%;
+							background-color: #000;
+							border-radius: 50%;
+							font-weight: bold;
+							font-family: kkt;
+							color: #fff;
+							display: flex;
+							justify-content: center;
+							align-items: center;
+						}
+
+						.sp2::after {
+							content: "$"
 						}
 					}
 
 					.intro {
-						width: 70%;
+						width: 100%;
 						height: 100%;
 						display: flex;
 						align-items: center;
@@ -518,7 +544,7 @@ function submit(e) {
 					}
 
 					.option {
-						width: 30%;
+						width: 100px;
 						height: 100%;
 						display: flex;
 						flex-direction: row;
@@ -552,6 +578,76 @@ function submit(e) {
 				}
 			}
 		}
+	}
+
+	.price {
+		position: absolute;
+		bottom: 5px;
+		width: 100%;
+		height: 50px;
+		display: flex;
+		justify-content: center;
+
+		.tw {
+			width: 90%;
+			height: 100%;
+			display: flex;
+			display: flex;
+			justify-content: center;
+			position: relative;
+			background-color: #111;
+			border-radius: 22px;
+			z-index: 0;
+			
+
+
+			.car {
+				position: absolute;
+				left: 0;
+				width: 120px;
+				height: 100%;
+				background: url("../assets/shoppingcar.svg");
+				background-size: contain;
+				background-repeat: no-repeat;
+				background-position: 50% 50%;
+
+			}
+
+			.cny {
+				width: 100%;
+				height: 100%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				color: #eee;
+
+				span {
+					color: rgb(255, 166, 0);
+					font-weight: bolder;
+					font-size: larger;
+				}
+
+			}
+
+			.submit {
+				width: 120px;
+				height: 100%;
+				position: absolute;
+				right: 0px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				border-bottom-right-radius: 20px;
+				border-top-right-radius: 20px;
+				background-color: #fff;
+				color: #000;
+				font-weight: bolder;
+				font-size: large;
+				border: #fff solid 1px;
+				z-index: 10;
+			}
+		}
+
 	}
 }
 
