@@ -70,9 +70,12 @@
 		<div class="last">
 
 			<div class="sidearea">
-				<div class="sidebar" v-for="mt in mtinfo">
-					<span class="det"> {{ mt }} </span>
-				</div>
+				<template v-for="(mt, index) in mtinfo">
+					<div :class="barColorStyle[index]" @click="gotodetail(index)">
+						<span class="det"> {{ mt }} </span>
+					</div>
+				</template>
+
 			</div>
 
 			<div class="marea">
@@ -101,8 +104,10 @@
 		<div class="price">
 			<div class="tw">
 				<div class="car"></div>
-				<div class="cny">结算总金额: <span>{{ cny }} </span>¥</div>
-				<div class="submit">支付</div>
+				<div class="cny">
+					<div>结算总金额: <span class="span">{{ cny }} </span>¥</div>
+				</div>
+				<div class="submit" @click="submit">支付</div>
 			</div>
 		</div>
 	</div>
@@ -141,10 +146,20 @@ let noml = ref("25%")
 
 let cny = ref(0)
 
+let barColorStyle = ref([])
+
 function makemap() {
 	for (let index = 0; index < allproducts.value.length; index++) {
 		orderinfo.set(allproducts.value[index], 0)
 	}
+}
+
+function gotodetail(e) {
+	for (let index = 0; index < barColorStyle.value.length; index++) {
+		barColorStyle.value[index] = "sidebar"
+	}
+	barColorStyle.value[e] = "sidebar bar_active"
+
 }
 
 function req(url, method) {
@@ -171,11 +186,13 @@ function packreq() {
 
 onBeforeMount(() => {
 	packreq()
+	for (let index = 0; index < mtinfo.value.length; index++) {
+		barColorStyle.value.push("sidebar")
+	}
 })
+
 onMounted(() => {
-
 	window.addEventListener('resize', () => itwid())
-
 	itwid()
 })
 
@@ -238,7 +255,9 @@ function changeinfo(e) {
 }
 
 function submit(e) {
-
+	alert("支付成功")
+	cny.value = 0
+	makemap()
 }
 
 </script>
@@ -293,7 +312,7 @@ function submit(e) {
 				display: flex;
 				align-items: center;
 				position: relative;
-				overflow: hidden;
+				// overflow: hidden;
 
 				.first-one {
 					z-index: 0;
@@ -330,9 +349,13 @@ function submit(e) {
 				}
 
 				.mst {
-					background: #2aaaffe8;
+					// background: #2aaaffe8;
+					background-color: #ededed80;
 					border-radius: 7px;
-					color: #fff;
+					color: rgb(0, 0, 0);
+					// box-sizing: border-box;
+					// border: 1px solid #000;
+					box-shadow: -2px -2px 5px #ffffff, 2px 2px 5px #888;
 
 					.box {
 						width: 100%;
@@ -369,18 +392,26 @@ function submit(e) {
 						.info {
 							width: 70%;
 							padding: 3px;
+							display: flex;
+							flex-direction: column;
+							align-items: center;
+							justify-content: space-evenly;
 
 							.name {
 								font-size: large;
-								font-weight: 800;
+								font-weight: 600;
+								font-family: kkt;
+								text-align: center;
 							}
 
 							.intro {
 								display: -webkit-box;
 								-webkit-box-orient: vertical;
-								-webkit-line-clamp: 2;
+								-webkit-line-clamp: 1;
 								overflow: hidden;
 								text-overflow: ellipsis;
+								font-size: small;
+								font-weight: 300;
 							}
 						}
 					}
@@ -408,11 +439,7 @@ function submit(e) {
 			padding-top: 10px;
 			position: absolute;
 
-			.sidebar:hover {
-				background: linear-gradient(to right, #fff1b8, #ffb6b6);
-				color: #444;
-				cursor: pointer;
-			}
+
 
 			.sidebar {
 				width: 90%;
@@ -420,10 +447,13 @@ function submit(e) {
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				background: linear-gradient(to left, #5896e7, #0ecfff);
+				background: linear-gradient(to right, #a7cfd6ab, #d4dae9ab);
 				margin-top: 5px;
+				margin-bottom: 5px;
 				border-radius: 7px;
-				color: #ececec;
+				color: #444;
+				box-shadow: -2px -2px 5px #fff, 2px 2px 5px #9c9c9c;
+				cursor: pointer;
 
 				.det {
 					width: 100%;
@@ -435,9 +465,15 @@ function submit(e) {
 				}
 			}
 
+			.sidebar:hover {
+				// background: linear-gradient(to right, #e6e0ff, #ffd9cf);
+				background: linear-gradient(to right, #363d46, #374244);
+				color: #fff;
+			}
+
 			.bar_active {
-				background: linear-gradient(to right, #ffe883, #ffc9b6);
-				color: #444;
+				background: linear-gradient(to right, #363d46, #374244);
+				color: #fff;
 			}
 		}
 
@@ -448,7 +484,6 @@ function submit(e) {
 			display: flex;
 			justify-content: center;
 			padding-top: 10px;
-			padding-bottom: 200px;
 
 			::-webkit-scrollbar {
 				display: none;
@@ -460,16 +495,16 @@ function submit(e) {
 				height: 90%;
 				scrollbar-width: none; //firefox 不显示滚动块
 				overflow: auto;
-
+				padding: 0 5px 0 5px;
 
 				.milktea {
 					width: 100%;
 					height: 100%;
 					max-height: 100px;
 					margin-top: 5px;
-					margin-bottom: 10px;
+					margin-bottom: 15px;
 					display: flex;
-					background: #fff;
+					box-shadow: -2px -2px 5px #ffffff, 2px 2px 5px #b4b4b4;
 					border-radius: 7px;
 
 					.pic {
@@ -533,6 +568,7 @@ function submit(e) {
 
 						h3 {
 							margin: 3px 0 3px 0;
+							font-family: kkt;
 						}
 
 						span {
@@ -540,6 +576,8 @@ function submit(e) {
 							-webkit-line-clamp: 2;
 							-webkit-box-orient: vertical;
 							overflow: hidden;
+							font-size: small;
+							font-weight: 200;
 						}
 					}
 
@@ -592,13 +630,12 @@ function submit(e) {
 			width: 90%;
 			height: 100%;
 			display: flex;
-			display: flex;
 			justify-content: center;
 			position: relative;
-			background-color: #111;
-			border-radius: 22px;
-			z-index: 0;
-			
+			box-shadow: -2px -2px 5px #fff, 2px 2px 5px #888;
+			border-radius: 20px;
+			overflow: hidden;
+
 
 
 			.car {
@@ -616,16 +653,25 @@ function submit(e) {
 			.cny {
 				width: 100%;
 				height: 100%;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				color: #eee;
 
-				span {
-					color: rgb(255, 166, 0);
-					font-weight: bolder;
-					font-size: larger;
+				div {
+					width: 100%;
+					height: 100%;
+					background-color: #ededed;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+
+					.span {
+						color: rgb(202, 115, 43);
+						font-weight: bolder;
+						font-size: larger;
+						margin: 0 5px 0 5px;
+
+					}
 				}
+
+
 
 			}
 
@@ -637,235 +683,231 @@ function submit(e) {
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				border-bottom-right-radius: 20px;
-				border-top-right-radius: 20px;
-				background-color: #fff;
-				color: #000;
+				color: #fff;
 				font-weight: bolder;
 				font-size: large;
-				border: #fff solid 1px;
-				z-index: 10;
+
+				background-color: #000;
 			}
 		}
 
 	}
-}
 
-.c2l {
-	animation-name: c2l;
-	animation-duration: 0.8s;
-	animation-fill-mode: forwards;
-}
-
-.c2r {
-	animation-name: c2r;
-	animation-duration: 0.8s;
-	animation-fill-mode: forwards;
-}
-
-.l2c {
-	animation-name: l2c;
-	animation-duration: 0.8s;
-	animation-fill-mode: forwards;
-}
-
-.r2c {
-	animation-name: r2c;
-	animation-duration: 0.8s;
-	animation-fill-mode: forwards;
-}
-
-.l2n {
-	animation-name: l2n;
-	animation-duration: 0.8s;
-	animation-fill-mode: forwards;
-}
-
-.n2r {
-	animation-name: n2r;
-	animation-duration: 0.8s;
-	animation-fill-mode: forwards;
-}
-
-.r2n {
-	animation-name: r2n;
-	animation-duration: 0.8s;
-	animation-fill-mode: forwards;
-}
-
-.n2l {
-	animation-name: n2l;
-	animation-duration: 0.8s;
-	animation-fill-mode: forwards;
-}
-
-@keyframes l2n {
-
-	50% {
-		height: 40%;
-		width: 15%;
-		left: -7.5%;
-		opacity: 0.5;
-		margin-left: 0;
+	.c2l {
+		animation-name: c2l;
+		animation-duration: 1s;
+		animation-fill-mode: forwards;
 	}
 
-	to {
-		width: 0;
-		height: 0;
-		left: 0;
-		opacity: 0;
-		margin-left: 0;
-	}
-}
-
-@keyframes l2c {
-	50% {
-		z-index: -1;
-		height: 90%;
-		width: 35%;
-		left: 15%;
+	.c2r {
+		animation-name: c2r;
+		animation-duration: 1s;
+		animation-fill-mode: forwards;
 	}
 
-	to {
-		z-index: 1;
-		height: 100%;
-		width: 40%;
-		left: 30%;
-		margin-left: 0;
-	}
-}
-
-@keyframes c2l {
-	from {
-		z-index: 1;
-		left: 30%;
+	.l2c {
+		animation-name: l2c;
+		animation-duration: 1s;
+		animation-fill-mode: forwards;
 	}
 
-	50% {
-		z-index: 0;
-		height: 90%;
-		width: 35%;
-		left: 15%;
+	.r2c {
+		animation-name: r2c;
+		animation-duration: 1s;
+		animation-fill-mode: forwards;
 	}
 
-	to {
-		z-index: -1;
-		left: 0;
-		height: 80%;
-		width: 30%;
-		margin-left: 1%;
-	}
-}
-
-@keyframes c2r {
-
-	50% {
-		z-index: 0;
-		height: 90%;
-		width: 35%;
-		left: 55%;
+	.l2n {
+		animation-name: l2n;
+		animation-duration: 1s;
+		animation-fill-mode: forwards;
 	}
 
-	to {
-		z-index: -1;
-		left: 70%;
-		height: 80%;
-		width: 30%;
-		margin-left: -1%;
-	}
-}
-
-@keyframes r2c {
-	50% {
-		z-index: 0;
-		height: 90%;
-		width: 35%;
-		left: 55%;
+	.n2r {
+		animation-name: n2r;
+		animation-duration: 1s;
+		animation-fill-mode: forwards;
 	}
 
-	to {
-		z-index: 1;
-		height: 100%;
-		width: 40%;
-		left: 30%;
-		margin-left: 0;
-	}
-}
-
-@keyframes r2n {
-	50% {
-		z-index: 0;
-		height: 40%;
-		width: 15%;
-		left: 85%;
-		opacity: 0.5;
+	.r2n {
+		animation-name: r2n;
+		animation-duration: 1s;
+		animation-fill-mode: forwards;
 	}
 
-	to {
-		z-index: -1;
-		height: 0%;
-		width: 0%;
-		left: 100%;
-		margin-left: 0;
-		opacity: 0;
-	}
-}
-
-//left center right null
-@keyframes n2r {
-	from {
-		opacity: 0;
+	.n2l {
+		animation-name: n2l;
+		animation-duration: 1s;
+		animation-fill-mode: forwards;
 	}
 
-	50% {
-		height: 40%;
-		width: 15%;
-		left: 85%;
-		opacity: 0.5;
-		margin-left: 0;
-		z-index: -1;
+	@keyframes l2n {
+
+		50% {
+			height: 40%;
+			width: 15%;
+			left: 0%;
+			opacity: 0.5;
+			margin-left: 0;
+		}
+
+		to {
+			width: 0;
+			height: 0;
+			left: 0%;
+			opacity: 0;
+			margin-left: 0;
+		}
 	}
 
-	to {
-		height: 80%;
-		width: 30%;
-		z-index: -1;
-		left: 70%;
-		margin-left: -1%;
-		opacity: 1;
+	@keyframes l2c {
+		50% {
+			z-index: 0;
+			height: 90%;
+			width: 35%;
+			left: 15%;
+		}
+
+		to {
+			z-index: 1;
+			height: 100%;
+			width: 40%;
+			left: 30%;
+			margin-left: 0;
+		}
 	}
 
+	@keyframes c2l {
+		from {
+			z-index: 1;
+			left: 30%;
+		}
 
-}
+		50% {
+			z-index: 0;
+			height: 90%;
+			width: 35%;
+			left: 15%;
+		}
 
-@keyframes n2l {
-	from {
-		opacity: 0;
+		to {
+			z-index: 0;
+			left: 0;
+			height: 80%;
+			width: 30%;
+			margin-left: 1%;
+		}
 	}
 
-	25% {
-		height: 0;
-		width: 0;
-		left: 0%;
-		opacity: 0;
+	@keyframes c2r {
+
+		50% {
+			z-index: 0;
+			height: 90%;
+			width: 35%;
+			left: 55%;
+		}
+
+		to {
+			z-index: 0;
+			left: 70%;
+			height: 80%;
+			width: 30%;
+			margin-left: -1%;
+		}
 	}
 
-	50% {
-		height: 40%;
-		width: 15%;
-		left: -15%;
-		z-index: -1;
-		opacity: 0;
+	@keyframes r2c {
+		50% {
+			z-index: 0;
+			height: 90%;
+			width: 35%;
+			left: 55%;
+		}
+
+		to {
+			z-index: 1;
+			height: 100%;
+			width: 40%;
+			left: 30%;
+			margin-left: 0;
+		}
 	}
 
+	@keyframes r2n {
+		50% {
+			z-index: 0;
+			height: 40%;
+			width: 15%;
+			left: 85%;
+			opacity: 0.5;
+		}
 
-	to {
-		height: 80%;
-		width: 30%;
-		z-index: -1;
-		left: 0%;
-		margin-left: 1%;
-		opacity: 1;
+		to {
+			z-index: 0;
+			height: 0%;
+			width: 0%;
+			left: 100%;
+			margin-left: 0;
+			opacity: 0;
+		}
+	}
+
+	@keyframes n2r {
+		from {
+			opacity: 0;
+		}
+
+		50% {
+			height: 40%;
+			width: 15%;
+			left: 85%;
+			opacity: 0.5;
+			margin-left: 0;
+			z-index: 0;
+		}
+
+		to {
+			height: 80%;
+			width: 30%;
+			z-index: 0;
+			left: 70%;
+			margin-left: -1%;
+			opacity: 1;
+		}
+
+
+	}
+
+	@keyframes n2l {
+		from {
+			opacity: 0;
+		}
+
+		25% {
+			height: 0;
+			width: 0;
+			left: 0%;
+			opacity: 0;
+		}
+
+		50% {
+			height: 40%;
+			width: 15%;
+			left: -15%;
+			z-index: 0;
+			opacity: 0;
+		}
+
+
+		to {
+			height: 80%;
+			width: 30%;
+			z-index: 0;
+			left: 0%;
+			margin-left: 1%;
+			opacity: 1;
+		}
 	}
 }
 </style>
