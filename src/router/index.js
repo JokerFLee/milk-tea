@@ -8,6 +8,7 @@ import loginp from "../components/login.vue"
 import newTypeMilkTeep from "../components/newTypeMilkTeep.vue"
 import milkTeeManagep from "../components/milkTeeManagep.vue"
 import orderMTp from "../components/orderMT.vue"
+import orderOptionp from "../components/orderOptionp.vue"
 
 
 export default createRouter({
@@ -32,6 +33,9 @@ export default createRouter({
 		},{
 			path:"/orderMT",
 			component:orderMTp
+		},{
+			path:"/orderOption",
+			component:orderOptionp
 		}
 	]
 })
