@@ -64,55 +64,55 @@
 				"price": 35,
 				"isale": 1,
 				"discount": 0.97,
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk1.png"
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk1.png"
 			},
 			{
 				"name": "芋泥啵啵",
 				"price": 27,
 				"isale": 1,
 				"discount": 0.97,
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk2.png"
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk2.png"
 			},
 			{
 				"name": "葡萄🍇桶",
 				"price": 45,
 				"isale": 1,
 				"discount": 0.97,
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk3.png"
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk3.png"
 			},
 			{
 				"name": "菠萝🍍派",
 				"price": 39,
 				"isale": 0,
 				"discount": 0.97,
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk4.png"
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk4.png"
 			}
 		],
 		[
 			{
 				"name": "手剥葡萄",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk5.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk5.png",
 				"intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶",
 				"topic": "新品",
 				"price": 17
 			},
 			{
 				"name": "山楂奶芙",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk6.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk6.png",
 				"intro": "好喝的奶茶!xxx奶茶造",
 				"topic": "新品",
 				"price": 14
 			},
 			{
 				"name": "脆脆西瓜",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk7.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk7.png",
 				"intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶",
 				"topic": "微甜",
 				"price": 12
 			},
 			{
 				"name": "芒芒冰椰",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk8.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk8.png",
 				"intro": "好喝的奶茶!",
 				"topic": "不含茶",
 				"price": 21
@@ -120,238 +120,238 @@
 			{
 				"name": "山楂奶芙",
 				"intro": "优选冻干山楂，搭配茉莉毛峰，定制草莓果茸，一口酸甜冰爽。 温馨提示： *冻干山楂会有山楂籽，饮用时需要注意 *直饮口打开，奶芙和冰沙一起喝，口感更丰富",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk6.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk6.png",
 				"topic": "不含糖",
 				"price": 19
 			},
 			{
 				"name": "满满百香果",
 				"intro": "优选新鲜百香果原浆，搭配百香果露和茉莉毛峰茶，底部增加经典椰果和黑糖珍珠小料，整杯清爽解渴，百香果毛峰全新升级大杯",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk7.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk7.png",
 				"topic": "不含糖",
 				"price": 21
 			},
 			{
 				"name": "山楂爽",
 				"intro": "优选冻干山楂，搭配茉莉毛峰，定制草莓果茸，一口酸甜冰爽。 温馨提示： *冻干山楂会有少量山楂籽，饮用时需要注意",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk17.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk17.png",
 				"topic": "不含糖",
 				"price": 18
 			},
 			{
 				"name": "脆脆西瓜",
 				"intro": "优选麒麟西瓜、茉莉毛峰茶、晶球，西瓜风味浓郁的液体饮料，果肉口口香甜。 西瓜果肉会飘在液体上，喝时需要搅拌，喝完杯底会有少量的西瓜果肉。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk8.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk8.png",
 				"topic": "不含糖",
 				"price": 15
 			},
 			{
 				"name": "西瓜奶芙",
 				"intro": "优选麒麟西瓜、海盐芝士奶芙，西瓜做成的冰沙液体搭配绵密的芝士奶芙，口口丰富。产品为冰沙饮料，放久了口味会变淡，冰沙容易融化分层。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk9.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk9.png",
 				"topic": "不含糖",
 				"price": 22
 			},
 			{
 				"name": "满满鲜果茶",
 				"intro": "优优选麒麟西瓜、新鲜凤梨、橙子、青金桔、茉莉毛峰茶，水果口味多，液体口感丰富。 西瓜泡久了，单吃西瓜口味会变淡。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk10.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk10.png",
 				"topic": "不含糖",
 				"price": 17
 			},
 			{
 				"name": "芒芒冰椰",
 				"intro": "优选新鲜台农芒搭配芒果原浆、椰浆，做成的芒果风味的冰沙饮料，底部增加了西柚粒和Q弹晶球，让整杯产品更丰富。 产品为冰沙饮料，放久了口味会变淡，冰沙容易融化分层。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk11.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk11.png",
 				"topic": "不含糖",
 				"price": 14
 			},
 			{
 				"name": "草莓爽",
 				"intro": "优选新鲜草莓搭配草莓果茸、茉莉毛峰茶做成的冰沙饮料，底部增加Q弹晶球，丰富口感。 产品为冰沙饮料，放久了口味会变淡，冰沙容易融化分层。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk12.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk12.png",
 				"topic": "不含糖",
 				"price": 9
 			},
 			{
 				"name": "手捣柠檬百香果",
 				"intro": "优选广东香水柠檬、新鲜百香果，杯杯手捣，搭配茉莉毛峰茶，柠檬和百香果的香气、茶香味充满在口腔中，果味清新。 为最大程度留住鲜果香气，手锤过程中会加入冰块锁香液体中有微小冰块。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk13.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk13.png",
 				"topic": "null",
 				"price": 28
 			},
 			{
 				"name": "手捣柠檬绿茶",
 				"intro": "优选广东香水柠檬，杯杯手捣，搭配特调绿茶，入口是柠檬的香气和茶香味，清爽适口。 为最大程度留住鲜果香气，手锤过程中会加入冰块锁香液体中有微小冰块。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk14.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk14.png",
 				"topic": "不含糖",
 				"price": 12
 			},
 			{
 				"name": "草莓桃子",
 				"intro": "优选新鲜草莓搭配水蜜桃汁（含量≥90%），杯杯捣压，混合冰粉、椰果，物料丰富，果味浓郁。 产品为冰饮，放久了冰块会化，液体会变淡",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk15.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk15.png",
 				"topic": "不含茶",
 				"price": 21
 			},
 			{
 				"name": "草莓鲜橙茉莉",
 				"intro": "优选新鲜草莓、橙子捣压出汁，搭配草莓果茸、茉莉毛峰茶，底部增加了冰粉，产品清爽可口。 产品茶味会比较明显，不建议少糖。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk16.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk16.png",
 				"topic": "新品",
 				"price": 19
 			},
 			{
 				"name": "芒果爽",
 				"intro": "优选新鲜台农芒搭配奶浆（不含反式脂肪酸），做成的芒果风味的冰沙饮料，让整杯产品更丰富。 产品为冰沙饮料，放久了口味会变淡，冰沙容易融化分层。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk17.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk17.png",
 				"topic": "null",
 				"price": 18
 			},
 			{
 				"name": "椰子奶冻",
 				"intro": "优选椰子水、椰乳做成椰味满满的液体，搭配椰乳和淡奶油（动物奶油）做成Q弹滑嫩的椰奶冻，底部增加了晶球，产品整体清爽不腻。 产品为冰饮，放久了冰块会化，液体会变淡。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk18.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk18.png",
 				"topic": "null",
 				"price": 23
 			},
 			{
 				"name": "葡萄养乐多",
 				"intro": "优选新鲜葡萄，粒粒手剥，搭配葡萄原汁和低糖养乐多，杯杯捣压，底部增加Q弹晶球，整杯产品口感层次丰富、清爽。 产品为冰饮，放久了冰块会化，液体会变淡",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk19.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk19.png",
 				"topic": "null",
 				"price": 17
 			},
 			{
 				"name": "手剥葡萄",
 				"intro": "优选新鲜葡萄，粒粒手剥，搭配葡萄原汁和茉莉毛峰茶，杯杯捣压，底部增加冰粉，整杯产品口感层次丰富、清爽。 产品为冰饮，放久了冰块会化，液体会变淡。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk20.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk20.png",
 				"topic": "不含糖",
 				"price": 27
 			},
 			{
 				"name": "葡萄奶芙",
 				"intro": "优选新鲜葡萄，粒粒手剥，搭配葡萄原汁和茉莉毛峰茶，杯杯捣压，底部增加Q弹晶球，顶部使用绵密的芝士奶芙，整杯产品口感层次丰富、清爽。 产品为冰沙产品，放久了口味会变淡，冰沙容易融化分层。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk21.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk21.png",
 				"topic": "不含糖",
 				"price": 15
 			},
 			{
 				"name": "凤梨毛峰",
 				"intro": "优选新鲜凤梨切制成小粒的凤梨丁，加入青瓜酱调味，搭配茉莉毛峰茶，产品果味清新自然。 热饮茶味会比较涩，不建议少糖。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk22.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk22.png",
 				"topic": "不含糖",
 				"price": 19
 			},
 			{
 				"name": "杨枝甘露",
 				"intro": "优选新鲜芒果，芒果酱、椰浆、奶浆（不含反式脂肪酸）进行混合成芒果风味的液体，底部增加了西柚粒来中和液体的甜腻感，杯身使用芒果浆挂壁，整杯产品芒果味浓郁，口感层次丰富。 产品本身会有些甜味，可以适当点少糖或者不加糖。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk23.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk23.png",
 				"topic": "不含糖",
 				"price": 13
 			},
 			{
 				"name": "满满橙意茶",
 				"intro": "优选新鲜橙子、青金桔，搭配橙子酱和乌龙青茶，橙子风味浓郁，尾部有淡淡的茶香味，口感层次丰富。 少糖和不加糖，茶味会比较明显，略微苦涩。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk24.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk24.png",
 				"topic": "不含糖",
 				"price": 18
 			},
 			{
 				"name": "手榨蜜桃乌龙",
 				"intro": "蜜桃果酱搭配白桃乌龙茶，整体风味解渴清爽不甜腻。 产品茶味比较明显，不建议少糖。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk25.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk25.png",
 				"topic": "不含糖",
 				"price": 25
 			},
 			{
 				"name": "椰香冷萃咖啡",
 				"intro": "选用优质椰子乳和深烘培程度咖啡，保留椰子风味，减少咖啡酸味，椰香清爽，咖啡香醇，底部增加Q弹珍珠，口感更丰富。“不加糖”也会有甜味，来自生椰乳本身的甜味。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk26.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk26.png",
 				"topic": "不含糖",
 				"price": 23
 			},
 			{
 				"name": "咖啡椰子爽",
 				"intro": "选用优质椰子乳和深烘培程度咖啡，保留椰子风味，减少咖啡酸味，椰香清爽，咖啡香醇。 “不加糖”也会有甜味，来自生椰乳本身的甜味",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk27.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk27.png",
 				"topic": "不含糖",
 				"price": 24
 			},
 			{
 				"name": "栗栗冰椰",
 				"intro": "软糯香甜的板栗、优质椰子乳、纯正椰子水制作的冰沙产品，不含茶，准妈妈和小朋友也可以喝",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk28.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk28.png",
 				"topic": "不含糖",
 				"price": 12
 			},
 			{
 				"name": "夏日可可",
 				"intro": " 优选可可粉做成冰沙搭配绵密海盐芝士奶芙，整体风味浓郁但不甜腻。 产品为冰沙饮品，放久了冰沙会融化，可可会沉淀，需搅拌均匀，口感更好",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk29.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk29.png",
 				"topic": "不含糖",
 				"price": 15
 			},
 			{
 				"name": "草莓牛乳茶",
 				"intro": "优选新鲜草莓，搭配草莓酱、茉莉毛峰茶、奶基底（不含反式脂肪酸）、牛奶，底部增加草莓风味的布丁、软糯的米麻薯，口感层次丰富、适口性强。 产品热饮液体可能会产生絮团（草莓的酸与奶制品加热产品的反应），会影响外观，但不影响口味。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk30.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk30.png",
 				"topic": "不含糖",
 				"price": 14
 			},
 			{
 				"name": "草莓牛奶",
 				"intro": "优选新鲜草莓，搭配草莓酱、奶基底、牛奶，底部增加草莓风味的布丁、软糯的米麻薯，口感层次丰富、适口性强。 产品热饮液体可能会产生絮团（草莓的酸与奶制品加热产品的反应），会影响外观，但不影响口味。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk31.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk31.png",
 				"topic": "不含糖",
 				"price": 22
 			},
 			{
 				"name": "米麻薯牛乳茶",
 				"intro": "优选特调米麻薯、漳浦芋泥，搭配特调红玉茶、奶基底（不含反式脂肪酸）、牛奶，顶部选用绵密的芝士奶芙，铺上一层带有焦香味的黑糖粉，物料丰富，口感层次分明。 奶芙在热饮中会容易化，需要尽快饮用。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk32.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk32.png",
 				"topic": "不含糖",
 				"price": 26
 			},
 			{
 				"name": "芋泥牛乳茶",
 				"intro": "优选漳浦芋头，还原芋泥本味，搭配特调红玉茶、奶基底（不含反式脂肪酸）、牛奶，底部增加了芋圆，口感扎实丰富。 芋泥在杯中底部，搅拌均匀喝，产品口感风味更佳。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk33.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk33.png",
 				"topic": "不含糖",
 				"price": 16
 			},
 			{
 				"name": "芋泥牛奶",
 				"intro": "优选漳浦芋头，还原芋泥本味，搭配奶基底（不含反式脂肪酸）、牛奶，口感扎实丰富。 芋泥在杯中底部，搅拌均匀喝，产品口感风味更佳。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk4.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk4.png",
 				"topic": "不含糖",
 				"price": 13
 			},
 			{
 				"name": "桂花酸奶",
 				"intro": "优选酸奶搭配芋圆、桂花冻，酸奶风味十足，搭配桂花冻，口感层次分明。 产品本身有甜味，可以适当选择少糖、不加糖。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk5.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk5.png",
 				"topic": "不含糖",
 				"price": 39
 			},
 			{
 				"name": "黑全套奶茶",
 				"intro": "特调混拼红茶搭配奶浆（不含反式脂肪酸）做成的奶茶液，底部增加黑糖风味的布丁、黑米爆珠、芋圆，顶部搭配香草奶油（动物奶油）、碧根果，整杯物料丰富，口感浓郁。 产品茶味会比较明显，奶油顶放久了会塌，要先吃奶油顶。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk6.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk6.png",
 				"topic": "不含糖",
 				"price": 22
 			},
 			{
 				"name": "全套奶茶",
 				"intro": "特调经典咖啡红茶搭配奶浆（不含反式脂肪酸）做成的奶茶液，底部增加了鸡蛋布丁、燕麦、椰果、芋圆，整杯物料丰富，口感浓郁。 产品茶味会比较明显，晚上饮用可能会影响睡眠。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk7.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk7.png",
 				"topic": "不含糖",
 				"price": 18
 			},
 			{
 				"name": "红豆奶茶",
 				"intro": "特调经典咖啡红茶搭配奶浆（不含反式脂肪酸）做成的奶茶液，底部增加了软糯的红豆，口感丰富。 产品的甜味来自于红豆，不另外加糖。",
-				"picurl": "http://192.168.31.100:8111/imgs/kwk/kwk8.png",
+				"picurl": "http://li.jokeme.top:8111/imgs/kwk/kwk8.png",
 				"topic": "不含糖",
 				"price": 14
 			}
