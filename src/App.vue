@@ -43,6 +43,9 @@
 						<router-link to="/orderMT">
 							<li>奶茶点单</li>
 						</router-link>
+						<router-link to="/orderOption">
+							<li>订单管理</li>
+						</router-link>
 					</ul>
 				</div>
 

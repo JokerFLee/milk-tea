@@ -67,7 +67,7 @@
 
 		</div>
 
-		<div class="last">
+		<div class="last" >
 
 			<div class="sidearea">
 				<template v-for="(mt, index) in mtinfo">
@@ -75,7 +75,6 @@
 						<span class="det"> {{ mt }} </span>
 					</div>
 				</template>
-
 			</div>
 
 			<div class="marea">
@@ -115,7 +114,7 @@
 
 <script setup>
 import axios from 'axios';
-import { onBeforeMount, onMounted, reactive, ref } from 'vue';
+import { onBeforeMount, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 
 let stgrp = ref(["mst first-one", "mst second", "mst third", "mst fouth"])
 
@@ -130,10 +129,10 @@ let mtinfo = ref([
 ])
 
 let masu = ref([
-	{ "name": "手剥葡萄", "picurl": "http://192.168.31.100:8111/imgs/kwk/kwk1.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
-	{ "name": "爽口雪梨", "picurl": "http://192.168.31.100:8111/imgs/kwk/kwk2.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
-	{ "name": "冰雪荔枝", "picurl": "http://192.168.31.100:8111/imgs/kwk/kwk3.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
-	{ "name": "菠萝吹雪", "picurl": "http://192.168.31.100:8111/imgs/kwk/kwk4.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "最热" }
+	{ "name": "手剥葡萄", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk1.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
+	{ "name": "爽口雪梨", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk2.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
+	{ "name": "冰雪荔枝", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk3.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
+	{ "name": "菠萝吹雪", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk4.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "最热" }
 ])
 
 let allproducts = ref([])
@@ -159,7 +158,10 @@ function gotodetail(e) {
 		barColorStyle.value[index] = "sidebar"
 	}
 	barColorStyle.value[e] = "sidebar bar_active"
-
+	// 跳转到指定地方,目前的打算是,在json里面添加type int类型,然后判断每个类型有多少个,因为每个item的高度固定,只需要用 {滑动固定长度 * 数量} 就可以实现滚动了
+	barColorStyle.forEach(ele => {
+		console.log(ele.toString());
+	});
 }
 
 function req(url, method) {
@@ -194,6 +196,10 @@ onBeforeMount(() => {
 onMounted(() => {
 	window.addEventListener('resize', () => itwid())
 	itwid()
+})
+
+onUnmounted(()=> {
+	window.removeEventListener('resize')
 })
 
 function itwid() {
@@ -275,7 +281,7 @@ function submit(e) {
 	.first {
 		width: 100%;
 		height: 15%;
-		border-bottom: #444 solid 1px;
+		// border-bottom: #444 solid 1px;
 		padding: 10px 0 10px 0;
 
 		.topbar {
@@ -350,12 +356,12 @@ function submit(e) {
 
 				.mst {
 					// background: #2aaaffe8;
-					background-color: #ededed80;
+					background-color: rgba(237, 237, 237, 0.8);
 					border-radius: 7px;
 					color: rgb(0, 0, 0);
 					// box-sizing: border-box;
 					// border: 1px solid #000;
-					box-shadow: -2px -2px 5px #ffffff, 2px 2px 5px #888;
+					box-shadow: -2px -2px 5px #ccc, 2px 2px 5px #ccc;
 
 					.box {
 						width: 100%;
@@ -447,12 +453,12 @@ function submit(e) {
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				background: linear-gradient(to right, #a7cfd6ab, #d4dae9ab);
+				background: linear-gradient(to right, #eee, #e8e8e8);
 				margin-top: 5px;
 				margin-bottom: 5px;
 				border-radius: 7px;
 				color: #444;
-				box-shadow: -2px -2px 5px #fff, 2px 2px 5px #9c9c9c;
+				box-shadow: -2px -2px 5px #fff, 2px 2px 5px #cfcfcf;
 				cursor: pointer;
 
 				.det {
@@ -465,15 +471,18 @@ function submit(e) {
 				}
 			}
 
-			.sidebar:hover {
-				// background: linear-gradient(to right, #e6e0ff, #ffd9cf);
-				background: linear-gradient(to right, #363d46, #374244);
-				color: #fff;
-			}
+			// .sidebar:hover {
+			// 	// background: linear-gradient(to right, #e6e0ff, #ffd9cf);
+			// 	background: linear-gradient(to right, #363d46, #374244);
+			// 	color: #fff;
+			// }
 
 			.bar_active {
-				background: linear-gradient(to right, #363d46, #374244);
+				// background: linear-gradient(to right, #363d46, #374244);
+				background: #363d46;
 				color: #fff;
+				font-family: kkt;
+				font-weight: bold;
 			}
 		}
 
@@ -492,11 +501,13 @@ function submit(e) {
 
 			.detail {
 				width: 95%;
-				height: 90%;
+				height: 100%;
 				scrollbar-width: none; //firefox 不显示滚动块
 				overflow: auto;
 				padding: 0 5px 0 5px;
-
+			div.milktea:last-child {
+						margin-bottom: 80px;
+					}
 				.milktea {
 					width: 100%;
 					height: 100%;
@@ -506,6 +517,8 @@ function submit(e) {
 					display: flex;
 					box-shadow: -2px -2px 5px #ffffff, 2px 2px 5px #b4b4b4;
 					border-radius: 7px;
+
+					
 
 					.pic {
 						width: 110px;
