@@ -199,7 +199,7 @@ onMounted(() => {
 })
 
 onUnmounted(()=> {
-	window.removeEventListener('resize')
+	window.removeEventListener('resize',()=>itwid())
 })
 
 function itwid() {
