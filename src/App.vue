@@ -93,7 +93,7 @@
 					</div>
 					<ul v-show="statement[3]" @click="ismobile">
 						<router-link to="/">
-							<li>员工申请</li> <!-- 管理员:用于处理员工的注册请求 ===> 普通员工:无权限访问 -->
+							<li>员工注册</li> <!-- 管理员:用于处理员工的注册请求 ===> 普通员工:无权限访问 -->
 						</router-link>
 						<router-link to="/">
 							<li>用户管理</li> <!-- 管理员:岗位调动,离职,删 改 查 ===> 普通员工:无权限访问-->
@@ -113,10 +113,7 @@
 							<li>申请调休</li>
 						</router-link>
 						<router-link to="/">
-							<li>活动日历</li>
-						</router-link>
-						<router-link to="/">
-							<li>匿名吐槽</li>
+							<li>优惠码</li>
 						</router-link>
 					</ul>
 				</div>
