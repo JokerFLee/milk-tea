@@ -114,7 +114,7 @@
 
 <script setup>
 import axios from 'axios';
-import { onBeforeMount, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
+import { onBeforeMount, onMounted, onUnmounted, reactive, ref } from 'vue';
 
 let stgrp = ref(["mst first-one", "mst second", "mst third", "mst fouth"])
 
@@ -137,7 +137,7 @@ let masu = ref([
 
 let allproducts = ref([])
 
-let orderinfo = reactive(new Map())//名称,数量,温度,甜度,堂食?外带
+let orderinfo = reactive(new Map())
 
 let nowidth = ref("100%")
 
@@ -262,7 +262,7 @@ function changeinfo(e) {
 
 function submit(e) {
 	alert("支付成功")
-
+	console.log(orderinfo);
 	cny.value = 0
 	makemap()
 }
@@ -320,7 +320,6 @@ function submit(e) {
 				display: flex;
 				align-items: center;
 				position: relative;
-				overflow: hidden;
 
 				.first-one {
 					z-index: 0;
