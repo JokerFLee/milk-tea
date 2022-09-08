@@ -3,12 +3,13 @@
 		<div class="op">
 			<div class="kwk">
 				<div class="h_common head">
-					<div class="name head_common">名称</div>
-					<div class="original_price head_common">原价</div>
-					<div class="current_price head_common">现价</div>
-					<div class="discount head_common">折扣</div>
-					<div class="pic head_common">图片</div>
-					<div class="manage head_common">管理</div>
+					<div class="head_common">名称</div>
+					<div class="head_common">原价</div>
+					<div class="head_common">现价</div>
+					<div class="head_common">折扣</div>
+					<div class="head_common">售罄</div>
+					<div class="head_common">图片</div>
+					<div class="head_common">管理</div>
 				</div>
 				<div class="h_common body" v-for="item in sdata">
 					<div class="item_son">
@@ -16,6 +17,7 @@
 						<div class="b_common">{{ item.price }}</div>
 						<div class="b_common">{{ (item.price * item.discount).toFixed(2) }}</div>
 						<div class="b_common">{{ item.discount }}</div>
+						<div class="b_common">{{ item.soldout }}</div>
 						<div class="b_common"><img :src="item.picurl"></div>
 						<div class="b_common b_manage">
 							<div class="option1" @click="teadit(item)">修改</div>
@@ -48,6 +50,15 @@
 
 					<div class="ssbox">
 						<span>现价:</span> <label><input :value="now_price" disabled style="cursor: no-drop;"></label>
+					</div>
+
+					<div class="ssbox">
+						<span>售罄:</span>
+						<label>
+							<select v-model="itemdt.soldout" single>
+								<option>是</option>
+								<option>否</option>
+							</select></label>
 					</div>
 
 					<div class="ssbox">
@@ -120,6 +131,7 @@ function disableMask(e) {
 		item_tmp.discount = itemdt.value.discount
 		item_tmp.price = itemdt.value.price
 		item_tmp.picurl = itemdt.value.picurl
+		item_tmp.soldout = itemdt.value.soldout
 		// }
 		// }
 
@@ -381,6 +393,14 @@ onBeforeMount(() => {
 						justify-content: center;
 
 						input {
+							width: 90%;
+							height: 30px;
+							text-align: center;
+							border: none;
+							border-radius: 4px;
+						}
+
+						select {
 							width: 90%;
 							height: 30px;
 							text-align: center;

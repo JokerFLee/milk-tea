@@ -45,17 +45,22 @@
 				<div class="col">
 					<span>分类:</span>
 					<div class="mobo">
-						<input type="text" v-model="tips" placeholder="请输入奶茶Tips">
+						<select v-model="mk_series" single placeholder="请输入奶茶Tips">
+							<option>鸡坤</option>
+							<option>Ikun</option>
+							<option>你干嘛~</option>
+						</select>
 					</div>
 				</div>
 
 				<div class="col">
 					<span>Tips:</span>
 					<div class="mobo">
-						<select v-model="mk_type" single>
-							<option>基尼太美</option>
-							<option>你干嘛</option>
-							<option>时长两年半</option>
+						<select v-model="mk_tips" single>
+							<option>坤坤</option>
+							<option>守护最好的Ikun</option>
+							<option>鸡哥</option>
+							<option>菜鸡坤</option>
 						</select>
 					</div>
 				</div>
@@ -83,10 +88,10 @@ let name = ref("")
 let price = ref()
 let combo = ref("no")
 let whichcombo = ref([])
-let mk_type = ref([])
+let mk_tips = ref([])
 let uri = ref('')
 let intro = ref("")
-let tips = ref("")
+let mk_series = ref("")
 
 function selectImg(args) {
 	var myURL = window.URL.createObjectURL(args.target.files[0])

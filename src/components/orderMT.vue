@@ -496,7 +496,7 @@ function submit(e) {
 
 			::-webkit-scrollbar {
 				display: none;
-				//chrome edge 不显示滚动块
+				// opacity: 1;
 			}
 
 			.detail {
