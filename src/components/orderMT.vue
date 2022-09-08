@@ -67,7 +67,7 @@
 
 		</div>
 
-		<div class="last" >
+		<div class="last">
 
 			<div class="sidearea">
 				<template v-for="(mt, index) in mtinfo">
@@ -114,7 +114,7 @@
 
 <script setup>
 import axios from 'axios';
-import { onBeforeMount, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
+import { onBeforeMount, onMounted, onUnmounted, reactive, ref } from 'vue';
 
 let stgrp = ref(["mst first-one", "mst second", "mst third", "mst fouth"])
 
@@ -137,7 +137,7 @@ let masu = ref([
 
 let allproducts = ref([])
 
-let orderinfo = reactive(new Map())//名称,数量,温度,甜度,堂食?外带
+let orderinfo = reactive(new Map())
 
 let nowidth = ref("100%")
 
@@ -198,8 +198,8 @@ onMounted(() => {
 	itwid()
 })
 
-onUnmounted(()=> {
-	window.removeEventListener('resize')
+onUnmounted(() => {
+	window.removeEventListener('resize', () => itwid())
 })
 
 function itwid() {
@@ -262,6 +262,7 @@ function changeinfo(e) {
 
 function submit(e) {
 	alert("支付成功")
+	console.log(orderinfo);
 	cny.value = 0
 	makemap()
 }
@@ -287,6 +288,7 @@ function submit(e) {
 		.topbar {
 			width: 100%;
 			height: 100%;
+			min-height: 80px;
 			display: inline-flex;
 			align-items: center;
 			justify-content: center;
@@ -318,7 +320,6 @@ function submit(e) {
 				display: flex;
 				align-items: center;
 				position: relative;
-				// overflow: hidden;
 
 				.first-one {
 					z-index: 0;
@@ -434,6 +435,7 @@ function submit(e) {
 
 		.sidearea {
 			height: 100%;
+			overflow: hidden;
 			width: 25%;
 			max-width: 200px;
 			min-width: 125px;
@@ -444,8 +446,6 @@ function submit(e) {
 			overflow-y: auto;
 			padding-top: 10px;
 			position: absolute;
-
-
 
 			.sidebar {
 				width: 90%;
@@ -496,7 +496,7 @@ function submit(e) {
 
 			::-webkit-scrollbar {
 				display: none;
-				//chrome edge 不显示滚动块
+				// opacity: 1;
 			}
 
 			.detail {
@@ -505,9 +505,11 @@ function submit(e) {
 				scrollbar-width: none; //firefox 不显示滚动块
 				overflow: auto;
 				padding: 0 5px 0 5px;
-			div.milktea:last-child {
-						margin-bottom: 80px;
-					}
+
+				div.milktea:last-child {
+					margin-bottom: 80px;
+				}
+
 				.milktea {
 					width: 100%;
 					height: 100%;
@@ -518,7 +520,7 @@ function submit(e) {
 					box-shadow: -2px -2px 5px #ffffff, 2px 2px 5px #b4b4b4;
 					border-radius: 7px;
 
-					
+
 
 					.pic {
 						width: 110px;
@@ -907,9 +909,9 @@ function submit(e) {
 		50% {
 			height: 40%;
 			width: 15%;
-			left: -15%;
+			left: 0%;
 			z-index: 0;
-			opacity: 0;
+			opacity: 0.5;
 		}
 
 

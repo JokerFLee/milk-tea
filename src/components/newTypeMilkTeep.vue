@@ -1,11 +1,7 @@
 <template>
 	<div class="sidebox">
 		<div class="box">
-			<div class="top">
-				新品上架
-			</div>
 			<div class="edge">
-
 				<div class="col">
 					<span>名称:</span>
 					<div class="mobo">
@@ -31,13 +27,10 @@
 				<div class="col" v-show="combo === 'yes'">
 					<span title="多选时同时按住ctrl键即可">包含:</span>
 					<div class="mobo">
-						<select v-model="select" multiple>
+						<select v-model="whichcombo" multiple>
 							<option>香草啵啵</option>
 							<option>鲜榨橙汁</option>
 							<option>心动草莓</option>
-							<option>基尼太美</option>
-							<option>你干嘛</option>
-							<option>手倒榴莲</option>
 						</select>
 					</div>
 				</div>
@@ -45,10 +38,32 @@
 				<div class="col">
 					<span>文案:</span>
 					<div class="mobo">
-						<textarea cols="10" rows="10" v-model="intro"></textarea>
+						<textarea cols="10" rows="10" v-model="intro" placeholder="请输入让人眼前一新的文案吧"></textarea>
 					</div>
 				</div>
 
+				<div class="col">
+					<span>分类:</span>
+					<div class="mobo">
+						<select v-model="mk_series" single placeholder="请输入奶茶Tips">
+							<option>鸡坤</option>
+							<option>Ikun</option>
+							<option>你干嘛~</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="col">
+					<span>Tips:</span>
+					<div class="mobo">
+						<select v-model="mk_tips" single>
+							<option>坤坤</option>
+							<option>守护最好的Ikun</option>
+							<option>鸡哥</option>
+							<option>菜鸡坤</option>
+						</select>
+					</div>
+				</div>
 
 				<div class="col">
 					<span>图片:</span>
@@ -72,9 +87,11 @@ import { ref, toRaw } from 'vue';
 let name = ref("")
 let price = ref()
 let combo = ref("no")
-let select = ref([])
+let whichcombo = ref([])
+let mk_tips = ref([])
 let uri = ref('')
 let intro = ref("")
+let mk_series = ref("")
 
 function selectImg(args) {
 	var myURL = window.URL.createObjectURL(args.target.files[0])
@@ -99,7 +116,7 @@ function submitthis() {
 	.box {
 		width: 90%;
 		max-width: 600px;
-		height: 80%;
+		height:87%;
 		background-color: #ebecf0;
 		box-shadow: -5px -5px 10px #fff, 5px 5px 8px #babebc;
 		border-radius: 7px;
@@ -109,14 +126,9 @@ function submitthis() {
 		align-items: center;
 		justify-content: center;
 
-		.top {
-			font-weight: bold;
-			font-size: larger;
-		}
-
 		.edge {
 			width: 80%;
-			height: 80%;
+			height: 90%;
 			display: flex;
 			flex-direction: column;
 			justify-content: space-evenly;
@@ -145,14 +157,20 @@ function submitthis() {
 					align-items: center;
 
 					textarea {
-						width: 90%;
-						min-width: 90%;
-						max-width: 90%;
-						height: auto;
-						max-height: 150px;
-						min-height: 50px;
-						padding: 3px;
+						width: 100%;
+						min-width: 100%;
+						height: 30px;
+						min-height: 30px;
+						max-height: 70px;
+						padding: 0;
 						border: none;
+						border-radius: 7px;
+						font-family: none;
+						text-align: center;
+					}
+					textarea::placeholder{
+						color: #8b8b8b9a;
+
 					}
 
 					img {
@@ -165,11 +183,13 @@ function submitthis() {
 					}
 
 					select {
-						width: 90%;
-						border: #333 solid 1px;
+						width: 100%;
+						min-width: 90%;
+						min-height: 30px;
 						text-align: center;
 						border-radius: 7px;
 						border: none;
+						overflow: auto;
 					}
 
 					label {
@@ -185,13 +205,12 @@ function submitthis() {
 					}
 
 					input {
-						width: 90%;
+						width: 100%;
 						height: 30px;
 						border-radius: 7px;
 						border: none;
-						padding: 1px 5px 1px 5px;
 						text-align: center;
-						font-size: medium;
+						padding: 0;
 					}
 
 					input::placeholder {
@@ -200,6 +219,7 @@ function submitthis() {
 
 					.ipt {
 						height: auto;
+						border-radius: 0;
 					}
 				}
 			}
