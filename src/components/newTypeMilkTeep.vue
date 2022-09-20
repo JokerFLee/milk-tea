@@ -82,7 +82,9 @@
 </template>
 
 <script setup>
-import { ref, toRaw } from 'vue';
+import { ref } from 'vue';
+import axpost from "../utils/axpost"
+
 
 let name = ref("")
 let price = ref()
@@ -99,9 +101,14 @@ function selectImg(args) {
 }
 
 function submitthis() {
-	console.log(name.value, price.value, combo.value, toRaw(select.value), uri.value, intro.value);
-}
+	let data = new Map()
+	data = {"name":name.value,"price":price.value,"combo":combo.value,"whichcombo":whichcombo.value,"mk_tips":mk_tips.value,"uri":uri.value,"intro":intro.value,"mk_series":mk_series.value}
+	// console.log(data);
+	axpost("http://localhost:8080/addnewtee","post",data).then((e)=>{
+		console.log(e);
+	})
 
+}
 
 </script>
 
