@@ -17,25 +17,6 @@
 				</div>
 
 				<div class="col">
-					<span title="勾选是以后,会在名称后面自动追加「套餐」二字">套餐:</span>
-					<div class="mobo">
-						<label for="no"><input type="radio" id="no" value="no" v-model="combo">否 </label>
-						<label for="yes"><input type="radio" id="yes" value="yes" v-model="combo">是</label>
-					</div>
-				</div>
-
-				<div class="col" v-show="combo === 'yes'">
-					<span title="多选时同时按住ctrl键即可">包含:</span>
-					<div class="mobo">
-						<select v-model="whichcombo" multiple>
-							<option>香草啵啵</option>
-							<option>鲜榨橙汁</option>
-							<option>心动草莓</option>
-						</select>
-					</div>
-				</div>
-
-				<div class="col">
 					<span>文案:</span>
 					<div class="mobo">
 						<textarea cols="10" rows="10" v-model="intro" placeholder="请输入让人眼前一新的文案吧"></textarea>
@@ -57,6 +38,7 @@
 					<span>Tips:</span>
 					<div class="mobo">
 						<select v-model="mk_tips" single>
+							<option></option>
 							<option>坤坤</option>
 							<option>守护最好的Ikun</option>
 							<option>鸡哥</option>
@@ -83,14 +65,12 @@
 
 <script setup>
 import { ref } from 'vue';
-import axpost from "../utils/axpost"
+import axpost from "../utils/milktee/axaddnewmilktea"
 
 
 let name = ref("")
 let price = ref()
-let combo = ref("no")
-let whichcombo = ref([])
-let mk_tips = ref([])
+let mk_tips = ref()
 let uri = ref('')
 let intro = ref("")
 let mk_series = ref("")
@@ -102,9 +82,9 @@ function selectImg(args) {
 
 function submitthis() {
 	let data = new Map()
-	data = {"name":name.value,"price":price.value,"combo":combo.value,"whichcombo":whichcombo.value,"mk_tips":mk_tips.value,"uri":uri.value,"intro":intro.value,"mk_series":mk_series.value}
+	data = {"name":name.value,"price":price.value,"mk_tips":mk_tips.value,"uri":uri.value,"intro":intro.value,"mk_series":mk_series.value}
 	// console.log(data);
-	axpost("http://localhost:8080/addnewtee","post",data).then((e)=>{
+	axpost("http://mt.ip.jokeme.top:6280/addnewtee","post",data).then((e)=>{
 		console.log(e);
 	})
 

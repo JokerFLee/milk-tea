@@ -9,6 +9,7 @@ import newTypeMilkTeep from "../components/newTypeMilkTeep.vue"
 import milkTeeManagep from "../components/milkTeeManagep.vue"
 import orderMTp from "../components/orderMT.vue"
 import orderOptionp from "../components/orderOptionp.vue"
+import seriesandtipsp from "../components/seriesandtips.vue"
 
 
 export default createRouter({
@@ -36,6 +37,9 @@ export default createRouter({
 		},{
 			path:"/orderOption",
 			component:orderOptionp
+		},{
+			path:"/addsseriesortips",
+			component:seriesandtipsp
 		}
 	]
 })
