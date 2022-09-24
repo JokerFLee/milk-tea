@@ -106,7 +106,7 @@
 				<div class="cny">
 					<div>结算总金额: <span class="span">{{ cny }} </span>¥</div>
 				</div>
-				<div class="submit" @click="submit">支付</div>
+				<div class="submit" @click="submit">结算</div>
 			</div>
 		</div>
 	</div>
@@ -124,7 +124,6 @@ let mtinfo = ref([
 	"甜点美食",
 	"mosaic下午茶",
 	"Florentia milk coffee",
-	"低热绿色饮品",
 	"奶茶盲盒"
 ])
 
@@ -374,18 +373,18 @@ function submit(e) {
 							width: 30%;
 							height: 100%;
 							position: relative;
+							max-width: 55px;
 
 							img {
 								width: 100%;
 								height: 100%;
-								min-width: 50px;
 								object-fit: contain;
 							}
 
 							span {
 								position: absolute;
 								padding: 5px;
-								top: 10px;
+								top: 5px;
 								left: 60%;
 								writing-mode: vertical-lr;
 								white-space: nowrap;
@@ -493,6 +492,7 @@ function submit(e) {
 			display: flex;
 			justify-content: center;
 			padding-top: 10px;
+			
 
 			::-webkit-scrollbar {
 				display: none;
@@ -505,6 +505,7 @@ function submit(e) {
 				scrollbar-width: none; //firefox 不显示滚动块
 				overflow: auto;
 				padding: 0 5px 0 5px;
+				
 
 				div.milktea:last-child {
 					margin-bottom: 80px;
@@ -513,14 +514,13 @@ function submit(e) {
 				.milktea {
 					width: 100%;
 					height: 100%;
-					max-height: 100px;
+					max-height: 120px;
 					margin-top: 5px;
 					margin-bottom: 15px;
 					display: flex;
 					box-shadow: -2px -2px 5px #ffffff, 2px 2px 5px #b4b4b4;
 					border-radius: 7px;
-
-
+					overflow: hidden;
 
 					.pic {
 						width: 110px;
@@ -533,14 +533,14 @@ function submit(e) {
 						img {
 							width: 100%;
 							height: 100%;
-							object-fit: contain;
+							object-fit: cover;
 						}
 
 						.sp1 {
 							position: absolute;
 							padding: 5px;
 							top: 10px;
-							left: 60%;
+							left: 70%;
 							writing-mode: vertical-lr;
 							white-space: nowrap;
 							background-color: #8400ff;
@@ -551,24 +551,24 @@ function submit(e) {
 						}
 
 						.sp2 {
-							width: 25px;
-							height: 25px;
+							width: 30px;
+							height: 30px;
 							text-align: center;
 							position: absolute;
 							top: 10px;
-							left: 3%;
+							left: 0%;
 							background-color: #000;
 							border-radius: 50%;
-							font-weight: bold;
+							font-size: large;
 							font-family: kkt;
-							color: #fff;
+							color: #eee;
 							display: flex;
 							justify-content: center;
 							align-items: center;
 						}
 
 						.sp2::after {
-							content: "$"
+							content: "￥"
 						}
 					}
 
@@ -701,7 +701,6 @@ function submit(e) {
 				color: #fff;
 				font-weight: bolder;
 				font-size: large;
-
 				background-color: #000;
 			}
 		}
