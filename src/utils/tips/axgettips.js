@@ -1,17 +1,19 @@
-export default function getalltips(url, method) {
+import axios from 'axios';
+
+function getalltips() {
 	const ax = axios({
-		url: url,
-		method: method,
+		url: "http://mt.ip.jokeme.top:6280/gettips",
+		method: "get",
 	}).then(res => {
 		return res.data
 	})
 	return ax
 }
 
-export default function getatipinfobyname(url, method,tip) {
+function getatipbyname(tip) {
 	const ax = axios({
-		url: url,
-		method: method,
+		url: "http://mt.ip.jokeme.top:6280/checktip",
+		method: "get",
 		params: {
 			tip: tip
 		}
@@ -20,3 +22,5 @@ export default function getatipinfobyname(url, method,tip) {
 	})
 	return ax
 }
+
+export {getalltips,getatipbyname}

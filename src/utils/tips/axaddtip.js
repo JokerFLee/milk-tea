@@ -1,11 +1,11 @@
 import axios from 'axios';
-export default function req(url, method) {
+
+export default function addtip(e) {
 	const ax = axios({
-		url: url,
-		method: method,
+		url: "http://mt.ip.jokeme.top:6280/addtips",
+		method: "get",
 		params: {
-			pk: "233",
-			sk: "yc9cbxyo7cs9ca6"
+			tip: e
 		}
 	}).then(res => {
 		return res.data
