@@ -1,8 +1,8 @@
 import axios from 'axios';
-export default function axpost(url, method,data) {
+export default function axmtpost(data) {
 	const ax = axios({
-		url: url,
-		method: method,
+		url: "http://mt.ip.jokeme.top:6280/addmilktea",
+		method:"post",
 		data: data
 	}).then(res => {
 		return res.data

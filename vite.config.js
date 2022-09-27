@@ -6,6 +6,6 @@ export default defineConfig({
   plugins: [vue()],
   lintOnSave:false,
   server: { 
-    host: true
+    host: true,
   } 
 })
