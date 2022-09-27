@@ -24,13 +24,12 @@
 				<div class="setips">
 					<div class="out">
 						<span>Series:</span>
-						<select title="选择元素以删除">
-							<option></option>
-							<option>1</option>
-							<option>2</option>
+						<select title="选择元素以删除" v-model="selectSeries" >
+							<option disabled value="">请选择</option>
+							<option v-for="item in seriesGp" :value="item.suid">{{ item.name }}</option>
 						</select>
 					</div>
-					<button type="submit">删除</button>
+					<button @click="deloneseries">删除</button>
 				</div>
 
 
@@ -42,7 +41,7 @@
 							<option v-for="item in tipsGp" :value="item.tuid">{{ item.name }}</option>
 						</select>
 					</div>
-					<button type="submit" @click="deltips">删除</button>
+					<button @click="deltips">删除</button>
 				</div>
 			</div>
 		</div>
@@ -51,9 +50,14 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import { getalltips, getatipbyname } from "../utils/tips/axgettips.js";
-import addtip from "../utils/tips/axaddtip.js"
-import deltip from "../utils/tips/axdeltip.js"
+
+import getalltips from "../utils/tips/axgettips";
+import addtip from "../utils/tips/axaddtip";
+import deltip from "../utils/tips/axdeltip";
+
+import getallseries from "../utils/series/axgetseries";
+import addseries from "../utils/series/axaddseries";
+import delseries from "../utils/series/axdelseries";
 
 let new_series = ref("")
 let new_tips = ref("")
@@ -64,29 +68,45 @@ let tipsGp = ref([])
 let selectTip=ref("")
 let selectSeries=ref("")
 
-function gettips() {
-}
-
 onMounted(() => {
-	settips()
+	settips();
+	setseries()
 })
 
 function settips() {
 	getalltips().then((e) => {
 		tipsGp.value = e
-		console.log(tipsGp.value);
 	});
+}
+
+function setseries() {
+	getallseries().then((e)=>{
+		seriesGp.value = e
+	})
 }
 
 function submitseries() {
 	let tmp = new_series.value
-	console.log(addtip(tmp));
-	alert("提交成功！")
+	if (tmp == "") {
+		alert("内容不能为空")
+		return 0
+	}
+	addseries(tmp).then((e)=>{
+		if(e == "error"){
+			alert("提交失败！")
+		}else{
+			setseries()
+		}
+	})
 	new_series.value = ""
 }
 
 function submittips() {
 	let tmp = new_tips.value
+	if (tmp == "") {
+		alert("内容不能为空")
+		return 0
+	}
 	addtip(tmp).then((result) => {
 		if (result == "error") {
 			alert("提交失败！")
@@ -104,6 +124,16 @@ function deltips() {
 			alert("删除失败！")
 		} else {
 			settips()
+		}
+	})
+}
+
+function deloneseries() {
+	delseries(selectSeries.value).then((e)=>{
+		if (e == "error") {
+			alert("删除失败！")
+		} else {
+			setseries()
 		}
 	})
 }

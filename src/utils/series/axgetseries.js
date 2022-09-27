@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-function getalltips() {
+function getallseries() {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/gettips",
+		url: "http://mt.ip.jokeme.top:6280/getallseries",
 		method: "get",
 	}).then(res => {
 		return res.data
@@ -10,12 +10,12 @@ function getalltips() {
 	return ax
 }
 
-function getatipbyname(tip) {
+function getseriesbyname(e) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/checktip",
+		url: "http://mt.ip.jokeme.top:6280/checkseries",
 		method: "get",
 		params: {
-			tip: tip
+			seriesname: e
 		}
 	}).then(res => {
 		return res.data
@@ -23,5 +23,5 @@ function getatipbyname(tip) {
 	return ax
 }
 
-export default getalltips
-export {getatipbyname}
+export default getallseries
+export {getseriesbyname}

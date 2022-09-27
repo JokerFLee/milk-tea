@@ -158,9 +158,9 @@ function gotodetail(e) {
 	}
 	barColorStyle.value[e] = "sidebar bar_active"
 	// 跳转到指定地方,目前的打算是,在json里面添加type int类型,然后判断每个类型有多少个,因为每个item的高度固定,只需要用 {滑动固定长度 * 数量} 就可以实现滚动了
-	barColorStyle.forEach(ele => {
-		console.log(ele.toString());
-	});
+	// barColorStyle.forEach(ele => {
+	// 	console.log(ele.toString());
+	// });
 }
 
 function req(url, method) {
@@ -201,6 +201,7 @@ onUnmounted(() => {
 	window.removeEventListener('resize', () => itwid())
 })
 
+// 监听侧边栏宽度。
 function itwid() {
 	{
 		let wd = document.body.clientWidth
@@ -221,9 +222,7 @@ const delay = (n) => new Promise(r => setTimeout(r, n * 1000));
 
 async function toleft() {
 	stgrp.value = ["mst first-one l2n", "mst second c2l", "mst third r2c", "mst fouth n2r"]
-
 	await delay(1);
-
 	let tmp = []
 	for (let index = 1; index <= masu.value.length; index++) {
 		tmp[index - 1] = masu.value[index]
@@ -235,7 +234,6 @@ async function toleft() {
 }
 
 async function toright() {
-
 	stgrp.value = ["mst first-one l2c", "mst second c2r", "mst third r2n", "mst fouth n2l"]
 	await delay(1);
 	let tmp = []

@@ -53,7 +53,7 @@
 						<input type="file" class="ipt"
 							accept="image/jpg,image/JPG,image/jpeg,image/JPEG,image/png,image/PNG,image/gif" single
 							@change="selectImg">
-						<img :src="uri" v-show="uri">
+						<img :src="local_pic_url" v-show="local_pic_url">
 					</div>
 				</div>
 
@@ -65,7 +65,8 @@
 
 <script setup>
 import { ref } from 'vue';
-import axpost from "../utils/milktee/axaddnewmilktea"
+import axmtpost from "../utils/milktee/axaddnewmilktea"
+import uploadpic from "../utils/milktee/uploadpic"
 
 
 let name = ref("")
@@ -74,17 +75,24 @@ let mk_tips = ref()
 let uri = ref('')
 let intro = ref("")
 let mk_series = ref("")
+let local_pic_url = ref("")
 
 function selectImg(args) {
-	var myURL = window.URL.createObjectURL(args.target.files[0])
-	uri.value = myURL
+	let myURL = window.URL.createObjectURL(args.target.files[0])
+	let file = args.target.files[0]
+	uploadpic(file).then((e)=>{
+		console.log(e);
+	})
+	local_pic_url.value = myURL
+	console.log( myURL,file );
+
 }
 
 function submitthis() {
 	let data = new Map()
 	data = {"name":name.value,"price":price.value,"mk_tips":mk_tips.value,"uri":uri.value,"intro":intro.value,"mk_series":mk_series.value}
 	// console.log(data);
-	axpost("http://mt.ip.jokeme.top:6280/addnewtee","post",data).then((e)=>{
+	axmtpost(data).then((e)=>{
 		console.log(e);
 	})
 
