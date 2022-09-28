@@ -80,19 +80,22 @@ let local_pic_url = ref("")
 function selectImg(args) {
 	let myURL = window.URL.createObjectURL(args.target.files[0])
 	let file = args.target.files[0]
-	uploadpic(file).then((e)=>{
-		console.log(e);
+	uploadpic(file).then((e) => {
+		if (e.result != "error") {
+			uri.value = e.url
+		}
+
 	})
 	local_pic_url.value = myURL
-	console.log( myURL,file );
+	console.log(myURL, file);
 
 }
 
 function submitthis() {
 	let data = new Map()
-	data = {"name":name.value,"price":price.value,"mk_tips":mk_tips.value,"uri":uri.value,"intro":intro.value,"mk_series":mk_series.value}
+	data = { "name": name.value, "price": price.value, "mk_tips": mk_tips.value, "uri": uri.value, "intro": intro.value, "mk_series": mk_series.value }
 	// console.log(data);
-	axmtpost(data).then((e)=>{
+	axmtpost(data).then((e) => {
 		console.log(e);
 	})
 
@@ -111,7 +114,7 @@ function submitthis() {
 	.box {
 		width: 90%;
 		max-width: 600px;
-		height:87%;
+		height: 87%;
 		background-color: #ebecf0;
 		box-shadow: -5px -5px 10px #fff, 5px 5px 8px #babebc;
 		border-radius: 7px;
@@ -144,6 +147,7 @@ function submitthis() {
 					justify-content: center;
 					align-items: center;
 				}
+
 				.mobo {
 					width: 80%;
 					height: auto;
@@ -163,7 +167,8 @@ function submitthis() {
 						font-family: none;
 						text-align: center;
 					}
-					textarea::placeholder{
+
+					textarea::placeholder {
 						color: #8b8b8b9a;
 
 					}

@@ -167,7 +167,8 @@ function kfc(url, method) {
 }
 
 function ismobile() {
-	if (screen.availWidth <= 1440) {
+	if (screen.availWidth < 1440) {
+		// default 1440
 		sideshow.value = false
 	}
 }
