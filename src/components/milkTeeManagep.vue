@@ -2,6 +2,7 @@
 	<div class="sabox">
 		<div class="op">
 			<div class="kwk">
+
 				<div class="h_common head">
 					<div class="head_common">名称</div>
 					<div class="head_common">原价</div>
@@ -11,6 +12,7 @@
 					<div class="head_common">图片</div>
 					<div class="head_common">管理</div>
 				</div>
+
 				<div class="h_common body" v-for="item in sdata">
 					<div class="item_son">
 						<div class="b_common">{{ item.name }}</div>
@@ -37,34 +39,37 @@
 				<div class="main_input">
 
 					<div class="ssbox">
-						<span>名称:</span> <label><input type="text" disabled :value="itemdt.name" style="cursor: no-drop;"></label>
+						<span>名称:</span> <label><input type="text"  :value.lazy="itemdt.name" ></label>
 					</div>
 
 					<div class="ssbox">
-						<span>价格:</span> <label><input type="number" v-model="itemdt.price"></label>
+						<span>价格:</span> <label><input type="number" v-model.lazy="itemdt.price"></label>
 					</div>
 
 					<div class="ssbox">
-						<span>折扣:</span> <label><input min="0" max="1" step="0.01" type="number" v-model="itemdt.discount"></label>
+						<span>折扣:</span> <label><input min="0" max="1" step="0.01" type="number" v-model.lazy="itemdt.discount"></label>
 					</div>
 
 					<div class="ssbox">
-						<span>现价:</span> <label><input :value="now_price" disabled style="cursor: no-drop;"></label>
+						<span>现价:</span> <label><input :value.lazy="now_price" disabled style="cursor: no-drop;"></label>
+					</div>
+
+					<div class="ssbox">
+						<span>介绍:</span> <label><input :value.lazy="itemdt.intro" ></label>
 					</div>
 
 					<div class="ssbox">
 						<span>售罄:</span>
 						<label>
-							<select v-model="itemdt.soldout" single>
-								<option>是</option>
-								<option>否</option>
+							<select v-model.lazy="itemdt.soldout" single>
+								<option v-for="item in soldoutlist" :value.lazy="item.value" >{{ item.x }}</option>
 							</select></label>
 					</div>
 
 					<div class="ssbox">
 						<span>图片:</span>
 						<div> <input type="file" accept="image/jpg,image/JPG,image/jpeg,image/JPEG,image/png,image/PNG,image/gif"
-								single @change="changepic"> <img :src="itemdt.picurl"> </div>
+								single @change="changepic"> <img :src.lazy="itemdt.picurl"> </div>
 					</div>
 
 				</div>
@@ -76,19 +81,20 @@
 			</div>
 
 		</div>
+
 	</div>
 </template>
 
 <script setup>
-import axios from 'axios';
-import { computed, reactive, onBeforeMount, ref, toRaw, watch } from 'vue';
+import getmilktealist from "../utils/milktee/axgetamilktea"
+import { computed, reactive, onBeforeMount, ref, watch } from 'vue';
 
 let mask_state = ref(false)
 let sdata = ref()
 let blurSta = ref("0px")
 let itemdt = ref("")
 let item_tmp = null
-
+let soldoutlist = ref([{x:"是",value:1},{x:"否",value:0}])
 
 let now_price = computed(() => (itemdt.value.price * itemdt.value.discount).toFixed(2))
 
@@ -113,11 +119,13 @@ function changepic(args) {
 function teadit(e) {
 	mask_state.value = true
 	blurSta.value = "5px"
-	console.log(e);
+
 	item_tmp = e
-	let stupid_vue = JSON.parse(JSON.stringify(toRaw(e)))
+
+	let stupid_vue = JSON.parse(JSON.stringify(e))
+
 	itemdt.value = reactive(stupid_vue)
-	// itemdt.value = e
+	console.log(itemdt,soldoutlist);
 
 }
 
@@ -126,42 +134,24 @@ function disableMask(e) {
 	blurSta.value = "0px"
 	if (e) {
 		console.log("提交咯", item_tmp.target, itemdt.value);
-		// axios(){
-		// success(){
 		item_tmp.discount = itemdt.value.discount
 		item_tmp.price = itemdt.value.price
 		item_tmp.picurl = itemdt.value.picurl
 		item_tmp.soldout = itemdt.value.soldout
-		// }
-		// }
-
 	}
 }
 
-function req(url, method) {
-	const ax = axios({
-		url: url,
-		method: method,
-		params: {
-			pk: "233",
-			sk: "yc9cbxyo7cs9ca6"
-		}
-	}).then(res => {
-		return res.data
+//getmilktealist
+
+function getallmilktea(){
+	getmilktealist().then((e)=>{
+		sdata.value = e
 	})
-	return ax
 }
 
-function packreq() {
-	let url = "src/assets/test.json";
-	let method = "get"
-	req(url, method).then((e) => {
-		sdata.value = e.jsp[3]
-	})
-}
 
 onBeforeMount(() => {
-	packreq()
+	getallmilktea()
 })
 
 
@@ -306,8 +296,8 @@ onBeforeMount(() => {
 			z-index: 20;
 			width: 85%;
 			max-width: 470px;
-			height: 70%;
-			max-height: 550px;
+			height: 80%;
+			// max-height: 550px;
 			background-color: #ffffff61;
 			// box-shadow: -1px -1px 10px #fff, 1px 1px 10px #babebc;
 			// border: dashed 1px #eee;
@@ -372,9 +362,10 @@ onBeforeMount(() => {
 
 						img {
 							width: auto;
-							max-width: 200px;
-							height: 170px;
+							// max-width: 200px;
+							height: 100px;
 							object-fit: cover;
+							border-radius: 10px;
 						}
 					}
 

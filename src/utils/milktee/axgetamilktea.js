@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-export default function req(url, method) {
+export default function getmilktealist(token) {
 	const ax = axios({
-		url: url,
-		method: method,
+		url: "http://mt.ip.jokeme.top:6280/getmilktealist",
+		method: "get",
 		params: {
-			pk: "233",
+			token: token,
 		}
 	}).then(res => {
 		return res.data
