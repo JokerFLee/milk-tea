@@ -1,27 +1,38 @@
 <template>
 	<div class="sabox">
 		<div class="op">
-			<div class="kwk">
-				<div class="h_common head">
-					<div class="head_common">名称</div>
-					<div class="head_common">原价</div>
-					<div class="head_common">现价</div>
-					<div class="head_common">折扣</div>
-					<div class="head_common">售罄</div>
-					<div class="head_common">图片</div>
-					<div class="head_common">管理</div>
+			<div class="kwk" @scroll="itscroll">
+
+				<div class="jp">
+					<div class="head">
+						<div class="head_common">名称</div>
+						<div class="head_common">原价</div>
+						<div class="head_common">现价</div>
+						<div class="head_common">折扣</div>
+						<div class="head_common">售罄</div>
+						<div class="head_common">图片</div>
+						<div class="head_common">管理</div>
+					</div>
 				</div>
-				<div class="h_common body" v-for="item in sdata">
-					<div class="item_son">
-						<div class="b_common">{{ item.name }}</div>
-						<div class="b_common">{{ item.price }}</div>
-						<div class="b_common">{{ (item.price * item.discount).toFixed(2) }}</div>
-						<div class="b_common">{{ item.discount }}</div>
-						<div class="b_common">{{ item.soldout }}</div>
-						<div class="b_common"><img :src="item.picurl"></div>
-						<div class="b_common b_manage">
-							<div class="option1" @click="teadit(item)">修改</div>
-							<div class="option2">删除</div>
+
+				<div class="tw">
+					<div class="body" v-for="item in sdata" :value=insideKey>
+						<div class="item_son">
+							<div class="b_common"><span>{{ item.name }}</span></div>
+							<div class="b_common">{{ item.price }}</div>
+							<div class="b_common">{{ (item.price * item.discount).toFixed(2) }}</div>
+							<div class="b_common">{{ item.discount }}</div>
+							<div class="b_common" style="color: red;" v-if="item.soldout == 1">
+								是
+							</div>
+							<div class="b_common" v-else>
+								否
+							</div>
+							<div class="b_common"><img :src="item.picurl"></div>
+							<div class="b_common b_manage">
+								<div class="option1 opt_comm" @click="teadit(item)">修改</div>
+								<div class="option2 opt_comm" @click="deleteMilkteaByGuid(item.guid)">删除</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -37,7 +48,7 @@
 				<div class="main_input">
 
 					<div class="ssbox">
-						<span>名称:</span> <label><input type="text" disabled :value="itemdt.name" style="cursor: no-drop;"></label>
+						<span>名称:</span> <label><input type="text" :value="itemdt.name"></label>
 					</div>
 
 					<div class="ssbox">
@@ -53,11 +64,14 @@
 					</div>
 
 					<div class="ssbox">
+						<span>介绍:</span> <label><input :value="itemdt.intro"></label>
+					</div>
+
+					<div class="ssbox">
 						<span>售罄:</span>
 						<label>
 							<select v-model="itemdt.soldout" single>
-								<option>是</option>
-								<option>否</option>
+								<option v-for="item in soldoutlist" :value="item.value">{{ item.x }}</option>
 							</select></label>
 					</div>
 
@@ -76,19 +90,25 @@
 			</div>
 
 		</div>
+
 	</div>
 </template>
 
 <script setup>
-import axios from 'axios';
-import { computed, reactive, onBeforeMount, ref, toRaw, watch } from 'vue';
+import { getmilktealist, getMilkteaByGyid } from "../utils/milktee/axgetamilktea"
+import updateMilkteaByGyid from "../utils/milktee/axupdatemilktealist.js"
+import uploadpic from "../utils/milktee/uploadpic"
+import delmilkteabyguid from "../utils/milktee/axdeletemilktea"
+import { computed, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue';
 
 let mask_state = ref(false)
-let sdata = ref()
 let blurSta = ref("0px")
-let itemdt = ref("")
-let item_tmp = null
+let insideKey = ref(0)
 
+let sdata = ref()//用来存储初始化的milktea list数据
+let itemdt = ref("") //用来存储点击edit以后的数据
+
+let soldoutlist = ref([{ x: "是", value: 1 }, { x: "否", value: 0 }])
 
 let now_price = computed(() => (itemdt.value.price * itemdt.value.discount).toFixed(2))
 
@@ -101,68 +121,73 @@ watch(
 	},
 	{ deep: true, immediate: false }
 )
-
-function changepic(args) {
-	var myURL = window.URL.createObjectURL(args.target.files[0])
-	itemdt.value.picurl = myURL
-	// let real = upload pic option
-	// itemdt.value.picurl = real
-
+// 初始化sdata
+function getallmilktea() {
+	getmilktealist().then((e) => {
+		sdata.value = e
+	})
 }
 
+function itscroll(e) {
+	// window.setTimeout(,3000)
+}
+
+onBeforeMount(() => {
+	getallmilktea()
+})
+
+// 编辑执行的操作。
 function teadit(e) {
 	mask_state.value = true
 	blurSta.value = "5px"
-	console.log(e);
-	item_tmp = e
-	let stupid_vue = JSON.parse(JSON.stringify(toRaw(e)))
-	itemdt.value = reactive(stupid_vue)
-	// itemdt.value = e
+	getMilkteaByGyid(e.guid).then((result) => {
+		itemdt.value = result
+		console.log(result);
+	})
+}
+
+//修改图片执行的操作。
+function changepic(args) {
+	let file = args.target.files[0]
+	uploadpic(file).then((e) => {
+		if (e.result != "error") {
+			console.log(e);
+			itemdt.value.picurl = e.url
+		} else {
+			alert("上传图片失败！请稍后重试。")
+		}
+	})
 
 }
 
+// 判断点击的确定还是取消，然后执行相应的操作。
 function disableMask(e) {
 	mask_state.value = false
 	blurSta.value = "0px"
 	if (e) {
-		console.log("提交咯", item_tmp.target, itemdt.value);
-		// axios(){
-		// success(){
-		item_tmp.discount = itemdt.value.discount
-		item_tmp.price = itemdt.value.price
-		item_tmp.picurl = itemdt.value.picurl
-		item_tmp.soldout = itemdt.value.soldout
-		// }
-		// }
+		updateMilkteaByGyid(itemdt.value).then((result) => {
+			if (result != "error") {
+				getallmilktea()
+			} else {
+				alert("修改失败！")
+			}
 
+		})
 	}
+	itemdt.value = ""
 }
 
-function req(url, method) {
-	const ax = axios({
-		url: url,
-		method: method,
-		params: {
-			pk: "233",
-			sk: "yc9cbxyo7cs9ca6"
-		}
-	}).then(res => {
-		return res.data
+// 删除milktea
+function deleteMilkteaByGuid(params) {
+	delmilkteabyguid(params).then((e) => {
+		console.log(e);
+		getallmilktea()
 	})
-	return ax
+
+
 }
 
-function packreq() {
-	let url = "src/assets/test.json";
-	let method = "get"
-	req(url, method).then((e) => {
-		sdata.value = e.jsp[3]
-	})
-}
 
-onBeforeMount(() => {
-	packreq()
-})
 
 
 </script>
@@ -180,103 +205,136 @@ onBeforeMount(() => {
 		justify-content: center;
 		align-items: center;
 		user-select: none;
-		overflow: hidden;
-		z-index: 0;
 		filter: blur(v-bind(blurSta));
+		position: relative;
+
+		::-webkit-scrollbar {
+			display: block;
+			width: 8px;
+			background: #bbb;
+		}
+		::-webkit-scrollbar-thumb{
+			background:  #808080;
+			border-radius: 7px;
+		}
 
 		.kwk {
-			width: 95%;
-			height: 95%;
+			// scrollbar-width: none; //firefox 不显示滚动块
+			width: 100%;
+			height: 100%;
+			overflow: overlay;
 
-			.h_common {
+			.jp {
 				width: 100%;
-				display: flex;
-				flex-direction: row;
-			}
-
-			.head {
-				background: #ededed;
+				position: absolute;
+				background: #d3d3d3ee;
 				color: #333;
 				height: 35px;
 				margin: 0px;
-				border-radius: 5px;
-				box-shadow: -2px -2px 5px #e0e0e0, 2px 2px 5px #babebc;
-				// outline: #eee solid 1px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
 
-				.head_common {
-
-					width: 100%;
-					display: flex;
-					justify-content: center;
-					align-items: center;
-
-				}
-			}
-
-			.body {
-				height: 60px;
-				margin: 10px 0 15px 0;
-				background-color: #ededed;
-				box-shadow: -2px -2px 5px #fcfcfc, 2px 2px 5px #babebc;
-				border-radius: 5px;
-				padding: 2px 0 2px 0;
-				color: #333;
-
-				.item_son {
-					width: 100%;
-					height: 100%;
+				.head {
+					width: 90%;
+					height: calc(100% - 2px);
 					display: flex;
 					flex-direction: row;
-					justify-content: center;
-					align-items: center;
-					padding: 0 3px 0 3px;
+					border-radius: 7px;
+					
 
-					.b_common {
-						width: 20%;
+
+					.head_common {
+						width: 100%;
 						display: flex;
 						justify-content: center;
 						align-items: center;
-
-						img {
-							width: 45px;
-							height: 60px;
-							object-fit: cover;
-						}
 					}
+				}
 
-					.b_manage {
-						justify-content: space-evenly;
+			}
 
-						.option1 {
-							width: 25px;
-							height: 25px;
-							padding: 5px;
-							border-radius: 50%;
-							display: flex;
+
+			.tw {
+				margin-top: 45px;
+				width: 100%;
+				height: 100%;
+
+				.body:last-child {
+					padding-bottom: 20px;
+				}
+
+				.body {
+					height: 65px;
+					margin: 10px 0 15px 0;
+					border-radius: 5px;
+					padding: 2px 0 2px 0;
+					color: #333;
+					display: flex;
+					flex-direction: row;
+					justify-content: center;
+
+
+					.item_son {
+						width: 90%;
+						height: 100%;
+						display: flex;
+						flex-direction: row;
+						justify-content: center;
+						background-color: #ededed;
+						box-shadow: -2px -2px 5px #fcfcfc, 2px 2px 5px #babebc;
+						border-radius: 7px;
+
+						span {
+							padding: 0 3px 0 3px;
 							align-items: center;
-							justify-content: center;
-							white-space: nowrap;
-							cursor: pointer;
-							background-color: #711cd3;
-							color: #eee;
 						}
 
-						.option2 {
-							width: 25px;
-							height: 25px;
-							padding: 5px;
-							border-radius: 50%;
+						.b_common {
+							width: 20%;
 							display: flex;
-							align-items: center;
 							justify-content: center;
-							white-space: nowrap;
-							cursor: pointer;
-							background-color: #fd2252;
-							color: #eee;
+							align-items: center;
+							text-align: center;
+							padding: 3px 0;
+
+							img {
+								width: 45px;
+								height: 65px;
+								object-fit: cover;
+							}
+						}
+
+						.b_manage {
+							justify-content: space-evenly;
+
+							.opt_comm {
+								font-size: small;
+								width: 25px;
+								height: 25px;
+								padding: 5px;
+								border-radius: 50%;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+								white-space: nowrap;
+								cursor: pointer;
+							}
+
+							.option1 {
+								background-color: #711cd3;
+								color: #eee;
+							}
+
+							.option2 {
+								background-color: #fd2252;
+								color: #eee;
+							}
 						}
 					}
 				}
 			}
+
 
 
 		}
@@ -306,8 +364,8 @@ onBeforeMount(() => {
 			z-index: 20;
 			width: 85%;
 			max-width: 470px;
-			height: 70%;
-			max-height: 550px;
+			height: 80%;
+			// max-height: 550px;
 			background-color: #ffffff61;
 			// box-shadow: -1px -1px 10px #fff, 1px 1px 10px #babebc;
 			// border: dashed 1px #eee;
@@ -372,9 +430,10 @@ onBeforeMount(() => {
 
 						img {
 							width: auto;
-							max-width: 200px;
-							height: 170px;
+							// max-width: 200px;
+							height: 100px;
 							object-fit: cover;
+							border-radius: 10px;
 						}
 					}
 

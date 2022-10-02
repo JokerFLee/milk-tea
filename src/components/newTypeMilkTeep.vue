@@ -1,32 +1,34 @@
 <template>
 	<div class="sidebox">
 		<div class="box">
-			<div class="edge">
+			<form class="edge" @submit.prevent="submitthis" autocomplete="on">
 				<div class="col">
 					<span>名称:</span>
 					<div class="mobo">
-						<input type="text" v-model="name" placeholder="请输入新品奶茶名称">
+						<input type="text" v-model="name" name="milktea_name" autocomplete="on" placeholder="请输入新品奶茶名称"
+							@focusout="checkName" >
 					</div>
 				</div>
 
 				<div class="col">
 					<span>价格:</span>
 					<div class="mobo">
-						<input type="number" v-model="price" placeholder="奶茶总要有个价格吧">
+						<input type="number" v-model="price" placeholder="奶茶总要有个价格吧" >
 					</div>
 				</div>
 
 				<div class="col">
 					<span>文案:</span>
 					<div class="mobo">
-						<textarea cols="10" rows="10" v-model="intro" placeholder="请输入让人眼前一新的文案吧"></textarea>
+						<textarea cols="10" rows="10" v-model="intro" name="milktea_intro" autocomplete="on"
+							placeholder="请输入让人眼前一新的文案吧" ></textarea>
 					</div>
 				</div>
 
 				<div class="col">
 					<span>分类:</span>
 					<div class="mobo">
-						<select v-model="mk_series" single placeholder="请输入奶茶Tips">
+						<select v-model="mk_series" single placeholder="请输入奶茶Tips" >
 							<option>鸡坤</option>
 							<option>Ikun</option>
 							<option>你干嘛~</option>
@@ -37,7 +39,7 @@
 				<div class="col">
 					<span>Tips:</span>
 					<div class="mobo">
-						<select v-model="mk_tips" single>
+						<select v-model="mk_tips" single >
 							<option></option>
 							<option>坤坤</option>
 							<option>守护最好的Ikun</option>
@@ -51,14 +53,14 @@
 					<span>图片:</span>
 					<div class="mobo">
 						<input type="file" class="ipt"
-							accept="image/jpg,image/JPG,image/jpeg,image/JPEG,image/png,image/PNG,image/gif" single
+							accept="image/jpg,image/JPG,image/jpeg,image/JPEG,image/png,image/PNG,image/gif" single 
 							@change="selectImg">
 						<img :src="local_pic_url" v-show="local_pic_url">
 					</div>
 				</div>
 
-			</div>
-			<button @click="submitthis">submit</button>
+			</form>
+			<button type="submit" @click="submitthis" >提交</button>
 		</div>
 	</div>
 </template>
@@ -67,7 +69,7 @@
 import { ref } from 'vue';
 import axmtpost from "../utils/milktee/axaddnewmilktea"
 import uploadpic from "../utils/milktee/uploadpic"
-
+import {getMilkteaByName} from "../utils/milktee/axgetamilktea"
 
 let name = ref("")
 let price = ref()
@@ -78,24 +80,46 @@ let mk_series = ref("")
 let local_pic_url = ref("")
 
 function selectImg(args) {
-	let myURL = window.URL.createObjectURL(args.target.files[0])
+	local_pic_url.value = window.URL.createObjectURL(args.target.files[0])
 	let file = args.target.files[0]
-	uploadpic(file).then((e)=>{
-		console.log(e);
-	})
-	local_pic_url.value = myURL
-	console.log( myURL,file );
+	uploadpic(file).then((e) => {
+		if (e.result != "error") {
+			uri.value = e.url
+		}
 
+	})
 }
 
 function submitthis() {
 	let data = new Map()
-	data = {"name":name.value,"price":price.value,"mk_tips":mk_tips.value,"uri":uri.value,"intro":intro.value,"mk_series":mk_series.value}
-	// console.log(data);
-	axmtpost(data).then((e)=>{
-		console.log(e);
-	})
+	data = { "name": name.value, "price": price.value, "mk_tips": mk_tips.value, "uri": uri.value, "intro": intro.value, "mk_series": mk_series.value }
 
+	if (name.value != null && price.value != null && mk_tips.value != null && mk_series != null && intro != null && uri.value != null) {
+		axmtpost(data).then((e) => {
+			if (e == 1) {
+				name.value = ""
+				price.value = ""
+				mk_tips.value = ""
+				uri.value = ""
+				intro.value = ""
+				mk_series.value = ""
+				local_pic_url.value = ""
+			} else {
+				alert("添加失败")
+			}
+
+		})
+	}else{
+		alert("所有的输入都必须为非空状态")
+	}
+}
+
+function checkName() {
+	getMilkteaByName(name.value).then((e)=>{
+		if(e){
+			alert("当前奶茶名已被占用！建议更换以避免混淆")
+		}
+	})
 }
 
 </script>
@@ -111,7 +135,7 @@ function submitthis() {
 	.box {
 		width: 90%;
 		max-width: 600px;
-		height:87%;
+		height: 87%;
 		background-color: #ebecf0;
 		box-shadow: -5px -5px 10px #fff, 5px 5px 8px #babebc;
 		border-radius: 7px;
@@ -144,6 +168,7 @@ function submitthis() {
 					justify-content: center;
 					align-items: center;
 				}
+
 				.mobo {
 					width: 80%;
 					height: auto;
@@ -163,17 +188,17 @@ function submitthis() {
 						font-family: none;
 						text-align: center;
 					}
-					textarea::placeholder{
+
+					textarea::placeholder {
 						color: #8b8b8b9a;
 
 					}
 
 					img {
-						width: 100%;
+						width: auto;
 						height: 100%;
 						border-radius: 5px;
-						max-width: 180px;
-						max-height: 100px;
+						max-height: 130px;
 						object-fit: cover;
 					}
 
