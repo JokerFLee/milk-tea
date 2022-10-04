@@ -1,5 +1,6 @@
 <template>
 	<div class="oops">
+
 		<div class="first">
 
 			<div class="topbar">
@@ -68,8 +69,7 @@
 		</div>
 
 		<div class="last">
-
-			<div class="sidearea">
+			<div class="sidearea" @resize="itwid()">
 				<template v-for="(mt, index) in mtinfo">
 					<div :class="barColorStyle[index]" @click="gotodetail(index)">
 						<span class="det"> {{ mt }} </span>
@@ -77,9 +77,9 @@
 				</template>
 			</div>
 
-			<div class="marea">
-				<div class="detail">
-					<div class="milktea" v-for="mk in allproducts">
+			<div class="marea" >
+				<div class="detail" @scroll.native="scrollFun">
+					<div class="milktea" v-for="mk in allproducts" ref="scrollHeights">
 						<div class="pic">
 							<img :src="mk.picurl">
 							<span class="sp1" v-show="mk.topic != 'null'">{{ mk.topic }}</span>
@@ -114,8 +114,19 @@
 
 <script setup>
 import axios from 'axios';
-import { onBeforeMount, onMounted, onUnmounted, reactive, ref } from 'vue';
+import { onMounted, onUnmounted, reactive, ref } from 'vue';
 
+import { getallseries } from "../utils/series/axgetseries"
+import { getmilktealist} from "../utils/milktee/axgetamilktea"
+
+
+let allproducts = ref([])
+let orderinfo = reactive(new Map())
+let nowidth = ref("100%")
+let noml = ref("25%")
+let cny = ref(0)
+let barColorStyle = ref([])
+let scrollHeights = ref(0)
 let stgrp = ref(["mst first-one", "mst second", "mst third", "mst fouth"])
 
 let mtinfo = ref([
@@ -134,18 +145,6 @@ let masu = ref([
 	{ "name": "菠萝吹雪", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk4.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "最热" }
 ])
 
-let allproducts = ref([])
-
-let orderinfo = reactive(new Map())
-
-let nowidth = ref("100%")
-
-let noml = ref("25%")
-
-let cny = ref(0)
-
-let barColorStyle = ref([])
-
 function makemap() {
 	for (let index = 0; index < allproducts.value.length; index++) {
 		orderinfo.set(allproducts.value[index], 0)
@@ -163,6 +162,11 @@ function gotodetail(e) {
 	// });
 }
 
+function scrollFun(e){
+	// console.log(e.srcElement.scrollTop);//滑动距离
+	let ele_height = scrollHeights.value[0].offsetHeight
+}
+
 function req(url, method) {
 	const ax = axios({
 		url: url,
@@ -176,6 +180,7 @@ function req(url, method) {
 	})
 	return ax
 }
+
 function packreq() {
 	let url = "src/assets/test.json";
 	let method = "get"
@@ -185,21 +190,34 @@ function packreq() {
 	})
 }
 
-onBeforeMount(() => {
+onMounted(() => {
 	packreq()
 	for (let index = 0; index < mtinfo.value.length; index++) {
 		barColorStyle.value.push("sidebar")
 	}
-})
-
-onMounted(() => {
 	window.addEventListener('resize', () => itwid())
 	itwid()
+	initPage()
 })
 
 onUnmounted(() => {
 	window.removeEventListener('resize', () => itwid())
 })
+
+
+
+function initPage(){
+	getallseries().then((e)=>{
+		let tmp = []
+		e.forEach(x => {
+			tmp.push(x.name)
+		});
+		mtinfo.value=tmp
+	})
+	getmilktealist().then((e)=>{
+		console.log(e);
+	})
+}
 
 // 监听侧边栏宽度。
 function itwid() {
@@ -468,18 +486,16 @@ function submit(e) {
 				}
 			}
 
-			// .sidebar:hover {
-			// 	// background: linear-gradient(to right, #e6e0ff, #ffd9cf);
-			// 	background: linear-gradient(to right, #363d46, #374244);
-			// 	color: #fff;
-			// }
+			.sidebar:hover {
+				background: linear-gradient(to right, #a88f7f, #67969e);
+				color: #fff;
+			}
 
 			.bar_active {
 				// background: linear-gradient(to right, #363d46, #374244);
 				background: #363d46;
 				color: #fff;
-				font-family: kkt;
-				font-weight: bold;
+				// font-weight: bold;
 			}
 		}
 
