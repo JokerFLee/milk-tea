@@ -112,8 +112,8 @@
 </template>
 
 <script setup>
-import { getmilktealist, getMilkteaByGyid } from "../utils/milktee/axgetamilktea"
-import updateMilkteaByGyid from "../utils/milktee/axupdatemilktealist.js"
+import { getmilktealist, getMilkteaByGuid } from "../utils/milktee/axgetamilktea"
+import updateMilkteaByGuid from "../utils/milktee/axupdatemilktealist.js"
 import uploadpic from "../utils/milktee/uploadpic"
 import delmilkteabyguid from "../utils/milktee/axdeletemilktea"
 import { computed, onBeforeMount, ref, watch } from 'vue'
@@ -167,7 +167,7 @@ onBeforeMount(() => {
 function teadit(e) {
 	mask_state.value = true
 	blurSta.value = "5px"
-	getMilkteaByGyid(e.guid).then((result) => {
+	getMilkteaByGuid(e.guid).then((result) => {
 		itemdt.value = result
 	})
 
@@ -193,7 +193,7 @@ function disableMask(e) {
 	mask_state.value = false
 	blurSta.value = "0px"
 	if (e) {
-		updateMilkteaByGyid(itemdt.value).then((result) => {
+		updateMilkteaByGuid(itemdt.value).then((result) => {
 			if (result != "error") {
 				getallmilktea()
 			} else {

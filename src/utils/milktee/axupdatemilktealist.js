@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default function updateMilkteaByGyid(mt) {
+export default function updateMilkteaByGuid(mt) {
 	const ax = axios({
 		url: "http://mt.ip.jokeme.top:6280/updatemilktea",
 		method: "post",

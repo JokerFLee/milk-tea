@@ -77,12 +77,12 @@
 				</template>
 			</div>
 
-			<div class="marea" >
+			<div class="marea">
 				<div class="detail" @scroll.native="scrollFun">
 					<div class="milktea" v-for="mk in allproducts" ref="scrollHeights">
 						<div class="pic">
 							<img :src="mk.picurl">
-							<span class="sp1" v-show="mk.topic != 'null'">{{ mk.topic }}</span>
+							<span class="sp1" v-show="mk.tips != ''">{{ mk.tips }}</span>
 							<span class="sp2">{{ mk.price }}</span>
 						</div>
 						<div class="intro">
@@ -117,8 +117,7 @@ import axios from 'axios';
 import { onMounted, onUnmounted, reactive, ref } from 'vue';
 
 import { getallseries } from "../utils/series/axgetseries"
-import { getmilktealist} from "../utils/milktee/axgetamilktea"
-
+import { getmilktealist, getDescMilkteaList, getMilkteaCount } from "../utils/milktee/axgetamilktea"
 
 let allproducts = ref([])
 let orderinfo = reactive(new Map())
@@ -129,14 +128,7 @@ let barColorStyle = ref([])
 let scrollHeights = ref(0)
 let stgrp = ref(["mst first-one", "mst second", "mst third", "mst fouth"])
 
-let mtinfo = ref([
-	"套餐推荐",
-	"最低折扣",
-	"甜点美食",
-	"mosaic下午茶",
-	"Florentia milk coffee",
-	"奶茶盲盒"
-])
+let mtinfo = ref([])
 
 let masu = ref([
 	{ "name": "手剥葡萄", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk1.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
@@ -162,60 +154,41 @@ function gotodetail(e) {
 	// });
 }
 
-function scrollFun(e){
+function scrollFun(e) {
 	// console.log(e.srcElement.scrollTop);//滑动距离
 	let ele_height = scrollHeights.value[0].offsetHeight
 }
 
-function req(url, method) {
-	const ax = axios({
-		url: url,
-		method: method,
-		params: {
-			pk: "233",
-			sk: "yc9cbxyo7cs9ca6"
-		}
-	}).then(res => {
-		return res.data
-	})
-	return ax
-}
-
-function packreq() {
-	let url = "src/assets/test.json";
-	let method = "get"
-	req(url, method).then((e) => {
-		allproducts.value = e.jsp[4];
-		makemap()
-	})
-}
-
 onMounted(() => {
-	packreq()
-	for (let index = 0; index < mtinfo.value.length; index++) {
-		barColorStyle.value.push("sidebar")
-	}
 	window.addEventListener('resize', () => itwid())
 	itwid()
 	initPage()
+
 })
 
 onUnmounted(() => {
 	window.removeEventListener('resize', () => itwid())
 })
 
-
-
-function initPage(){
-	getallseries().then((e)=>{
+function initPage() {
+	getallseries().then((e) => {
 		let tmp = []
 		e.forEach(x => {
 			tmp.push(x.name)
 		});
-		mtinfo.value=tmp
+		mtinfo.value = tmp
+		for (let index = 0; index < mtinfo.value.length; index++) {
+			if (index == 0) {
+				barColorStyle.value.push("sidebar bar_active")
+			}else{
+				barColorStyle.value.push("sidebar")
+			}
+			
+		}
 	})
-	getmilktealist().then((e)=>{
-		console.log(e);
+	getDescMilkteaList().then((e) => {
+		allproducts.value = e
+		makemap()
 	})
 }
 
@@ -506,7 +479,7 @@ function submit(e) {
 			display: flex;
 			justify-content: center;
 			padding-top: 10px;
-			
+
 
 			::-webkit-scrollbar {
 				display: none;
@@ -519,7 +492,7 @@ function submit(e) {
 				scrollbar-width: none; //firefox 不显示滚动块
 				overflow: auto;
 				padding: 0 5px 0 5px;
-				
+
 
 				div.milktea:last-child {
 					margin-bottom: 80px;
