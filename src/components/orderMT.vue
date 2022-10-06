@@ -78,16 +78,30 @@
 			</div>
 
 			<div class="marea">
-				<div class="detail" @scroll.native="scrollFun">
+				<div class="detail" @scroll.native="scrollFun" ref="scrollbase">
 					<div class="milktea" v-for="mk in allproducts" ref="scrollHeights">
 						<div class="pic">
 							<img :src="mk.picurl">
 							<span class="sp1" v-show="mk.tips != ''">{{ mk.tips }}</span>
-							<span class="sp2">{{ mk.price }}</span>
+
 						</div>
 						<div class="intro">
-							<h3>{{ mk.name }}</h3>
-							<span> {{ mk.intro }}</span>
+							<div class="realintro">
+								<h3>{{ mk.name }}</h3>
+								<span> {{ mk.intro }}</span>
+							</div>
+							<div class="value">
+								<div class="v1 v-c" v-if="mk.discount == 1">
+									<span>现价:{{ mk.price }}</span>
+								</div>
+
+								<div class="v2 v-c" v-else>
+									<span> 原价: <del>{{mk.price}}¥</del> </span>
+									<span> 折扣:{{mk.discount}}</span>
+									<span> 现价:<b style="color: green">{{ (mk.price*mk.discount).toFixed(2)}}¥</b></span>
+								</div>
+
+							</div>
 						</div>
 						<div class="option">
 							<div class="oks plus" @click="add2car(mk)">+</div>
@@ -113,11 +127,10 @@
 </template>
 
 <script setup>
-import axios from 'axios';
 import { onMounted, onUnmounted, reactive, ref } from 'vue';
 
 import { getallseries } from "../utils/series/axgetseries"
-import { getmilktealist, getDescMilkteaList, getMilkteaCount } from "../utils/milktee/axgetamilktea"
+import { getDescMilkteaList, getMilkteaCount } from "../utils/milktee/axgetamilktea"
 
 let allproducts = ref([])
 let orderinfo = reactive(new Map())
@@ -126,10 +139,10 @@ let noml = ref("25%")
 let cny = ref(0)
 let barColorStyle = ref([])
 let scrollHeights = ref(0)
+let scrollbase = ref("")
 let stgrp = ref(["mst first-one", "mst second", "mst third", "mst fouth"])
-
+let milkteaCount = ref("")
 let mtinfo = ref([])
-
 let masu = ref([
 	{ "name": "手剥葡萄", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk1.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
 	{ "name": "爽口雪梨", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk2.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
@@ -144,20 +157,66 @@ function makemap() {
 }
 
 function gotodetail(e) {
-	for (let index = 0; index < barColorStyle.value.length; index++) {
-		barColorStyle.value[index] = "sidebar"
+	let ele_height = scrollHeights.value[0].offsetHeight
+	let scroll_distance = 0
+	for (let x = 0; x < e; x++) {
+		scroll_distance += (ele_height + 15) * milkteaCount.value[x][1]
 	}
-	barColorStyle.value[e] = "sidebar bar_active"
-	// 跳转到指定地方,目前的打算是,在json里面添加type int类型,然后判断每个类型有多少个,因为每个item的高度固定,只需要用 {滑动固定长度 * 数量} 就可以实现滚动了
-	// barColorStyle.forEach(ele => {
-	// 	console.log(ele.toString());
-	// });
+	scrollbase.value.scrollTop = scroll_distance
+	scrollbase.value.scrollTo({
+		top: scroll_distance,
+		behavior: 'smooth'
+	})
+	setTimeout(() => {
+		changeBarStatus(e)
+	}, 400)
 }
 
 function scrollFun(e) {
-	// console.log(e.srcElement.scrollTop);//滑动距离
+
 	let ele_height = scrollHeights.value[0].offsetHeight
+	let Scroll_distance = e.srcElement.scrollTop
+
+	let tmp = []
+	let tmp_number = 0
+
+	for (let index = 0; index < milkteaCount.value.length; index++) {
+		let Target_distance = 0
+
+		if (index == 0) {
+			const element = milkteaCount.value[index][1];
+			Target_distance = (ele_height + 15) * element - 5
+		} else {
+			const element = milkteaCount.value[index][1];
+			Target_distance = (ele_height + 15) * element
+		}
+		tmp_number += Target_distance
+		tmp.push(tmp_number)
+	}
+
+	for (let index = 0; index < tmp.length; index++) {
+
+		if (index == 0) {
+			if (Scroll_distance < tmp[0]) {
+				changeBarStatus(0)
+			}
+		} else {
+			if (Scroll_distance > tmp[index - 1] && Scroll_distance < tmp[index]) {
+				changeBarStatus(index)
+			}
+		}
+	}
+
 }
+
+function changeBarStatus(e) {
+	let x = barColorStyle.value.length
+	for (let tmp = 0; tmp < x; tmp++) {
+		barColorStyle.value[tmp] = "sidebar"
+	}
+	barColorStyle.value[e] = "sidebar bar_active"
+}
+
 
 onMounted(() => {
 	window.addEventListener('resize', () => itwid())
@@ -180,15 +239,20 @@ function initPage() {
 		for (let index = 0; index < mtinfo.value.length; index++) {
 			if (index == 0) {
 				barColorStyle.value.push("sidebar bar_active")
-			}else{
+			} else {
 				barColorStyle.value.push("sidebar")
 			}
-			
 		}
 	})
+
 	getDescMilkteaList().then((e) => {
+		console.log(e);
 		allproducts.value = e
 		makemap()
+	})
+
+	getMilkteaCount().then((e) => {
+		milkteaCount.value = Object.entries(e)
 	})
 }
 
@@ -492,6 +556,7 @@ function submit(e) {
 				scrollbar-width: none; //firefox 不显示滚动块
 				overflow: auto;
 				padding: 0 5px 0 5px;
+				scroll-behavior: smooth;
 
 
 				div.milktea:last-child {
@@ -506,8 +571,7 @@ function submit(e) {
 					margin-bottom: 15px;
 					display: flex;
 					box-shadow: -2px -2px 5px #ffffff, 2px 2px 5px #b4b4b4;
-					border-radius: 7px;
-					overflow: hidden;
+					border-radius: 10px;
 
 					.pic {
 						width: 110px;
@@ -521,41 +585,21 @@ function submit(e) {
 							width: 100%;
 							height: 100%;
 							object-fit: cover;
+							border-radius: 10px 0 0 10px;
 						}
 
 						.sp1 {
 							position: absolute;
-							padding: 5px;
-							top: 10px;
-							left: 70%;
+							padding: 1px;
+							top: 2px;
+							right: 0%;
 							writing-mode: vertical-lr;
 							white-space: nowrap;
 							background-color: #8400ff;
-							border-radius: 100%;
+							border-radius: 15px;
 							font-size: smaller;
 							font-family: kkt;
 							color: white;
-						}
-
-						.sp2 {
-							width: 30px;
-							height: 30px;
-							text-align: center;
-							position: absolute;
-							top: 10px;
-							left: 0%;
-							background-color: #000;
-							border-radius: 50%;
-							font-size: large;
-							font-family: kkt;
-							color: #eee;
-							display: flex;
-							justify-content: center;
-							align-items: center;
-						}
-
-						.sp2::after {
-							content: "￥"
 						}
 					}
 
@@ -566,21 +610,60 @@ function submit(e) {
 						align-items: center;
 						justify-content: space-around;
 						padding-left: 10px;
-						flex-direction: column;
+						flex-direction: row;
 
-						h3 {
-							margin: 3px 0 3px 0;
-							font-family: kkt;
+						.realintro {
+							width: 85%;
+							height: 100%;
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							flex-direction: column;
+
+							h3 {
+								margin: 3px 0 3px 0;
+								font-family: kkt;
+							}
+
+							span {
+								display: -webkit-box;
+								-webkit-line-clamp: 2;
+								-webkit-box-orient: vertical;
+								overflow: hidden;
+								font-size: smaller;
+								font-weight: lighter;
+							}
 						}
 
-						span {
-							display: -webkit-box;
-							-webkit-line-clamp: 2;
-							-webkit-box-orient: vertical;
-							overflow: hidden;
-							font-size: small;
-							font-weight: 200;
+						.value {
+							width: 15%;
+							height: 100%;
+
+							.v-c {
+								width: 100%;
+								height: 100%;
+								display: flex;
+								flex-direction: column;
+								flex-wrap: nowrap;
+								font-size: smaller;
+							}
+
+							.v1 {
+								display: flex;
+								align-items: flex-start;
+								justify-content: center;
+							}
+
+							.v2 {
+								display: flex;
+								align-items: flex-start;
+								justify-content: space-evenly;
+
+							}
 						}
+
+
+
 					}
 
 					.option {
