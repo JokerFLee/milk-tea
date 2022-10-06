@@ -23,5 +23,4 @@ function getseriesbyname(e) {
 	return ax
 }
 
-export default getallseries
-export {getseriesbyname}
+export {getseriesbyname,getallseries}

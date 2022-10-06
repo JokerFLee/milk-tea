@@ -23,5 +23,4 @@ function getatipbyname(tip) {
 	return ax
 }
 
-export default getalltips
-export {getatipbyname}
+export {getatipbyname,getalltips}

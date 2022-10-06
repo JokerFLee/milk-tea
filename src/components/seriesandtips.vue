@@ -51,11 +51,11 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 
-import getalltips from "../utils/tips/axgettips";
+import {getalltips} from "../utils/tips/axgettips";
 import addtip from "../utils/tips/axaddtip";
 import deltip from "../utils/tips/axdeltip";
 
-import getallseries from "../utils/series/axgetseries";
+import {getallseries} from "../utils/series/axgetseries";
 import addseries from "../utils/series/axaddseries";
 import delseries from "../utils/series/axdelseries";
 

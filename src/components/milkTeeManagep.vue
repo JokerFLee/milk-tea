@@ -1,5 +1,6 @@
 <template>
 	<div class="sabox">
+
 		<div class="op">
 			<div class="kwk" @scroll="itscroll">
 
@@ -76,6 +77,22 @@
 					</div>
 
 					<div class="ssbox">
+						<span>Series:</span>
+						<label>
+							<select v-model="itemdt.series" single>
+								<option v-for="item in seriesList" :value="item.name">{{ item.name }}</option>
+							</select></label>
+					</div>
+
+					<div class="ssbox">
+						<span>Tips:</span>
+						<label>
+							<select v-model="itemdt.tips" single>
+								<option v-for="item in tipsList" :value="item.name">{{ item.name }}</option>
+							</select></label>
+					</div>
+
+					<div class="ssbox">
 						<span>图片:</span>
 						<div> <input type="file" accept="image/jpg,image/JPG,image/jpeg,image/JPEG,image/png,image/PNG,image/gif"
 								single @change="changepic"> <img :src="itemdt.picurl"> </div>
@@ -95,11 +112,13 @@
 </template>
 
 <script setup>
-import { getmilktealist, getMilkteaByGyid } from "../utils/milktee/axgetamilktea"
-import updateMilkteaByGyid from "../utils/milktee/axupdatemilktealist.js"
+import { getmilktealist, getMilkteaByGuid } from "../utils/milktee/axgetamilktea"
+import updateMilkteaByGuid from "../utils/milktee/axupdatemilktealist.js"
 import uploadpic from "../utils/milktee/uploadpic"
 import delmilkteabyguid from "../utils/milktee/axdeletemilktea"
-import { computed, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onBeforeMount, ref, watch } from 'vue'
+import { getallseries } from "../utils/series/axgetseries"
+import { getalltips } from "../utils/tips/axgettips"
 
 let mask_state = ref(false)
 let blurSta = ref("0px")
@@ -111,6 +130,9 @@ let itemdt = ref("") //用来存储点击edit以后的数据
 let soldoutlist = ref([{ x: "是", value: 1 }, { x: "否", value: 0 }])
 
 let now_price = computed(() => (itemdt.value.price * itemdt.value.discount).toFixed(2))
+
+let seriesList = ref("")
+let tipsList = ref("")
 
 watch(
 	() => itemdt.value.discount,
@@ -128,8 +150,13 @@ function getallmilktea() {
 	})
 }
 
-function itscroll(e) {
-	// window.setTimeout(,3000)
+function initPage() {
+	getallseries().then((e) => {
+		seriesList.value = e
+	})
+	getalltips().then((e) => {
+		tipsList.value = e
+	})
 }
 
 onBeforeMount(() => {
@@ -140,10 +167,11 @@ onBeforeMount(() => {
 function teadit(e) {
 	mask_state.value = true
 	blurSta.value = "5px"
-	getMilkteaByGyid(e.guid).then((result) => {
+	getMilkteaByGuid(e.guid).then((result) => {
 		itemdt.value = result
-		console.log(result);
 	})
+
+	initPage()
 }
 
 //修改图片执行的操作。
@@ -165,7 +193,7 @@ function disableMask(e) {
 	mask_state.value = false
 	blurSta.value = "0px"
 	if (e) {
-		updateMilkteaByGyid(itemdt.value).then((result) => {
+		updateMilkteaByGuid(itemdt.value).then((result) => {
 			if (result != "error") {
 				getallmilktea()
 			} else {
@@ -213,8 +241,9 @@ function deleteMilkteaByGuid(params) {
 			width: 8px;
 			background: #bbb;
 		}
-		::-webkit-scrollbar-thumb{
-			background:  #808080;
+
+		::-webkit-scrollbar-thumb {
+			background: #808080;
 			border-radius: 7px;
 		}
 
@@ -241,7 +270,7 @@ function deleteMilkteaByGuid(params) {
 					display: flex;
 					flex-direction: row;
 					border-radius: 7px;
-					
+
 
 
 					.head_common {
