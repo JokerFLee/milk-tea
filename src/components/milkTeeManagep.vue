@@ -235,18 +235,6 @@ function deleteMilkteaByGuid(params) {
 		user-select: none;
 		filter: blur(v-bind(blurSta));
 		position: relative;
-
-		::-webkit-scrollbar {
-			display: block;
-			width: 8px;
-			background: #bbb;
-		}
-
-		::-webkit-scrollbar-thumb {
-			background: #808080;
-			border-radius: 7px;
-		}
-
 		.kwk {
 			// scrollbar-width: none; //firefox 不显示滚动块
 			width: 100%;
@@ -270,8 +258,6 @@ function deleteMilkteaByGuid(params) {
 					display: flex;
 					flex-direction: row;
 					border-radius: 7px;
-
-
 
 					.head_common {
 						width: 100%;

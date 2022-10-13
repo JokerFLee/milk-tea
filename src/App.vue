@@ -197,6 +197,17 @@ onMounted(() => {
 	font-style: normal;
 }
 
+::-webkit-scrollbar {
+	display: block;
+	width: 8px;
+	background: #ccc;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #888;
+	border-radius: 7px;
+}
+
 .np {
 	width: 100%;
 	height: 100%;
@@ -221,7 +232,7 @@ onMounted(() => {
 			flex-direction: row;
 			justify-content: space-evenly;
 			align-items: center;
-			padding-left:20px;
+			padding-left: 20px;
 
 			.icon {
 				min-width: 20px;
