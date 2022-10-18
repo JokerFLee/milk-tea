@@ -78,12 +78,12 @@
 			</div>
 
 			<div class="marea">
-				<div class="detail" @scroll.native="scrollFun">
-					<div class="milktea" v-for="mk in allproducts" ref="scrollHeights">
+				<div class="detail" @scroll.native="scrollFun" ref="scrollInstance" >
+					<div class="milktea" v-for="mk in allproducts" ref="scrollHeights" >
 
 						<div class="pic">
 							<img :src="mk.picurl">
-							<span class="sp1" v-show="mk.tips != ''">{{ mk.tips }}</span>
+							<span class="sp1" v-show="mk.tips != ''&& mk.tips != 'null'">{{ mk.tips }}</span>
 							<span class="sp2">{{ mk.price }}</span>
 						</div>
 
@@ -125,7 +125,6 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { getallseries } from "../utils/series/axgetseries"
 import { getmilktealist, getMilkteaCount, getDescMilkteaList } from "../utils/milktee/axgetamilktea"
 
-
 let orderMap = new Map()
 let priceMap = new Map()
 
@@ -141,6 +140,7 @@ let stgrp = ref(["mst first-one", "mst second", "mst third", "mst fouth"])
 let mtinfo = ref([])
 let seriesCount = ref([])
 let distanceList = ref([])
+let scrollInstance = ref(0)
 
 let masu = ref([])
 
@@ -179,10 +179,20 @@ function initDistanceList() {
 }
 
 function gotodetail(e) {
-	for (let index = 0; index < barColorStyle.value.length; index++) {
-		barColorStyle.value[index] = "sidebar"
+	// 
+	let ele_height = scrollHeights.value[0].offsetHeight
+	// console.log(scrollInstance.value.scrollTop,e);
+	let height = 0
+	if (e!=0) {
+		height =(distanceList.value[e-1] * (ele_height+11))
 	}
-	barColorStyle.value[e] = "sidebar bar_active"
+	
+	scrollInstance.value.scrollTo({
+		top:height,
+		behavior: 'smooth'
+
+	})
+	updateBarStyle(e)
 }
 
 function scrollFun(e) {
@@ -324,7 +334,7 @@ onUnmounted(() => {
 	user-select: none;
 	position: relative;
 	background-color: #ededed;
-
+	
 	.first {
 		width: 100%;
 		height: 15%;
@@ -490,7 +500,6 @@ onUnmounted(() => {
 			align-items: center;
 			justify-content: flex-start;
 			overflow-y: auto;
-			padding-top: 5px;
 			position: absolute;
 
 			.sidebar {
@@ -536,21 +545,19 @@ onUnmounted(() => {
 			margin-left: v-bind(noml);
 			display: flex;
 			justify-content: center;
-			padding-top: 5px;
-
 
 			::-webkit-scrollbar {
-				display: none;
+				display: block;
 				// opacity: 1;
 			}
 
 			.detail {
 				width: 95%;
 				height: 100%;
-				scrollbar-width: none; //firefox 不显示滚动块
+				// scrollbar-width: none; //firefox 不显示滚动块
 				overflow: auto;
 				padding: 0 5px 0 5px;
-
+				scroll-behavior: smooth;
 
 				.milktea:last-child {
 					margin-bottom: 160px;
@@ -560,12 +567,13 @@ onUnmounted(() => {
 					width: 100%;
 					height: 100%;
 					max-height: 120px;
-					margin-top: 5px;
-					margin-bottom: 15px;
+					margin-top: 10px;
+					margin-bottom: 10px;
 					display: flex;
 					box-shadow: -2px -2px 5px #ffffff, 2px 2px 5px #b4b4b4;
 					border-radius: 7px;
 					overflow: hidden;
+					
 
 					.pic {
 						width: auto;
