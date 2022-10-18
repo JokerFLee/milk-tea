@@ -98,17 +98,33 @@
 
 			<div class="marea">
 				<div class="detail" @scroll.native="scrollFun" ref="scrollInstance">
+
 					<div class="milktea" v-for="mk in allproducts" ref="scrollHeights">
 
 						<div class="pic">
 							<img :src="mk.picurl">
 							<span class="sp1" v-show="mk.tips != ''&& mk.tips != 'null'">{{ mk.tips }}</span>
 							<span class="sp2">{{ mk.price }}</span>
+
 						</div>
 
 						<div class="intro">
-							<h3>{{ mk.name }}</h3>
-							<span> {{ mk.intro }}</span>
+							<div class="realintro">
+								<h3>{{ mk.name }}</h3>
+								<span> {{ mk.intro }}</span>
+							</div>
+							<div class="value">
+								<div class="v1 v-c" v-if="mk.discount == 1">
+									<span>现价:{{ mk.price }}</span>
+								</div>
+
+								<div class="v2 v-c" v-else>
+									<span> 原价: <del>{{mk.price}}¥</del> </span>
+									<span> 折扣:{{mk.discount}}</span>
+									<span> 现价:<b style="color: green">{{ (mk.price*mk.discount).toFixed(2)}}¥</b></span>
+								</div>
+
+							</div>
 						</div>
 
 						<div class="option" v-if="!mk.soldout">
@@ -155,7 +171,9 @@ let noml = ref("25%")
 let cny = ref(0)
 let barColorStyle = ref([])
 let scrollHeights = ref(0)
+let scrollbase = ref("")
 let stgrp = ref(["mst first-one", "mst second", "mst third", "mst fouth"])
+
 let mtinfo = ref([])
 let seriesCount = ref([])
 let distanceList = ref([])
@@ -164,11 +182,13 @@ let loader = ref(true)
 let masu = ref([])
 
 function initMap() {
+
 	for (let index = 0; index < allproducts.value.length; index++) {
 		orderinfo.value.set(allproducts.value[index].guid, 0)
 		pricemap.value.set(allproducts.value[index].guid, allproducts.value[index].price)
 	}
 }
+
 
 function updateBarStyle(e) {
 	barColorStyle.value = []
@@ -218,6 +238,7 @@ function scrollFun(e) {
 	let moveDistance = e.srcElement.scrollTop//滑动距离
 	let ele_height = scrollHeights.value[0].offsetHeight
 
+
 	let tmp = moveDistance / (ele_height + 15)
 	let x = 0
 	for (let index = 0; index < distanceList.value.length; index++) {
@@ -233,8 +254,8 @@ function scrollFun(e) {
 	}
 	updateBarStyle(x)
 
-}
 
+}
 
 function initPage() {
 	getallseries().then((e) => {
@@ -243,6 +264,7 @@ function initPage() {
 			tmp.push(x.name)
 		});
 		mtinfo.value = tmp
+
 		updateBarStyle(0)
 		initDistanceList()
 	})
@@ -568,7 +590,6 @@ onUnmounted(() => {
 			margin-left: v-bind(noml);
 			display: flex;
 			justify-content: center;
-
 			::-webkit-scrollbar {
 				display: block;
 				// opacity: 1;
@@ -594,8 +615,7 @@ onUnmounted(() => {
 					margin-bottom: 10px;
 					display: flex;
 					box-shadow: -2px -2px 5px #ffffff, 2px 2px 5px #b4b4b4;
-					border-radius: 7px;
-					overflow: hidden;
+					border-radius: 10px;
 
 
 					.pic {
@@ -613,10 +633,12 @@ onUnmounted(() => {
 							width: 100%;
 							height: 100%;
 							object-fit: cover;
+							border-radius: 10px 0 0 10px;
 						}
 
 						.sp1 {
 							position: absolute;
+
 							padding: 2px;
 							top: 2px;
 							left: 2px;
@@ -654,21 +676,60 @@ onUnmounted(() => {
 						align-items: center;
 						justify-content: space-around;
 						padding-left: 10px;
-						flex-direction: column;
+						flex-direction: row;
 
-						h3 {
-							margin: 3px 0 3px 0;
-							font-family: kkt;
+						.realintro {
+							width: 85%;
+							height: 100%;
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							flex-direction: column;
+
+							h3 {
+								margin: 3px 0 3px 0;
+								font-family: kkt;
+							}
+
+							span {
+								display: -webkit-box;
+								-webkit-line-clamp: 2;
+								-webkit-box-orient: vertical;
+								overflow: hidden;
+								font-size: smaller;
+								font-weight: lighter;
+							}
 						}
 
-						span {
-							display: -webkit-box;
-							-webkit-line-clamp: 2;
-							-webkit-box-orient: vertical;
-							overflow: hidden;
-							font-size: small;
-							font-weight: 200;
+						.value {
+							width: 15%;
+							height: 100%;
+
+							.v-c {
+								width: 100%;
+								height: 100%;
+								display: flex;
+								flex-direction: column;
+								flex-wrap: nowrap;
+								font-size: smaller;
+							}
+
+							.v1 {
+								display: flex;
+								align-items: flex-start;
+								justify-content: center;
+							}
+
+							.v2 {
+								display: flex;
+								align-items: flex-start;
+								justify-content: space-evenly;
+
+							}
 						}
+
+
+
 					}
 
 					.option {

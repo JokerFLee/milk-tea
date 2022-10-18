@@ -48,7 +48,7 @@
 				<div class="col">
 					<span>*图片:</span>
 					<div class="mobo">
-						<input type="file" class="ipt"
+						<input type="file" class="ipt" ref="x_file"
 							accept="image/jpg,image/JPG,image/jpeg,image/JPEG,image/png,image/PNG,image/gif" single
 							@change="selectImg">
 						<img :src="local_pic_url" v-show="local_pic_url">
@@ -76,6 +76,7 @@ let uri = ref('')
 let intro = ref("")
 let mk_series = ref("")
 let local_pic_url = ref("")
+let x_file = ref([])
 
 let seriesList = ref("")
 let tipsList = ref("")
@@ -110,13 +111,14 @@ function submitthis() {
 	if (name.value != null && price.value != null &&  mk_series != null && intro != null && uri.value != null) {
 		axmtpost(data).then((e) => {
 			if (e == 1) {
-				name.value = ""
-				price.value = ""
-				mk_tips.value = ""
-				uri.value = ""
-				intro.value = ""
-				mk_series.value = ""
-				local_pic_url.value = ""
+				name.value = null
+				price.value = null
+				mk_tips.value = null
+				uri.value = null
+				intro.value = null
+				mk_series.value = null
+				local_pic_url.value = null
+				x_file.value.value = null
 			} else {
 				alert("添加失败")
 			}
@@ -217,6 +219,7 @@ function checkName() {
 
 					select {
 						width: 100%;
+						height: 30px;
 						min-width: 90%;
 						min-height: 30px;
 						text-align: center;

@@ -27,7 +27,7 @@ function getMilkteaByName(name) {
 }
 
 
-function getMilkteaByGyid(guid) {
+function getMilkteaByGuid(guid) {
 	const ax = axios({
 		url: "http://mt.ip.jokeme.top:6280/getmilkteabyid",
 		method: "get",
@@ -39,6 +39,7 @@ function getMilkteaByGyid(guid) {
 	})
 	return ax
 }
+
 
 function getMilkteaCount() {
 	const ax = axios({
@@ -59,7 +60,5 @@ function getDescMilkteaList() {
 	})
 	return ax
 }
-
-
 
 export {getmilktealist,getMilkteaByGyid,getMilkteaByName,getDescMilkteaList,getMilkteaCount}
