@@ -1,7 +1,26 @@
 <template>
+	<div class="loader" v-show="loader">
+		<div class="loader-inner">
+			<div class="loader-line-wrap">
+				<div class="loader-line"></div>
+			</div>
+			<div class="loader-line-wrap">
+				<div class="loader-line"></div>
+			</div>
+			<div class="loader-line-wrap">
+				<div class="loader-line"></div>
+			</div>
+			<div class="loader-line-wrap">
+				<div class="loader-line"></div>
+			</div>
+			<div class="loader-line-wrap">
+				<div class="loader-line"></div>
+			</div>
+		</div>
+	</div>
 	<div class="oops">
 
-		<div class="first">
+		<div class="first" v-show="masu[0]">
 
 			<div class="topbar">
 				<div class="left com" @click="toleft"></div>
@@ -78,13 +97,17 @@
 			</div>
 
 			<div class="marea">
-				<div class="detail" @scroll.native="scrollFun" ref="scrollbase">
+				<div class="detail" @scroll.native="scrollFun" ref="scrollInstance">
+
 					<div class="milktea" v-for="mk in allproducts" ref="scrollHeights">
+
 						<div class="pic">
 							<img :src="mk.picurl">
-							<span class="sp1" v-show="mk.tips != ''">{{ mk.tips }}</span>
+							<span class="sp1" v-show="mk.tips != ''&& mk.tips != 'null'">{{ mk.tips }}</span>
+							<span class="sp2">{{ mk.price }}</span>
 
 						</div>
+
 						<div class="intro">
 							<div class="realintro">
 								<h3>{{ mk.name }}</h3>
@@ -103,11 +126,16 @@
 
 							</div>
 						</div>
-						<div class="option">
-							<div class="oks plus" @click="add2car(mk)">+</div>
-							<div class="oks num">{{ orderinfo.get(mk) }}</div>
-							<div class="oks reduce" @click="changeinfo(mk)">-</div>
+
+						<div class="option" v-if="!mk.soldout">
+							<div class="oks plus" @click="add2car(mk.guid)">+</div>
+							<div class="oks num">{{ orderinfo.get(mk.guid) }}</div>
+							<div class="oks reduce" @click="removeFromCar(mk.guid)">-</div>
 						</div>
+						<div class="option" v-else>
+							<div class="oks" style="color: #f88;">售罄</div>
+						</div>
+
 					</div>
 				</div>
 			</div>
@@ -127,13 +155,17 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, reactive, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 import { getallseries } from "../utils/series/axgetseries"
-import { getDescMilkteaList, getMilkteaCount } from "../utils/milktee/axgetamilktea"
+import { getmilktealist, getMilkteaCount, getDescMilkteaList } from "../utils/milktee/axgetamilktea"
+
+let orderMap = new Map()
+let priceMap = new Map()
 
 let allproducts = ref([])
-let orderinfo = reactive(new Map())
+let orderinfo = ref(orderMap)
+let pricemap = ref(priceMap)
 let nowidth = ref("100%")
 let noml = ref("25%")
 let cny = ref(0)
@@ -141,93 +173,89 @@ let barColorStyle = ref([])
 let scrollHeights = ref(0)
 let scrollbase = ref("")
 let stgrp = ref(["mst first-one", "mst second", "mst third", "mst fouth"])
-let milkteaCount = ref("")
-let mtinfo = ref([])
-let masu = ref([
-	{ "name": "手剥葡萄", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk1.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
-	{ "name": "爽口雪梨", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk2.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
-	{ "name": "冰雪荔枝", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk3.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
-	{ "name": "菠萝吹雪", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk4.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "最热" }
-])
 
-function makemap() {
+let mtinfo = ref([])
+let seriesCount = ref([])
+let distanceList = ref([])
+let scrollInstance = ref(0)
+let loader = ref(true)
+let masu = ref([])
+
+function initMap() {
+
 	for (let index = 0; index < allproducts.value.length; index++) {
-		orderinfo.set(allproducts.value[index], 0)
+		orderinfo.value.set(allproducts.value[index].guid, 0)
+		pricemap.value.set(allproducts.value[index].guid, allproducts.value[index].price)
 	}
 }
 
-function gotodetail(e) {
-	let ele_height = scrollHeights.value[0].offsetHeight
-	let scroll_distance = 0
-	for (let x = 0; x < e; x++) {
-		scroll_distance += (ele_height + 15) * milkteaCount.value[x][1]
+
+function updateBarStyle(e) {
+	barColorStyle.value = []
+	if (e != null) {
+		for (let index = 0; index < mtinfo.value.length; index++) {
+			if (index == e) {
+				barColorStyle.value.push("sidebar bar_active")
+			} else {
+				barColorStyle.value.push("sidebar")
+			}
+		}
+	} else {
+		for (let index = 0; index < mtinfo.value.length; index++) {
+			barColorStyle.value.push("sidebar")
+		}
 	}
-	scrollbase.value.scrollTop = scroll_distance
-	scrollbase.value.scrollTo({
-		top: scroll_distance,
+}
+
+function initDistanceList() {
+	let selist = []
+	let tmp = 0
+	for (const er of mtinfo.value) {
+		tmp += seriesCount.value[er]
+		selist.push(tmp)
+	}
+	distanceList.value = selist
+}
+
+async function gotodetail(e) {
+	// 
+	let ele_height = scrollHeights.value[0].offsetHeight
+	// console.log(scrollInstance.value.scrollTop,e);
+	let height = 0
+	if (e != 0) {
+		height = (distanceList.value[e - 1] * (ele_height + 11))
+	}
+
+	scrollInstance.value.scrollTo({
+		top: height,
 		behavior: 'smooth'
+
 	})
-	setTimeout(() => {
-		changeBarStatus(e)
-	}, 400)
+	updateBarStyle(e)
 }
 
 function scrollFun(e) {
-
+	let moveDistance = e.srcElement.scrollTop//滑动距离
 	let ele_height = scrollHeights.value[0].offsetHeight
-	let Scroll_distance = e.srcElement.scrollTop
 
-	let tmp = []
-	let tmp_number = 0
 
-	for (let index = 0; index < milkteaCount.value.length; index++) {
-		let Target_distance = 0
-
+	let tmp = moveDistance / (ele_height + 15)
+	let x = 0
+	for (let index = 0; index < distanceList.value.length; index++) {
 		if (index == 0) {
-			const element = milkteaCount.value[index][1];
-			Target_distance = (ele_height + 15) * element - 5
-		} else {
-			const element = milkteaCount.value[index][1];
-			Target_distance = (ele_height + 15) * element
-		}
-		tmp_number += Target_distance
-		tmp.push(tmp_number)
-	}
-
-	for (let index = 0; index < tmp.length; index++) {
-
-		if (index == 0) {
-			if (Scroll_distance < tmp[0]) {
-				changeBarStatus(0)
+			if (tmp < distanceList.value[index]) {
+				x = index
 			}
 		} else {
-			if (Scroll_distance > tmp[index - 1] && Scroll_distance < tmp[index]) {
-				changeBarStatus(index)
+			if (tmp > distanceList.value[index - 1] && tmp < distanceList.value[index]) {
+				x = index
 			}
 		}
 	}
+	updateBarStyle(x)
+
 
 }
-
-function changeBarStatus(e) {
-	let x = barColorStyle.value.length
-	for (let tmp = 0; tmp < x; tmp++) {
-		barColorStyle.value[tmp] = "sidebar"
-	}
-	barColorStyle.value[e] = "sidebar bar_active"
-}
-
-
-onMounted(() => {
-	window.addEventListener('resize', () => itwid())
-	itwid()
-	initPage()
-
-})
-
-onUnmounted(() => {
-	window.removeEventListener('resize', () => itwid())
-})
 
 function initPage() {
 	getallseries().then((e) => {
@@ -236,42 +264,52 @@ function initPage() {
 			tmp.push(x.name)
 		});
 		mtinfo.value = tmp
-		for (let index = 0; index < mtinfo.value.length; index++) {
-			if (index == 0) {
-				barColorStyle.value.push("sidebar bar_active")
-			} else {
-				barColorStyle.value.push("sidebar")
-			}
-		}
-	})
 
+		updateBarStyle(0)
+		initDistanceList()
+	})
 	getDescMilkteaList().then((e) => {
-		console.log(e);
 		allproducts.value = e
-		makemap()
+		initMap()
+		setTimeout(() => {
+			loader.value = false
+		}, 700);
 	})
+}
 
+function add2car(e) {
+	orderinfo.value.set(e, orderinfo.value.get(e) + 1)
+	cny.value += pricemap.value.get(e)
+}
+
+function removeFromCar(e) {
+	if (orderinfo.value.get(e) > 0) {
+		orderinfo.value.set(e, orderinfo.value.get(e) - 1)
+		cny.value -= pricemap.value.get(e)
+	}
+}
+
+function countOfSeries() {
 	getMilkteaCount().then((e) => {
-		milkteaCount.value = Object.entries(e)
+		seriesCount.value = e
 	})
+}
+
+// 提交订单
+function submit() {
+	let list = []
+	const tmp = orderinfo.value.keys()
+	for (const i of tmp) {
+		if (orderinfo.value.get(i) != 0) {
+			list.push(new Map().set(i, orderinfo.value.get(i)))
+		}
+	}
+	console.log(list);
+	initMap()
+	cny.value = 0
 }
 
 // 监听侧边栏宽度。
-function itwid() {
-	{
-		let wd = document.body.clientWidth
-		if (wd <= 125 * 4) {
-			nowidth.value = (wd - 125) + "px"
-			noml.value = "125px"
-		} else if (wd > 200 * 4) {
-			nowidth.value = (wd - 200) + "px"
-			noml.value = "200px"
-		} else {
-			nowidth.value = wd * 0.75 + "px"
-			noml.value = (wd * 0.25) + "px"
-		}
-	}
-}
 
 const delay = (n) => new Promise(r => setTimeout(r, n * 1000));
 
@@ -300,24 +338,35 @@ async function toright() {
 	stgrp.value = ["mst first-one", "mst second", "mst third", "mst fouth"]
 }
 
-function add2car(e) {
-	orderinfo.set(e, orderinfo.get(e) + 1)
-	cny.value = cny.value + e.price
-}
-
-function changeinfo(e) {
-	if (orderinfo.get(e) > 0) {
-		orderinfo.set(e, orderinfo.get(e) - 1)
-		cny.value = cny.value - e.price
+function itwid() {
+	{
+		let wd = document.body.clientWidth
+		if (wd <= 125 * 4) {
+			nowidth.value = (wd - 125) + "px"
+			noml.value = "125px"
+		} else if (wd > 200 * 4) {
+			nowidth.value = (wd - 200) + "px"
+			noml.value = "200px"
+		} else {
+			nowidth.value = wd * 0.75 + "px"
+			noml.value = (wd * 0.25) + "px"
+		}
 	}
 }
 
-function submit(e) {
-	alert("支付成功")
-	console.log(orderinfo);
-	cny.value = 0
-	makemap()
-}
+onMounted(() => {
+	window.addEventListener('resize', () => itwid())
+	countOfSeries()
+	itwid()
+	initPage()
+	
+})
+
+onUnmounted(() => {
+	window.removeEventListener('resize', () => itwid())
+})
+
+
 
 </script>
 
@@ -334,8 +383,8 @@ function submit(e) {
 	.first {
 		width: 100%;
 		height: 15%;
-		// border-bottom: #444 solid 1px;
-		padding: 10px 0 10px 0;
+		min-height: 80px;
+		padding: 5px 0 5px 0;
 
 		.topbar {
 			width: 100%;
@@ -481,7 +530,7 @@ function submit(e) {
 
 	.last {
 		width: 100%;
-		height: 85%;
+		height: 100%;
 		position: relative;
 		display: flex;
 
@@ -496,7 +545,6 @@ function submit(e) {
 			align-items: center;
 			justify-content: flex-start;
 			overflow-y: auto;
-			padding-top: 10px;
 			position: absolute;
 
 			.sidebar {
@@ -542,44 +590,44 @@ function submit(e) {
 			margin-left: v-bind(noml);
 			display: flex;
 			justify-content: center;
-			padding-top: 10px;
-
-
 			::-webkit-scrollbar {
-				display: none;
+				display: block;
 				// opacity: 1;
 			}
 
 			.detail {
 				width: 95%;
 				height: 100%;
-				scrollbar-width: none; //firefox 不显示滚动块
+				// scrollbar-width: none; //firefox 不显示滚动块
 				overflow: auto;
 				padding: 0 5px 0 5px;
 				scroll-behavior: smooth;
 
-
-				div.milktea:last-child {
-					margin-bottom: 80px;
+				.milktea:last-child {
+					margin-bottom: 160px;
 				}
 
 				.milktea {
 					width: 100%;
 					height: 100%;
 					max-height: 120px;
-					margin-top: 5px;
-					margin-bottom: 15px;
+					margin-top: 10px;
+					margin-bottom: 10px;
 					display: flex;
 					box-shadow: -2px -2px 5px #ffffff, 2px 2px 5px #b4b4b4;
 					border-radius: 10px;
 
+
 					.pic {
-						width: 110px;
+						width: auto;
+						min-width: 90px;
 						height: 100%;
 						display: flex;
 						flex-direction: column;
 						flex-wrap: wrap;
 						position: relative;
+						border-right: #d3d3d3 solid 1px;
+						overflow: hidden;
 
 						img {
 							width: 100%;
@@ -590,16 +638,34 @@ function submit(e) {
 
 						.sp1 {
 							position: absolute;
-							padding: 1px;
+
+							padding: 2px;
 							top: 2px;
-							right: 0%;
+							left: 2px;
 							writing-mode: vertical-lr;
 							white-space: nowrap;
 							background-color: #8400ff;
-							border-radius: 15px;
+							border-radius: 7px;
 							font-size: smaller;
 							font-family: kkt;
 							color: white;
+						}
+
+						.sp2 {
+							width: 100%;
+							height: 35px;
+							text-align: center;
+							position: absolute;
+							bottom: 0px;
+							font-family: kkt;
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							backdrop-filter: blur(15px) hue-rotate(10deg);
+						}
+
+						.sp2::after {
+							content: "￥"
 						}
 					}
 
@@ -697,6 +763,7 @@ function submit(e) {
 							height: 100%
 						}
 					}
+
 
 				}
 			}
@@ -992,6 +1059,124 @@ function submit(e) {
 			margin-left: 1%;
 			opacity: 1;
 		}
+	}
+}
+
+.loader {
+	// background: #000;
+	// background: radial-gradient(#222, #000);
+	background-color: #00000033;
+	backdrop-filter: blur(10px) ;
+	bottom: 0;
+	left: 0;
+	overflow: hidden;
+	position: fixed;
+	right: 0;
+	top: 0;
+	z-index: 99999;
+}
+
+.loader-inner {
+	bottom: 0;
+	height: 60px;
+	left: 0;
+	margin: auto;
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 100px;
+}
+
+.loader-line-wrap {
+	animation:
+		spin 2000ms cubic-bezier(.175, .885, .32, 1.275) infinite;
+	box-sizing: border-box;
+	height: 50px;
+	left: 0;
+	overflow: hidden;
+	position: absolute;
+	top: 0;
+	transform-origin: 50% 100%;
+	width: 100px;
+}
+
+.loader-line {
+	border: 4px solid transparent;
+	border-radius: 100%;
+	box-sizing: border-box;
+	height: 100px;
+	left: 0;
+	margin: 0 auto;
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 100px;
+}
+
+.loader-line-wrap:nth-child(1) {
+	animation-delay: -50ms;
+}
+
+.loader-line-wrap:nth-child(2) {
+	animation-delay: -100ms;
+}
+
+.loader-line-wrap:nth-child(3) {
+	animation-delay: -150ms;
+}
+
+.loader-line-wrap:nth-child(4) {
+	animation-delay: -200ms;
+}
+
+.loader-line-wrap:nth-child(5) {
+	animation-delay: -250ms;
+}
+
+.loader-line-wrap:nth-child(1) .loader-line {
+	border-color: hsl(0, 80%, 60%);
+	height: 90px;
+	width: 90px;
+	top: 7px;
+}
+
+.loader-line-wrap:nth-child(2) .loader-line {
+	border-color: hsl(60, 80%, 60%);
+	height: 76px;
+	width: 76px;
+	top: 14px;
+}
+
+.loader-line-wrap:nth-child(3) .loader-line {
+	border-color: hsl(120, 80%, 60%);
+	height: 62px;
+	width: 62px;
+	top: 21px;
+}
+
+.loader-line-wrap:nth-child(4) .loader-line {
+	border-color: hsl(180, 80%, 60%);
+	height: 48px;
+	width: 48px;
+	top: 28px;
+}
+
+.loader-line-wrap:nth-child(5) .loader-line {
+	border-color: hsl(240, 80%, 60%);
+	height: 34px;
+	width: 34px;
+	top: 35px;
+}
+
+@keyframes spin {
+
+	0%,
+	15% {
+		transform: rotate(0);
+	}
+
+	100% {
+		transform: rotate(360deg);
 	}
 }
 </style>
