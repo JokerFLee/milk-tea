@@ -49,7 +49,7 @@
 				<div class="main_input">
 
 					<div class="ssbox">
-						<span>名称:</span> <label><input type="text" :value="itemdt.name"></label>
+						<span>名称:</span> <label><input type="text" v-model="itemdt.name"></label>
 					</div>
 
 					<div class="ssbox">
@@ -65,7 +65,7 @@
 					</div>
 
 					<div class="ssbox">
-						<span>介绍:</span> <label><input :value="itemdt.intro"></label>
+						<span>介绍:</span> <label><input v-model="itemdt.intro"></label>
 					</div>
 
 					<div class="ssbox">
@@ -80,6 +80,7 @@
 						<span>Series:</span>
 						<label>
 							<select v-model="itemdt.series" single>
+								<option disabled>请选择</option>
 								<option v-for="item in seriesList" :value="item.name">{{ item.name }}</option>
 							</select></label>
 					</div>
@@ -88,6 +89,7 @@
 						<span>Tips:</span>
 						<label>
 							<select v-model="itemdt.tips" single>
+								<option disabled>请选择</option>
 								<option v-for="item in tipsList" :value="item.name">{{ item.name }}</option>
 							</select></label>
 					</div>
