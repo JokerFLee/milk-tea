@@ -1,7 +1,7 @@
 <template>
 	<div class="oops">
 
-		<div class="first">
+		<div class="first" v-show="masu[0]">
 
 			<div class="topbar">
 				<div class="left com" @click="toleft"></div>
@@ -77,23 +77,30 @@
 				</template>
 			</div>
 
-			<div class="marea" >
+			<div class="marea">
 				<div class="detail" @scroll.native="scrollFun">
 					<div class="milktea" v-for="mk in allproducts" ref="scrollHeights">
+
 						<div class="pic">
 							<img :src="mk.picurl">
-							<span class="sp1" v-show="mk.topic != 'null'">{{ mk.topic }}</span>
+							<span class="sp1" v-show="mk.tips != ''">{{ mk.tips }}</span>
 							<span class="sp2">{{ mk.price }}</span>
 						</div>
+
 						<div class="intro">
 							<h3>{{ mk.name }}</h3>
 							<span> {{ mk.intro }}</span>
 						</div>
-						<div class="option">
-							<div class="oks plus" @click="add2car(mk)">+</div>
-							<div class="oks num">{{ orderinfo.get(mk) }}</div>
-							<div class="oks reduce" @click="changeinfo(mk)">-</div>
+
+						<div class="option" v-if="!mk.soldout">
+							<div class="oks plus" @click="add2car(mk.guid)">+</div>
+							<div class="oks num">{{ orderinfo.get(mk.guid) }}</div>
+							<div class="oks reduce" @click="removeFromCar(mk.guid)">-</div>
 						</div>
+						<div class="option" v-else>
+							<div class="oks" style="color: #f88;">售罄</div>
+						</div>
+
 					</div>
 				</div>
 			</div>
@@ -113,42 +120,62 @@
 </template>
 
 <script setup>
-import axios from 'axios';
-import { onMounted, onUnmounted, reactive, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 import { getallseries } from "../utils/series/axgetseries"
-import { getmilktealist} from "../utils/milktee/axgetamilktea"
+import { getmilktealist, getMilkteaCount, getDescMilkteaList } from "../utils/milktee/axgetamilktea"
 
+
+let orderMap = new Map()
+let priceMap = new Map()
 
 let allproducts = ref([])
-let orderinfo = reactive(new Map())
+let orderinfo = ref(orderMap)
+let pricemap = ref(priceMap)
 let nowidth = ref("100%")
 let noml = ref("25%")
 let cny = ref(0)
 let barColorStyle = ref([])
 let scrollHeights = ref(0)
 let stgrp = ref(["mst first-one", "mst second", "mst third", "mst fouth"])
+let mtinfo = ref([])
+let seriesCount = ref([])
+let distanceList = ref([])
 
-let mtinfo = ref([
-	"套餐推荐",
-	"最低折扣",
-	"甜点美食",
-	"mosaic下午茶",
-	"Florentia milk coffee",
-	"奶茶盲盒"
-])
+let masu = ref([])
 
-let masu = ref([
-	{ "name": "手剥葡萄", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk1.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
-	{ "name": "爽口雪梨", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk2.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
-	{ "name": "冰雪荔枝", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk3.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "新品" },
-	{ "name": "菠萝吹雪", "picurl": "http://192.168.1.7:8111/imgs/kwk/kwk4.png", "intro": "非常的好喝!QQ乜乜好喝到爆咩噗茶", "topic": "最热" }
-])
-
-function makemap() {
+function initMap() {
 	for (let index = 0; index < allproducts.value.length; index++) {
-		orderinfo.set(allproducts.value[index], 0)
+		orderinfo.value.set(allproducts.value[index].guid, 0)
+		pricemap.value.set(allproducts.value[index].guid, allproducts.value[index].price)
 	}
+}
+
+function updateBarStyle(e) {
+	barColorStyle.value = []
+	if (e != null) {
+		for (let index = 0; index < mtinfo.value.length; index++) {
+			if (index == e) {
+				barColorStyle.value.push("sidebar bar_active")
+			} else {
+				barColorStyle.value.push("sidebar")
+			}
+		}
+	} else {
+		for (let index = 0; index < mtinfo.value.length; index++) {
+			barColorStyle.value.push("sidebar")
+		}
+	}
+}
+
+function initDistanceList() {
+	let selist = []
+	let tmp = 0
+	for (const er of mtinfo.value) {
+		tmp += seriesCount.value[er]
+		selist.push(tmp)
+	}
+	distanceList.value = selist
 }
 
 function gotodetail(e) {
@@ -156,85 +183,79 @@ function gotodetail(e) {
 		barColorStyle.value[index] = "sidebar"
 	}
 	barColorStyle.value[e] = "sidebar bar_active"
-	// 跳转到指定地方,目前的打算是,在json里面添加type int类型,然后判断每个类型有多少个,因为每个item的高度固定,只需要用 {滑动固定长度 * 数量} 就可以实现滚动了
-	// barColorStyle.forEach(ele => {
-	// 	console.log(ele.toString());
-	// });
 }
 
-function scrollFun(e){
-	// console.log(e.srcElement.scrollTop);//滑动距离
+function scrollFun(e) {
+	let moveDistance = e.srcElement.scrollTop//滑动距离
 	let ele_height = scrollHeights.value[0].offsetHeight
-}
 
-function req(url, method) {
-	const ax = axios({
-		url: url,
-		method: method,
-		params: {
-			pk: "233",
-			sk: "yc9cbxyo7cs9ca6"
+	let tmp = moveDistance / (ele_height + 15)
+	let x = 0
+	for (let index = 0; index < distanceList.value.length; index++) {
+		if (index == 0) {
+			if (tmp < distanceList.value[index]) {
+				x = index
+			}
+		} else {
+			if (tmp > distanceList.value[index - 1] && tmp < distanceList.value[index]) {
+				x = index
+			}
 		}
-	}).then(res => {
-		return res.data
-	})
-	return ax
-}
-
-function packreq() {
-	let url = "src/assets/test.json";
-	let method = "get"
-	req(url, method).then((e) => {
-		allproducts.value = e.jsp[4];
-		makemap()
-	})
-}
-
-onMounted(() => {
-	packreq()
-	for (let index = 0; index < mtinfo.value.length; index++) {
-		barColorStyle.value.push("sidebar")
 	}
-	window.addEventListener('resize', () => itwid())
-	itwid()
-	initPage()
-})
+	updateBarStyle(x)
 
-onUnmounted(() => {
-	window.removeEventListener('resize', () => itwid())
-})
+}
 
 
-
-function initPage(){
-	getallseries().then((e)=>{
+function initPage() {
+	getallseries().then((e) => {
 		let tmp = []
 		e.forEach(x => {
 			tmp.push(x.name)
 		});
-		mtinfo.value=tmp
+		mtinfo.value = tmp
+		updateBarStyle(0)
+		initDistanceList()
 	})
-	getmilktealist().then((e)=>{
-		console.log(e);
+	getDescMilkteaList().then((e) => {
+		allproducts.value = e
+		initMap()
 	})
 }
 
-// 监听侧边栏宽度。
-function itwid() {
-	{
-		let wd = document.body.clientWidth
-		if (wd <= 125 * 4) {
-			nowidth.value = (wd - 125) + "px"
-			noml.value = "125px"
-		} else if (wd > 200 * 4) {
-			nowidth.value = (wd - 200) + "px"
-			noml.value = "200px"
-		} else {
-			nowidth.value = wd * 0.75 + "px"
-			noml.value = (wd * 0.25) + "px"
-		}
+function add2car(e) {
+	orderinfo.value.set(e, orderinfo.value.get(e) + 1)
+	cny.value += pricemap.value.get(e)
+}
+
+function removeFromCar(e) {
+	if (orderinfo.value.get(e) > 0) {
+		orderinfo.value.set(e, orderinfo.value.get(e) - 1)
+		cny.value -= pricemap.value.get(e)
 	}
 }
+
+function countOfSeries() {
+	getMilkteaCount().then((e) => {
+		seriesCount.value = e
+	})
+}
+
+// 提交订单
+function submit() {
+	let list = []
+	const tmp = orderinfo.value.keys()
+	for (const i of tmp) {
+		if (orderinfo.value.get(i) != 0) {
+			list.push(new Map().set(i, orderinfo.value.get(i)))
+		}
+	}
+	console.log(list);
+	initMap()
+	cny.value = 0
+}
+
+// 监听侧边栏宽度。
 
 const delay = (n) => new Promise(r => setTimeout(r, n * 1000));
 
@@ -263,24 +284,34 @@ async function toright() {
 	stgrp.value = ["mst first-one", "mst second", "mst third", "mst fouth"]
 }
 
-function add2car(e) {
-	orderinfo.set(e, orderinfo.get(e) + 1)
-	cny.value = cny.value + e.price
-}
-
-function changeinfo(e) {
-	if (orderinfo.get(e) > 0) {
-		orderinfo.set(e, orderinfo.get(e) - 1)
-		cny.value = cny.value - e.price
+function itwid() {
+	{
+		let wd = document.body.clientWidth
+		if (wd <= 125 * 4) {
+			nowidth.value = (wd - 125) + "px"
+			noml.value = "125px"
+		} else if (wd > 200 * 4) {
+			nowidth.value = (wd - 200) + "px"
+			noml.value = "200px"
+		} else {
+			nowidth.value = wd * 0.75 + "px"
+			noml.value = (wd * 0.25) + "px"
+		}
 	}
 }
 
-function submit(e) {
-	alert("支付成功")
-	console.log(orderinfo);
-	cny.value = 0
-	makemap()
-}
+onMounted(() => {
+	window.addEventListener('resize', () => itwid())
+	countOfSeries()
+	itwid()
+	initPage()
+})
+
+onUnmounted(() => {
+	window.removeEventListener('resize', () => itwid())
+})
+
+
 
 </script>
 
@@ -297,8 +328,8 @@ function submit(e) {
 	.first {
 		width: 100%;
 		height: 15%;
-		// border-bottom: #444 solid 1px;
-		padding: 10px 0 10px 0;
+		min-height: 80px;
+		padding: 5px 0 5px 0;
 
 		.topbar {
 			width: 100%;
@@ -444,7 +475,7 @@ function submit(e) {
 
 	.last {
 		width: 100%;
-		height: 85%;
+		height: 100%;
 		position: relative;
 		display: flex;
 
@@ -459,7 +490,7 @@ function submit(e) {
 			align-items: center;
 			justify-content: flex-start;
 			overflow-y: auto;
-			padding-top: 10px;
+			padding-top: 5px;
 			position: absolute;
 
 			.sidebar {
@@ -505,8 +536,8 @@ function submit(e) {
 			margin-left: v-bind(noml);
 			display: flex;
 			justify-content: center;
-			padding-top: 10px;
-			
+			padding-top: 5px;
+
 
 			::-webkit-scrollbar {
 				display: none;
@@ -519,10 +550,10 @@ function submit(e) {
 				scrollbar-width: none; //firefox 不显示滚动块
 				overflow: auto;
 				padding: 0 5px 0 5px;
-				
 
-				div.milktea:last-child {
-					margin-bottom: 80px;
+
+				.milktea:last-child {
+					margin-bottom: 160px;
 				}
 
 				.milktea {
@@ -537,12 +568,15 @@ function submit(e) {
 					overflow: hidden;
 
 					.pic {
-						width: 110px;
+						width: auto;
+						min-width: 90px;
 						height: 100%;
 						display: flex;
 						flex-direction: column;
 						flex-wrap: wrap;
 						position: relative;
+						border-right: #d3d3d3 solid 1px;
+						overflow: hidden;
 
 						img {
 							width: 100%;
@@ -552,33 +586,29 @@ function submit(e) {
 
 						.sp1 {
 							position: absolute;
-							padding: 5px;
-							top: 10px;
-							left: 70%;
+							padding: 2px;
+							top: 2px;
+							left: 2px;
 							writing-mode: vertical-lr;
 							white-space: nowrap;
 							background-color: #8400ff;
-							border-radius: 100%;
+							border-radius: 7px;
 							font-size: smaller;
 							font-family: kkt;
 							color: white;
 						}
 
 						.sp2 {
-							width: 30px;
-							height: 30px;
+							width: 100%;
+							height: 35px;
 							text-align: center;
 							position: absolute;
-							top: 10px;
-							left: 0%;
-							background-color: #000;
-							border-radius: 50%;
-							font-size: large;
+							bottom: 0px;
 							font-family: kkt;
-							color: #eee;
 							display: flex;
 							justify-content: center;
 							align-items: center;
+							backdrop-filter: blur(15px) hue-rotate(10deg);
 						}
 
 						.sp2::after {
@@ -641,6 +671,7 @@ function submit(e) {
 							height: 100%
 						}
 					}
+
 
 				}
 			}

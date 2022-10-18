@@ -40,4 +40,26 @@ function getMilkteaByGyid(guid) {
 	return ax
 }
 
-export {getmilktealist,getMilkteaByGyid,getMilkteaByName}
+function getMilkteaCount() {
+	const ax = axios({
+		url: "http://mt.ip.jokeme.top:6280/getmilkteacount",
+		method: "get",
+	}).then(res => {
+		return res.data
+	})
+	return ax
+}
+
+function getDescMilkteaList() {
+	const ax = axios({
+		url: "http://mt.ip.jokeme.top:6280/getdescmilktealist",
+		method: "get",
+	}).then(res => {
+		return res.data
+	})
+	return ax
+}
+
+
+
+export {getmilktealist,getMilkteaByGyid,getMilkteaByName,getDescMilkteaList,getMilkteaCount}
