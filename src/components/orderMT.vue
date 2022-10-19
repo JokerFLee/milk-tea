@@ -218,28 +218,30 @@ function initDistanceList() {
 }
 
 async function gotodetail(e) {
-	// 
 	let ele_height = scrollHeights.value[0].offsetHeight
-	// console.log(scrollInstance.value.scrollTop,e);
 	let height = 0
 	if (e != 0) {
-		height = (distanceList.value[e - 1] * (ele_height + 11))
+		height = (distanceList.value[e - 1]*(ele_height + 10))
+	}else{
+		height = 0
 	}
-
+	height+=10
+	// console.log(height);
 	scrollInstance.value.scrollTo({
 		top: height,
 		behavior: 'smooth'
-
 	})
-	updateBarStyle(e)
+
+	setTimeout(() => {
+		updateBarStyle(e)
+	}, 400)
 }
 
 function scrollFun(e) {
 	let moveDistance = e.srcElement.scrollTop//滑动距离
 	let ele_height = scrollHeights.value[0].offsetHeight
 
-
-	let tmp = moveDistance / (ele_height + 15)
+	let tmp = moveDistance / (ele_height + 10)
 	let x = 0
 	for (let index = 0; index < distanceList.value.length; index++) {
 		if (index == 0) {
@@ -253,8 +255,6 @@ function scrollFun(e) {
 		}
 	}
 	updateBarStyle(x)
-
-
 }
 
 function initPage() {
@@ -1065,7 +1065,7 @@ onUnmounted(() => {
 .loader {
 	// background: #000;
 	// background: radial-gradient(#222, #000);
-	background-color: #00000033;
+	background-color: #0000009d;
 	backdrop-filter: blur(10px) ;
 	bottom: 0;
 	left: 0;
