@@ -1,4 +1,5 @@
 <template>
+	<!-- 加载动画 -->
 	<div class="loader" v-show="loader">
 		<div class="loader-inner">
 			<div class="loader-line-wrap">
@@ -18,6 +19,7 @@
 			</div>
 		</div>
 	</div>
+	<!-- 页面主体部分 -->
 	<div class="oops">
 
 		<div class="first" v-show="masu[0]">
@@ -104,7 +106,7 @@
 						<div class="pic">
 							<img :src="mk.picurl">
 							<span class="sp1" v-show="mk.tips != ''&& mk.tips != 'null'">{{ mk.tips }}</span>
-							<span class="sp2">{{ mk.price }}</span>
+							<span class="sp2">{{ (mk.price*mk.discount).toFixed(2) }}</span>
 
 						</div>
 
@@ -115,13 +117,13 @@
 							</div>
 							<div class="value">
 								<div class="v1 v-c" v-if="mk.discount == 1">
-									<span>现价:{{ mk.price }}</span>
+									<span>现价：<b>{{ mk.price }}</b></span>
 								</div>
 
 								<div class="v2 v-c" v-else>
-									<span> 原价: <del>{{mk.price}}¥</del> </span>
-									<span> 折扣:{{mk.discount}}</span>
-									<span> 现价:<b style="color: green">{{ (mk.price*mk.discount).toFixed(2)}}¥</b></span>
+									<span> 原价：<del><b>{{mk.price}}¥</b></del> </span>
+									<span> 折扣：<b>{{mk.discount}}</b></span>
+									<span> 现价；<b style="color: green">{{ (mk.price*mk.discount).toFixed(2)}}¥</b></span>
 								</div>
 
 							</div>
@@ -152,13 +154,18 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- 弹出层 -->
+	<div class="opt">
+
+	</div>
 </template>
 
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
 
 import { getallseries } from "../utils/series/axgetseries"
-import { getmilktealist, getMilkteaCount, getDescMilkteaList } from "../utils/milktee/axgetamilktea"
+import { getMilkteaCount, getDescMilkteaList } from "../utils/milktee/axgetamilktea"
 
 let orderMap = new Map()
 let priceMap = new Map()
@@ -185,7 +192,7 @@ function initMap() {
 
 	for (let index = 0; index < allproducts.value.length; index++) {
 		orderinfo.value.set(allproducts.value[index].guid, 0)
-		pricemap.value.set(allproducts.value[index].guid, allproducts.value[index].price)
+		pricemap.value.set(allproducts.value[index].guid, (allproducts.value[index].price*allproducts.value[index].discount).toFixed(2) )
 	}
 }
 
@@ -279,7 +286,8 @@ function initPage() {
 
 function add2car(e) {
 	orderinfo.value.set(e, orderinfo.value.get(e) + 1)
-	cny.value += pricemap.value.get(e)
+	cny.value += pricemap.value.get(e)/1
+	cny.value=cny.value.toFixed(2)/1
 }
 
 function removeFromCar(e) {
@@ -1061,12 +1069,19 @@ onUnmounted(() => {
 		}
 	}
 }
+.opt{
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	backdrop-filter: blur(8px);
+	top: 0;
+	bottom: 0;
+	z-index: 100
 
+}
 .loader {
-	// background: #000;
-	// background: radial-gradient(#222, #000);
 	background-color: #0000009d;
-	backdrop-filter: blur(10px) ;
+	backdrop-filter: blur(15px) ;
 	bottom: 0;
 	left: 0;
 	overflow: hidden;
@@ -1074,9 +1089,8 @@ onUnmounted(() => {
 	right: 0;
 	top: 0;
 	z-index: 99999;
-}
 
-.loader-inner {
+	.loader-inner {
 	bottom: 0;
 	height: 60px;
 	left: 0;
@@ -1179,4 +1193,7 @@ onUnmounted(() => {
 		transform: rotate(360deg);
 	}
 }
+}
+
+
 </style>

@@ -46,6 +46,9 @@
 						<router-link to="/addsseriesortips">
 							<li>series&tips</li>
 						</router-link>
+						<router-link to="/milkteaDIY">
+							<li>奶茶个性化</li>
+						</router-link>
 						<router-link to="/orderOption">
 							<li>订单管理</li>
 						</router-link>
@@ -197,17 +200,6 @@ onMounted(() => {
 	font-style: normal;
 }
 
-::-webkit-scrollbar {
-	display: block;
-	width: 8px;
-	background: #ccc;
-}
-
-::-webkit-scrollbar-thumb {
-	background: #888;
-	border-radius: 7px;
-}
-
 .np {
 	width: 100%;
 	height: 100%;
@@ -223,6 +215,7 @@ onMounted(() => {
 		display: flex;
 		user-select: none;
 		background-color: #666;
+		color: #fff;
 
 		.out1div {
 			width: 10%;
@@ -245,8 +238,6 @@ onMounted(() => {
 			.name {
 				height: 100%;
 				width: 100%;
-				// color: #333;
-				color: #fff;
 				display: flex;
 				align-items: center;
 				padding-left: 10px;
@@ -257,7 +248,6 @@ onMounted(() => {
 		.navga {
 			width: 100%;
 			height: 100%;
-			color: #eee;
 			display: flex;
 			box-sizing: border-box;
 			padding: 1px;
@@ -358,7 +348,7 @@ onMounted(() => {
 			border-top: 1px solid #555;
 
 			.op1div-common:hover {
-				background: #555;
+				background: #484848;
 			}
 
 			.op1div-common {
