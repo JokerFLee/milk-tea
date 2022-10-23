@@ -46,6 +46,9 @@
 						<router-link to="/addsseriesortips">
 							<li>series&tips</li>
 						</router-link>
+						<router-link to="/milkteaDIY">
+							<li>奶茶个性化</li>
+						</router-link>
 						<router-link to="/orderOption">
 							<li>订单管理</li>
 						</router-link>
@@ -197,17 +200,6 @@ onMounted(() => {
 	font-style: normal;
 }
 
-::-webkit-scrollbar {
-	display: block;
-	width: 8px;
-	background: #ccc;
-}
-
-::-webkit-scrollbar-thumb {
-	background: #888;
-	border-radius: 7px;
-}
-
 .np {
 	width: 100%;
 	height: 100%;
@@ -222,7 +214,8 @@ onMounted(() => {
 		user-select: none;
 		display: flex;
 		user-select: none;
-		background-color: #ececec;
+		background-color: #666;
+		color: #fff;
 
 		.out1div {
 			width: 10%;
@@ -245,7 +238,6 @@ onMounted(() => {
 			.name {
 				height: 100%;
 				width: 100%;
-				color: #333;
 				display: flex;
 				align-items: center;
 				padding-left: 10px;
@@ -256,7 +248,6 @@ onMounted(() => {
 		.navga {
 			width: 100%;
 			height: 100%;
-			color: #333;
 			display: flex;
 			box-sizing: border-box;
 			padding: 1px;
@@ -351,42 +342,48 @@ onMounted(() => {
 			display: flex;
 			align-items: center;
 			flex-direction: column;
-			color: #000;
-			background: linear-gradient(to bottom, #f0e9e9, #588dff);
+			color: #eee;
+			background: #666;
 			user-select: none;
+			border-top: 1px solid #555;
 
+			.op1div-common:hover {
+				background: #484848;
+			}
 
 			.op1div-common {
 				width: 100%;
 				height: auto;
-				margin-top: 20px;
-				margin-bottom: 10px;
+				min-height: 50px;
+				// margin-top: 3px;
+				margin-bottom: 5px;
 
 				.op1div-title {
 					width: 90%;
+					min-height: 50px;
 					height: auto;
 					display: flex;
 					flex-direction: row;
 					flex-wrap: nowrap;
 					align-items: center;
 					margin-left: 5%;
-					padding: 5px 0 5px 0;
+					padding: 1px 0 1px 0;
 					font-family: kkt;
 
 					span {
-						height: 30px;
+						height: 40px;
 						width: 100%;
 						display: inline-block;
 						font-size: larger;
 						text-align: justify;
 						text-align-last: justify;
 						text-justify: inter-ideograph;
-						line-height: 30px;
+						line-height: 40px;
 					}
 
 					.image-common {
-						height: 30px;
-						width: 30px;
+						height: 35px;
+						width: 35px;
 						border-radius: 50%;
 						background-repeat: no-repeat;
 						background-position: 50% 50%;
@@ -433,7 +430,7 @@ onMounted(() => {
 						width: 100%;
 						display: block;
 						text-decoration: none;
-						color: #111;
+						color: #fff;
 					}
 
 					li {
@@ -451,8 +448,8 @@ onMounted(() => {
 					}
 
 					li:hover {
-						background: linear-gradient(to right, #98c8ff, #dec6ec);
-						color: #333;
+						// background: linear-gradient(to right, #98c8ff, #dec6ec);
+						background: #333;
 					}
 				}
 			}

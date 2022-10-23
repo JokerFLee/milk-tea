@@ -61,4 +61,4 @@ function getDescMilkteaList() {
 	return ax
 }
 
-export {getmilktealist,getMilkteaByGyid,getMilkteaByName,getDescMilkteaList,getMilkteaCount}
+export {getmilktealist,getMilkteaByGuid,getMilkteaByName,getDescMilkteaList,getMilkteaCount}

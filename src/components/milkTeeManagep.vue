@@ -237,11 +237,13 @@ function deleteMilkteaByGuid(params) {
 		user-select: none;
 		filter: blur(v-bind(blurSta));
 		position: relative;
+
 		.kwk {
 			// scrollbar-width: none; //firefox 不显示滚动块
 			width: 100%;
 			height: 100%;
 			overflow: overlay;
+
 
 			.jp {
 				width: 100%;
@@ -351,9 +353,6 @@ function deleteMilkteaByGuid(params) {
 					}
 				}
 			}
-
-
-
 		}
 	}
 
