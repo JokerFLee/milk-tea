@@ -6,6 +6,9 @@ export default defineConfig({
   plugins: [vue()],
   lintOnSave:false,
   server: { 
-    host: true,
+    host: "0.0.0.0",
+		port: 8080,
+		cors:false,
+		
   } 
 })

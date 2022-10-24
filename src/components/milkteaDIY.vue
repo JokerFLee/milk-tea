@@ -23,6 +23,30 @@
 
 		</div>
 	</div>
+
+
+	<div class="mask">
+		<div class="mask_main">
+			<div class="mask_card comm">
+
+				<div class="mask_card_item">
+					dlfhgkdfug
+				</div>
+
+				<div class="mask_card_button">
+					hosidkfhksduufgh
+				</div>
+
+			</div>
+
+			<div class="massk_preview comm">
+
+			</div>
+
+		</div>
+	</div>
+
+
 </template>
 
 <script setup>
@@ -44,6 +68,7 @@ onMounted(() => {
 	width: 100%;
 	height: 100%;
 	color: #111;
+	z-index: 0;
 
 	.diy_outbox {
 		width: 100%;
@@ -87,7 +112,7 @@ onMounted(() => {
 						align-items: center;
 						flex-direction: column;
 						backdrop-filter: blur(10px);
-
+						-webkit-backdrop-filter:blur(10px);
 						span {
 							width: 80%;
 						}
@@ -143,5 +168,56 @@ onMounted(() => {
 			}
 		}
 	}
+}
+
+.mask {
+	z-index: 100;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	backdrop-filter: blur(15px);
+	-webkit-backdrop-filter: blur(15px);
+	background: #4444446f;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+
+	.mask_main {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-evenly;
+		overflow: auto;
+
+		.comm {
+			min-width: 350px;
+			width: 90%;
+			height: 90%;
+			margin: 5px 15px;
+			flex: 1;
+		}
+
+		.mask_card {
+			background-color: bisque;
+
+			.mask_card_item {}
+
+
+			.mask_card_button {}
+
+		}
+
+		.massk_preview {
+			background-color: seagreen;
+
+		}
+	}
+
 }
 </style>
