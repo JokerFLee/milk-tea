@@ -599,8 +599,7 @@ onUnmounted(() => {
 			display: flex;
 			justify-content: center;
 			::-webkit-scrollbar {
-				display: block;
-				// opacity: 1;
+				display: none;//chrome不显示滚动块
 			}
 
 			.detail {
@@ -608,6 +607,7 @@ onUnmounted(() => {
 				height: 100%;
 				// scrollbar-width: none; //firefox 不显示滚动块
 				overflow: auto;
+				overflow-x: hidden;
 				padding: 0 5px 0 5px;
 				scroll-behavior: smooth;
 
@@ -1069,16 +1069,16 @@ onUnmounted(() => {
 		}
 	}
 }
-.opt{
-	width: 100%;
-	height: 100%;
-	position: fixed;
-	backdrop-filter: blur(8px);
-	top: 0;
-	bottom: 0;
-	z-index: 100
+// .opt{
+// 	width: 100%;
+// 	height: 100%;
+// 	position: fixed;
+// 	backdrop-filter: blur(8px);
+// 	top: 0;
+// 	bottom: 0;
+// 	z-index: 100
 
-}
+// }
 .loader {
 	background-color: #0000009d;
 	backdrop-filter: blur(15px) ;
