@@ -134,6 +134,7 @@ function printll() {
 function modifythis(e){
 	guid = e
 	mask.value = true
+	console.log(guid);
 }
 
 function updateDate(e) {

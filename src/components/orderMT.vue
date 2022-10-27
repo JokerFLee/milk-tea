@@ -105,8 +105,8 @@
 
 						<div class="pic">
 							<img :src="mk.picurl">
-							<span class="sp1" v-show="mk.tips != ''&& mk.tips != 'null'">{{ mk.tips }}</span>
-							<span class="sp2">{{ (mk.price*mk.discount).toFixed(2) }}</span>
+							<span class="sp1" v-show="mk.tips != '' && mk.tips != 'null'">{{ mk.tips }}</span>
+							<span class="sp2">{{ (mk.price * mk.discount).toFixed(2) }}</span>
 
 						</div>
 
@@ -121,9 +121,9 @@
 								</div>
 
 								<div class="v2 v-c" v-else>
-									<span> 原价：<del><b>{{mk.price}}¥</b></del> </span>
-									<span> 折扣：<b>{{mk.discount}}</b></span>
-									<span> 现价；<b style="color: green">{{ (mk.price*mk.discount).toFixed(2)}}¥</b></span>
+									<span> 原价：<del><b>{{ mk.price }}¥</b></del> </span>
+									<span> 折扣：<b>{{ mk.discount }}</b></span>
+									<span> 现价；<b style="color: green">{{ (mk.price * mk.discount).toFixed(2) }}¥</b></span>
 								</div>
 
 							</div>
@@ -178,7 +178,6 @@ let noml = ref("25%")
 let cny = ref(0)
 let barColorStyle = ref([])
 let scrollHeights = ref(0)
-let scrollbase = ref("")
 let stgrp = ref(["mst first-one", "mst second", "mst third", "mst fouth"])
 
 let mtinfo = ref([])
@@ -192,7 +191,7 @@ function initMap() {
 
 	for (let index = 0; index < allproducts.value.length; index++) {
 		orderinfo.value.set(allproducts.value[index].guid, 0)
-		pricemap.value.set(allproducts.value[index].guid, (allproducts.value[index].price*allproducts.value[index].discount).toFixed(2) )
+		pricemap.value.set(allproducts.value[index].guid, (allproducts.value[index].price * allproducts.value[index].discount).toFixed(2))
 	}
 }
 
@@ -228,11 +227,11 @@ async function gotodetail(e) {
 	let ele_height = scrollHeights.value[0].offsetHeight
 	let height = 0
 	if (e != 0) {
-		height = (distanceList.value[e - 1]*(ele_height + 10))
-	}else{
+		height = (distanceList.value[e - 1] * (ele_height + 10))
+	} else {
 		height = 0
 	}
-	height+=10
+	height += 10
 	// console.log(height);
 	scrollInstance.value.scrollTo({
 		top: height,
@@ -248,19 +247,22 @@ function scrollFun(e) {
 	let moveDistance = e.srcElement.scrollTop//滑动距离
 	let ele_height = scrollHeights.value[0].offsetHeight
 
-	let tmp = moveDistance / (ele_height + 10)
-	let x = 0
+	let x = null
+
+	let x_tmp = []
+
 	for (let index = 0; index < distanceList.value.length; index++) {
-		if (index == 0) {
-			if (tmp < distanceList.value[index]) {
-				x = index
-			}
-		} else {
-			if (tmp > distanceList.value[index - 1] && tmp < distanceList.value[index]) {
-				x = index
-			}
-		}
+		x_tmp.push(distanceList.value[index] * (ele_height + 10))
 	}
+	function compareNumbers(a, b) {
+		return a - b;
+	}
+
+	x_tmp.push(moveDistance)
+
+	x_tmp.sort(compareNumbers)
+
+	x=x_tmp.indexOf(moveDistance)
 	updateBarStyle(x)
 }
 
@@ -286,8 +288,8 @@ function initPage() {
 
 function add2car(e) {
 	orderinfo.value.set(e, orderinfo.value.get(e) + 1)
-	cny.value += pricemap.value.get(e)/1
-	cny.value=cny.value.toFixed(2)/1
+	cny.value += pricemap.value.get(e) / 1
+	cny.value = cny.value.toFixed(2) / 1
 }
 
 function removeFromCar(e) {
@@ -367,7 +369,7 @@ onMounted(() => {
 	countOfSeries()
 	itwid()
 	initPage()
-	
+
 })
 
 onUnmounted(() => {
@@ -598,8 +600,9 @@ onUnmounted(() => {
 			margin-left: v-bind(noml);
 			display: flex;
 			justify-content: center;
+
 			::-webkit-scrollbar {
-				display: none;//chrome不显示滚动块
+				display: none; //chrome不显示滚动块
 			}
 
 			.detail {
@@ -1069,6 +1072,7 @@ onUnmounted(() => {
 		}
 	}
 }
+
 // .opt{
 // 	width: 100%;
 // 	height: 100%;
@@ -1081,7 +1085,7 @@ onUnmounted(() => {
 // }
 .loader {
 	background-color: #0000009d;
-	backdrop-filter: blur(15px) ;
+	backdrop-filter: blur(15px);
 	bottom: 0;
 	left: 0;
 	overflow: hidden;
@@ -1091,109 +1095,107 @@ onUnmounted(() => {
 	z-index: 99999;
 
 	.loader-inner {
-	bottom: 0;
-	height: 60px;
-	left: 0;
-	margin: auto;
-	position: absolute;
-	right: 0;
-	top: 0;
-	width: 100px;
-}
-
-.loader-line-wrap {
-	animation:
-		spin 2000ms cubic-bezier(.175, .885, .32, 1.275) infinite;
-	box-sizing: border-box;
-	height: 50px;
-	left: 0;
-	overflow: hidden;
-	position: absolute;
-	top: 0;
-	transform-origin: 50% 100%;
-	width: 100px;
-}
-
-.loader-line {
-	border: 4px solid transparent;
-	border-radius: 100%;
-	box-sizing: border-box;
-	height: 100px;
-	left: 0;
-	margin: 0 auto;
-	position: absolute;
-	right: 0;
-	top: 0;
-	width: 100px;
-}
-
-.loader-line-wrap:nth-child(1) {
-	animation-delay: -50ms;
-}
-
-.loader-line-wrap:nth-child(2) {
-	animation-delay: -100ms;
-}
-
-.loader-line-wrap:nth-child(3) {
-	animation-delay: -150ms;
-}
-
-.loader-line-wrap:nth-child(4) {
-	animation-delay: -200ms;
-}
-
-.loader-line-wrap:nth-child(5) {
-	animation-delay: -250ms;
-}
-
-.loader-line-wrap:nth-child(1) .loader-line {
-	border-color: hsl(0, 80%, 60%);
-	height: 90px;
-	width: 90px;
-	top: 7px;
-}
-
-.loader-line-wrap:nth-child(2) .loader-line {
-	border-color: hsl(60, 80%, 60%);
-	height: 76px;
-	width: 76px;
-	top: 14px;
-}
-
-.loader-line-wrap:nth-child(3) .loader-line {
-	border-color: hsl(120, 80%, 60%);
-	height: 62px;
-	width: 62px;
-	top: 21px;
-}
-
-.loader-line-wrap:nth-child(4) .loader-line {
-	border-color: hsl(180, 80%, 60%);
-	height: 48px;
-	width: 48px;
-	top: 28px;
-}
-
-.loader-line-wrap:nth-child(5) .loader-line {
-	border-color: hsl(240, 80%, 60%);
-	height: 34px;
-	width: 34px;
-	top: 35px;
-}
-
-@keyframes spin {
-
-	0%,
-	15% {
-		transform: rotate(0);
+		bottom: 0;
+		height: 60px;
+		left: 0;
+		margin: auto;
+		position: absolute;
+		right: 0;
+		top: 0;
+		width: 100px;
 	}
 
-	100% {
-		transform: rotate(360deg);
+	.loader-line-wrap {
+		animation:
+			spin 2000ms cubic-bezier(.175, .885, .32, 1.275) infinite;
+		box-sizing: border-box;
+		height: 50px;
+		left: 0;
+		overflow: hidden;
+		position: absolute;
+		top: 0;
+		transform-origin: 50% 100%;
+		width: 100px;
+	}
+
+	.loader-line {
+		border: 4px solid transparent;
+		border-radius: 100%;
+		box-sizing: border-box;
+		height: 100px;
+		left: 0;
+		margin: 0 auto;
+		position: absolute;
+		right: 0;
+		top: 0;
+		width: 100px;
+	}
+
+	.loader-line-wrap:nth-child(1) {
+		animation-delay: -50ms;
+	}
+
+	.loader-line-wrap:nth-child(2) {
+		animation-delay: -100ms;
+	}
+
+	.loader-line-wrap:nth-child(3) {
+		animation-delay: -150ms;
+	}
+
+	.loader-line-wrap:nth-child(4) {
+		animation-delay: -200ms;
+	}
+
+	.loader-line-wrap:nth-child(5) {
+		animation-delay: -250ms;
+	}
+
+	.loader-line-wrap:nth-child(1) .loader-line {
+		border-color: hsl(0, 80%, 60%);
+		height: 90px;
+		width: 90px;
+		top: 7px;
+	}
+
+	.loader-line-wrap:nth-child(2) .loader-line {
+		border-color: hsl(60, 80%, 60%);
+		height: 76px;
+		width: 76px;
+		top: 14px;
+	}
+
+	.loader-line-wrap:nth-child(3) .loader-line {
+		border-color: hsl(120, 80%, 60%);
+		height: 62px;
+		width: 62px;
+		top: 21px;
+	}
+
+	.loader-line-wrap:nth-child(4) .loader-line {
+		border-color: hsl(180, 80%, 60%);
+		height: 48px;
+		width: 48px;
+		top: 28px;
+	}
+
+	.loader-line-wrap:nth-child(5) .loader-line {
+		border-color: hsl(240, 80%, 60%);
+		height: 34px;
+		width: 34px;
+		top: 35px;
+	}
+
+	@keyframes spin {
+
+		0%,
+		15% {
+			transform: rotate(0);
+		}
+
+		100% {
+			transform: rotate(360deg);
+		}
 	}
 }
-}
-
-
 </style>
