@@ -1,4 +1,7 @@
 <template>
+	
+	<loader v-show="loading" ></loader>
+
 	<div class="sabox">
 
 		<div class="op">
@@ -111,6 +114,7 @@
 		</div>
 
 	</div>
+
 </template>
 
 <script setup>
@@ -118,9 +122,12 @@ import { getmilktealist, getMilkteaByGuid } from "../utils/milktee/axgetamilktea
 import updateMilkteaByGuid from "../utils/milktee/axupdatemilktealist.js"
 import uploadpic from "../utils/milktee/uploadpic"
 import delmilkteabyguid from "../utils/milktee/axdeletemilktea"
-import { computed, onBeforeMount, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { getallseries } from "../utils/series/axgetseries"
 import { getalltips } from "../utils/tips/axgettips"
+import loader from "../tools/loader.vue"
+
+let loading = ref(true)
 
 let mask_state = ref(false)
 let blurSta = ref("0px")
@@ -148,11 +155,16 @@ watch(
 // 初始化sdata
 function getallmilktea() {
 	getmilktealist().then((e) => {
+		setTimeout(() => {
+		loading.value = false
+	}, 500);
 		sdata.value = e
 	})
 }
 
+
 function initPage() {
+
 	getallseries().then((e) => {
 		seriesList.value = e
 	})
@@ -161,7 +173,7 @@ function initPage() {
 	})
 }
 
-onBeforeMount(() => {
+onMounted(() => {
 	getallmilktea()
 })
 
@@ -172,7 +184,6 @@ function teadit(e) {
 	getMilkteaByGuid(e.guid).then((result) => {
 		itemdt.value = result
 	})
-
 	initPage()
 }
 
@@ -201,7 +212,6 @@ function disableMask(e) {
 			} else {
 				alert("修改失败！")
 			}
-
 		})
 	}
 	itemdt.value = ""
@@ -213,12 +223,7 @@ function deleteMilkteaByGuid(params) {
 		console.log(e);
 		getallmilktea()
 	})
-
-
 }
-
-
-
 
 </script>
 

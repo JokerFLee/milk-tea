@@ -8,8 +8,8 @@
 						<img :src="item.picurl">
 
 						<div class="info">
-							<span>{{item.name}}</span>
-							<span>{{(item.price * item.discount).toFixed(2)}}</span>
+							<span>{{ item.name }}</span>
+							<span>{{ (item.price * item.discount).toFixed(2) }}</span>
 						</div>
 
 						<div class="butt">
@@ -24,117 +24,176 @@
 		</div>
 	</div>
 
+	<loader v-show="loading"></loader>
 
 	<div class="mask" v-show="mask">
-		<div class="mask_main">
-			<div class="mask_card comm">
 
-				<div class="mask_card_item">
-					<div class="smell it-c">
-						<h2>味道</h2>
-						<input placeholder="例如：七分甜 五分甜" @focusout="updateDate(0)" @keyup="updateDate(0)" v-model="diyParams[0]">
-					</div>
-					<div class="temperature it-c">
-						<h2>温度</h2>
-						<input placeholder="例如：常温 冰镇 去冰" @focusout="updateDate(1)" @keyup="updateDate(1)" v-model="diyParams[1]">
-					</div>
-					<div class="content it-c">
-						<h2>加料</h2>
-						<input placeholder="例如：加芋泥 加葡萄" @focusout="updateDate(2)" @keyup="updateDate(2)" v-model="diyParams[2]">
+		<div class="flo">
+			<notifi v-show="shownoti">{{ msg }}</notifi>
+		</div>
+
+		<div class="cor">
+			<div class="mask_main">
+				<div class="mask_card comm">
+
+					<div class="mask_card_item">
+						<div class="smell it-c">
+							<h2>味道</h2>
+							<input placeholder="例如：七分甜 五分甜" @focusout="updateDate(0)" @keyup="updateDate(0)" v-model="diyParams[0]">
+						</div>
+						<div class="temperature it-c">
+							<h2>温度</h2>
+							<input placeholder="例如：常温 冰镇 去冰" @focusout="updateDate(1)" @keyup="updateDate(1)" v-model="diyParams[1]">
+						</div>
+						<div class="content it-c">
+							<h2>加料</h2>
+							<input placeholder="例如：加芋泥 加葡萄" @focusout="updateDate(2)" @keyup="updateDate(2)" v-model="diyParams[2]">
+						</div>
+
+						<div class="other it-c">
+							<h2>其他</h2>
+							<input placeholder="例如：风味" v-model="diyParams[3]">
+							<input placeholder="例如： Florence Москва" @focusout="updateDate(4)" @keyup="updateDate(4)"
+								v-model="diyParams[4]">
+						</div>
+
+						<span class="note">备注：内容用空格隔开，为空就不显示</span>
+
 					</div>
 
-					<div class="other it-c">
-						<h2>其他</h2>
-						<input placeholder="例如：风味" v-model="diyParams[3]">
-						<input placeholder="例如： Florence Москва" @focusout="updateDate(4)" @keyup="updateDate(4)"
-							v-model="diyParams[4]">
+					<div class="mask_card_button">
+						<button @click="setDefault">默认设置</button>
+						<button @click="commitModify">提交</button>
+						<button @click="cancel">取消</button>
 					</div>
-
-					<span class="note">备注：内容用空格隔开，为空就不显示</span>
 
 				</div>
 
-				<div class="mask_card_button">
-					<button @click="setDefault">默认设置</button>
-					<button @click="printll">提交</button>
-					<button @click="cancel">取消</button>
-				</div>
+				<div class="mask_preview comm">
+					<div class="maskbox">
+						<div class="head">
+							<h2>Preview</h2>
+						</div>
+						<div class="body">
+							<div class="container">
 
-			</div>
-
-			<div class="mask_preview comm">
-				<div class="maskbox">
-					<div class="head">
-						<h2>Preview</h2>
-					</div>
-					<div class="body">
-						<div class="container">
-
-							<div class="comment" v-show="diyParams[0]">
-								<div class="title">
-									<h2>味道</h2>
+								<div class="comment" v-show="diyParams[0]">
+									<div class="title">
+										<h2>味道</h2>
+									</div>
+									<div class="content">
+										<span v-for="it in diyParamsList[0]">{{ it }}</span>
+									</div>
 								</div>
-								<div class="content">
-									<span v-for="it in diyParamsList[0]">{{it}}</span>
+
+								<div class="comment" v-show="diyParams[1]">
+									<div class="title">
+										<h2>温度</h2>
+									</div>
+									<div class="content">
+										<span v-for="it in diyParamsList[1]">{{ it }} </span>
+									</div>
 								</div>
+
+								<div class="comment" v-show="diyParams[2]">
+									<div class="title">
+										<h2>加料</h2>
+									</div>
+									<div class="content">
+										<span v-for="it in diyParamsList[2]">{{ it }}</span>
+									</div>
+								</div>
+
+								<div class="comment" v-show="diyParams[3] || diyParams[4]">
+									<div class="title">
+										<h2>{{ diyParams[3] }}</h2>
+									</div>
+									<div class="content">
+										<span v-for="it in diyParamsList[3]">{{ it }}</span>
+									</div>
+								</div>
+
 							</div>
-
-							<div class="comment" v-show="diyParams[1]">
-								<div class="title">
-									<h2>温度</h2>
-								</div>
-								<div class="content">
-									<span v-for="it in diyParamsList[1]">{{ it }} </span>
-								</div>  
-							</div>
-
-							<div class="comment" v-show="diyParams[2]">
-								<div class="title">
-									<h2>加料</h2>
-								</div>
-								<div class="content">
-									<span v-for="it in diyParamsList[2]">{{ it }}</span>
-								</div>
-							</div>
-
-							<div class="comment" v-show="diyParams[3] || diyParams[4]">
-								<div class="title">
-									<h2>{{diyParams[3]}}</h2>
-								</div>
-								<div class="content">
-									<span v-for="it in diyParamsList[3]">{{it}}</span>
-								</div>
-							</div>
-
 						</div>
 					</div>
 				</div>
-			</div>
 
+			</div>
 		</div>
+
 	</div>
 
 
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, provide, ref } from "vue";
 import { getDescMilkteaList } from "../utils/milktee/axgetamilktea"
+import { modifymilkteadiy, getdiyinfobyguid } from "../utils/milktee/modifymilkteadiy";
+import notifi from "../tools/notifi.vue";
+import loader from "../tools/loader.vue"
 
+let loading = ref (true)
 let main_milktlist = ref([])
 let mask = ref(false)
 let guid = ""
 let diyParams = ref([])
-let diyParamsList = ref([[],[],[],[]])
+let diyParamsList = ref([[], [], [], []])
+let shownoti = ref(false)
 
-function printll() {
-	console.log(diyParamsList.value);
-}
+let type = ref("")
+let msg = ref("")
 
-function modifythis(e){
+provide("type", type)
+
+
+function modifythis(e) {
 	guid = e
 	mask.value = true
-	console.log(guid);
+	getdiyinfobyguid(guid).then((e) => {
+		if (e != null || e != NaN) {
+			diyParams.value[0] = e.smell
+			diyParams.value[1] = e.temperature
+			diyParams.value[2] = e.content
+			diyParams.value[3] = e.other_name
+			diyParams.value[4] = e.other
+			updateDate(0)
+			updateDate(1)
+			updateDate(2)
+			updateDate(4)
+		}
+
+	})
+}
+
+function commitModify() {
+	let tmp = { "guid": guid, "smell": diyParams.value[0], "temperature": diyParams.value[1], "content": diyParams.value[2] }
+	if (diyParams.value[3] != null && diyParams.value[3] != "" && diyParams.value[4] != null && diyParams.value[4] != "") {
+		tmp.other_name = diyParams.value[3]
+		tmp.other = diyParams.value[4]
+	} else {
+		tmp.other_name = ""
+		tmp.other = ""
+	}
+	modifymilkteadiy(tmp).then((e) => {
+		if (e != "error") {
+			type.value = "success"
+			msg.value = "提交成功！"
+			shownoti.value = true
+			setTimeout(() => {
+				shownoti.value = false
+			}, 700);
+		} else {
+			type.value = "error"
+			msg.value = "提交失败！"
+			shownoti.value = true
+			setTimeout(() => {
+				shownoti.value = false
+			}, 700);
+		}
+		
+	})
+
 }
 
 function updateDate(e) {
@@ -152,10 +211,9 @@ function updateDate(e) {
 			diyParamsList.value[3] = diyParams.value[4].split(' ')
 			break
 	}
-
 }
 
-function setDefault(){
+function setDefault() {
 	let smell = "七分甜 五分甜 三分甜 不甜"
 	let temperature = "加热 常温 冰镇"
 	let food = "椰果 珍珠 西柚 芋泥 米麻薯 冰粉 晶球"
@@ -167,13 +225,19 @@ function setDefault(){
 	updateDate(2)
 }
 
-function cancel(){
+function cancel() {
 	mask.value = false
 }
 
 onMounted(() => {
 	getDescMilkteaList().then((e) => {
-		main_milktlist.value = e
+		if (e!="error") {
+			main_milktlist.value = e
+			setTimeout(() => {
+				loading.value = false
+			}, 500);
+		}
+		
 	})
 })
 </script>
@@ -199,16 +263,16 @@ onMounted(() => {
 			min-height: 95%;
 			height: 95%;
 			padding: 5px 0;
-			
+
 
 			.card_box {
 				width: auto;
 				height: auto;
 				display: flex;
-				justify-content: center;
+				justify-content: space-between;
 				flex-wrap: wrap;
 				padding-bottom: 2.5%;
-				
+
 
 				.card_item {
 					height: auto;
@@ -219,7 +283,7 @@ onMounted(() => {
 					border-radius: 8px;
 					overflow: hidden;
 					position: relative;
-					box-shadow: 2px 2px 3px #ddd,-2px -2px 3px #eee;
+					box-shadow: 2px 2px 3px #ddd, -2px -2px 3px #eee;
 
 					.info {
 						width: 40%;
@@ -275,7 +339,7 @@ onMounted(() => {
 							background-color: rgba(255, 255, 255, 0);
 							backdrop-filter: blur(10px);
 							-webkit-backdrop-filter: blur(10px);
-							box-shadow: 2px 2px 3px #ccc,-2px -2px 3px #eee;
+							box-shadow: 2px 2px 3px #ccc, -2px -2px 3px #eee;
 							color: #444;
 							font-weight: bold;
 							cursor: pointer;
@@ -284,7 +348,7 @@ onMounted(() => {
 						}
 
 						:hover {
-							background: #444444bf;
+							background: #582aee;
 							color: #fff;
 						}
 
@@ -305,10 +369,28 @@ onMounted(() => {
 	backdrop-filter: blur(15px);
 	-webkit-backdrop-filter: blur(15px);
 	background: #4444446f;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 
+
+	.flo {
+		position: absolute;
+		top: 20px;
+		right: 0;
+		width: 40%;
+		min-width: 150px;
+		max-width: 400px;
+		height: 80px;
+
+
+	}
+
+	.cor {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+	}
 
 	.mask_main {
 		width: 100%;
@@ -332,8 +414,8 @@ onMounted(() => {
 
 		.mask_card {
 			background-color: #eee;
-			
 			width: 60%;
+
 			.mask_card_item {
 				width: 100%;
 				height: 80%;
@@ -436,7 +518,7 @@ onMounted(() => {
 				display: flex;
 				flex-direction: column;
 				align-items: center;
-				
+
 
 				h2 {
 					margin: 0;
@@ -456,7 +538,7 @@ onMounted(() => {
 					width: 90%;
 					height: 90%;
 					border-radius: 8px;
-					box-shadow:2px 2px 3px #ccc,-2px -2px 3px #fff;
+					box-shadow: 2px 2px 3px #ccc, -2px -2px 3px #fff;
 
 
 					.container {
@@ -485,7 +567,8 @@ onMounted(() => {
 								display: flex;
 								justify-content: space-evenly;
 								margin-top: 5px;
-								span{
+
+								span {
 									width: 80px;
 									height: 40px;
 									margin: 0 2px;
@@ -496,12 +579,13 @@ onMounted(() => {
 									justify-content: center;
 									padding: 2px;
 									cursor: pointer;
-									box-shadow:2px 2px 3px #bbb,-2px -2px 3px #fff;
+									box-shadow: 2px 2px 3px #bbb, -2px -2px 3px #fff;
 								}
-								span:hover{
-										background: #582aee;
-										color: #fff;
-									}
+
+								span:hover {
+									background: #582aee;
+									color: #fff;
+								}
 							}
 						}
 					}

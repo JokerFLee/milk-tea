@@ -1,93 +1,9 @@
 <template>
 	<!-- 加载动画 -->
-	<div class="loader" v-show="loader">
-		<div class="loader-inner">
-			<div class="loader-line-wrap">
-				<div class="loader-line"></div>
-			</div>
-			<div class="loader-line-wrap">
-				<div class="loader-line"></div>
-			</div>
-			<div class="loader-line-wrap">
-				<div class="loader-line"></div>
-			</div>
-			<div class="loader-line-wrap">
-				<div class="loader-line"></div>
-			</div>
-			<div class="loader-line-wrap">
-				<div class="loader-line"></div>
-			</div>
-		</div>
-	</div>
+	<loader class="loading" v-show="loading"></loader>
+
 	<!-- 页面主体部分 -->
 	<div class="oops">
-
-		<div class="first" v-show="masu[0]">
-
-			<div class="topbar">
-				<div class="left com" @click="toleft"></div>
-
-				<div class="center">
-					<template v-for="(ms, index) in masu" :index=index>
-
-						<div :class="stgrp[0]" v-if="index == 0">
-							<div class="box">
-								<div class="pic">
-									<img :src=ms.picurl>
-									<span>{{ ms.topic }}</span>
-								</div>
-								<div class="info">
-									<div class="name">{{ ms.name }}</div>
-									<div class="intro">{{ ms.intro }}</div>
-								</div>
-							</div>
-						</div>
-
-						<div :class="stgrp[1]" v-else-if="index == 1">
-							<div class="box">
-								<div class="pic">
-									<img :src=ms.picurl>
-									<span>{{ ms.topic }}</span>
-								</div>
-								<div class="info">
-									<div class="name">{{ ms.name }}</div>
-									<div class="intro">{{ ms.intro }}</div>
-								</div>
-							</div>
-						</div>
-
-						<div :class="stgrp[2]" v-else-if="index == 2">
-							<div class="box">
-								<div class="pic">
-									<img :src=ms.picurl>
-									<span>{{ ms.topic }}</span>
-								</div>
-								<div class="info">
-									<div class="name">{{ ms.name }}</div>
-									<div class="intro">{{ ms.intro }}</div>
-								</div>
-							</div>
-						</div>
-
-						<div :class="stgrp[3]" v-else>
-							<div class="box">
-								<div class="pic">
-									<img :src=ms.picurl>
-									<span>{{ ms.topic }}</span>
-								</div>
-								<div class="info">
-									<div class="name">{{ ms.name }}</div>
-									<div class="intro">{{ ms.intro }}</div>
-								</div>
-							</div>
-						</div>
-
-					</template>
-				</div>
-				<div class="right com" @click="toright"></div>
-			</div>
-
-		</div>
 
 		<div class="last">
 			<div class="sidearea" @resize="itwid()">
@@ -166,6 +82,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 
 import { getallseries } from "../utils/series/axgetseries"
 import { getMilkteaCount, getDescMilkteaList } from "../utils/milktee/axgetamilktea"
+import loader from "../tools/loader.vue"
 
 let orderMap = new Map()
 let priceMap = new Map()
@@ -178,17 +95,15 @@ let noml = ref("25%")
 let cny = ref(0)
 let barColorStyle = ref([])
 let scrollHeights = ref(0)
-let stgrp = ref(["mst first-one", "mst second", "mst third", "mst fouth"])
 
 let mtinfo = ref([])
 let seriesCount = ref([])
 let distanceList = ref([])
 let scrollInstance = ref(0)
-let loader = ref(true)
-let masu = ref([])
+
+let loading = ref(true)
 
 function initMap() {
-
 	for (let index = 0; index < allproducts.value.length; index++) {
 		orderinfo.value.set(allproducts.value[index].guid, 0)
 		pricemap.value.set(allproducts.value[index].guid, (allproducts.value[index].price * allproducts.value[index].discount).toFixed(2))
@@ -223,7 +138,7 @@ function initDistanceList() {
 	distanceList.value = selist
 }
 
-async function gotodetail(e) {
+function gotodetail(e) {
 	let ele_height = scrollHeights.value[0].offsetHeight
 	let height = 0
 	if (e != 0) {
@@ -232,7 +147,6 @@ async function gotodetail(e) {
 		height = 0
 	}
 	height += 10
-	// console.log(height);
 	scrollInstance.value.scrollTo({
 		top: height,
 		behavior: 'smooth'
@@ -246,24 +160,16 @@ async function gotodetail(e) {
 function scrollFun(e) {
 	let moveDistance = e.srcElement.scrollTop//滑动距离
 	let ele_height = scrollHeights.value[0].offsetHeight
-
-	let x = null
-
 	let x_tmp = []
-
 	for (let index = 0; index < distanceList.value.length; index++) {
 		x_tmp.push(distanceList.value[index] * (ele_height + 10))
 	}
 	function compareNumbers(a, b) {
 		return a - b;
 	}
-
 	x_tmp.push(moveDistance)
-
 	x_tmp.sort(compareNumbers)
-
-	x=x_tmp.indexOf(moveDistance)
-	updateBarStyle(x)
+	updateBarStyle(x_tmp.indexOf(moveDistance))
 }
 
 function initPage() {
@@ -273,15 +179,16 @@ function initPage() {
 			tmp.push(x.name)
 		});
 		mtinfo.value = tmp
-
 		updateBarStyle(0)
-		initDistanceList()
+		setTimeout(() => {
+			initDistanceList()
+		}, 1);
 	})
 	getDescMilkteaList().then((e) => {
 		allproducts.value = e
 		initMap()
 		setTimeout(() => {
-			loader.value = false
+			loading.value = false
 		}, 700);
 	})
 }
@@ -320,34 +227,6 @@ function submit() {
 }
 
 // 监听侧边栏宽度。
-
-const delay = (n) => new Promise(r => setTimeout(r, n * 1000));
-
-async function toleft() {
-	stgrp.value = ["mst first-one l2n", "mst second c2l", "mst third r2c", "mst fouth n2r"]
-	await delay(1);
-	let tmp = []
-	for (let index = 1; index <= masu.value.length; index++) {
-		tmp[index - 1] = masu.value[index]
-	}
-	tmp[masu.value.length - 1] = masu.value[0]
-	masu.value = tmp
-
-	stgrp.value = ["mst first-one", "mst second", "mst third", "mst fouth"]
-}
-
-async function toright() {
-	stgrp.value = ["mst first-one l2c", "mst second c2r", "mst third r2n", "mst fouth n2l"]
-	await delay(1);
-	let tmp = []
-	tmp[0] = masu.value[masu.value.length - 1]
-	for (let index = 1; index < masu.value.length; index++) {
-		tmp[index] = masu.value[index - 1]
-	}
-	masu.value = tmp
-	stgrp.value = ["mst first-one", "mst second", "mst third", "mst fouth"]
-}
-
 function itwid() {
 	{
 		let wd = document.body.clientWidth
@@ -389,154 +268,6 @@ onUnmounted(() => {
 	user-select: none;
 	position: relative;
 	background-color: #ededed;
-
-	.first {
-		width: 100%;
-		height: 15%;
-		min-height: 80px;
-		padding: 5px 0 5px 0;
-
-		.topbar {
-			width: 100%;
-			height: 100%;
-			min-height: 80px;
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-
-			.com {
-				width: auto;
-				min-width: 30px;
-				height: 100%;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				background-position: 50% 50%;
-				background-repeat: no-repeat;
-				background-size: contain;
-				cursor: pointer;
-			}
-
-			.left {
-				background-image: url("../assets/left.svg");
-			}
-
-			.right {
-				background-image: url("../assets/right.svg");
-			}
-
-			.center {
-				width: 100%;
-				height: 100%;
-				display: flex;
-				align-items: center;
-				position: relative;
-
-				.first-one {
-					z-index: 0;
-					height: 80%;
-					width: 30%;
-					margin-left: 1%;
-					position: absolute;
-					left: 0;
-				}
-
-				.second {
-					z-index: 1;
-					width: 40%;
-					height: 100%;
-					position: absolute;
-					left: 30%;
-				}
-
-				.third {
-					z-index: 0;
-					height: 80%;
-					width: 30%;
-					margin-left: -1%;
-					position: absolute;
-					left: 70%;
-				}
-
-				.fouth {
-					z-index: 0;
-					height: 0;
-					width: 0;
-					position: absolute;
-					left: 100%;
-				}
-
-				.mst {
-					// background: #2aaaffe8;
-					background-color: rgba(237, 237, 237, 0.8);
-					border-radius: 7px;
-					color: rgb(0, 0, 0);
-					// box-sizing: border-box;
-					// border: 1px solid #000;
-					box-shadow: -2px -2px 5px #ccc, 2px 2px 5px #ccc;
-
-					.box {
-						width: 100%;
-						height: 100%;
-						overflow: hidden;
-						display: flex;
-
-						.pic {
-							width: 30%;
-							height: 100%;
-							position: relative;
-							max-width: 55px;
-
-							img {
-								width: 100%;
-								height: 100%;
-								object-fit: contain;
-							}
-
-							span {
-								position: absolute;
-								padding: 5px;
-								top: 5px;
-								left: 60%;
-								writing-mode: vertical-lr;
-								white-space: nowrap;
-								background-color: #fa5e2e;
-								border-radius: 50%;
-								font-size: smaller;
-								font-family: kkt;
-							}
-						}
-
-						.info {
-							width: 70%;
-							padding: 3px;
-							display: flex;
-							flex-direction: column;
-							align-items: center;
-							justify-content: space-evenly;
-
-							.name {
-								font-size: large;
-								font-weight: 600;
-								font-family: kkt;
-								text-align: center;
-							}
-
-							.intro {
-								display: -webkit-box;
-								-webkit-box-orient: vertical;
-								-webkit-line-clamp: 1;
-								overflow: hidden;
-								text-overflow: ellipsis;
-								font-size: small;
-								font-weight: 300;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
 
 	.last {
 		width: 100%;
@@ -854,223 +585,16 @@ onUnmounted(() => {
 		}
 
 	}
+}
 
-	.c2l {
-		animation-name: c2l;
-		animation-duration: 1s;
-		animation-fill-mode: forwards;
-	}
-
-	.c2r {
-		animation-name: c2r;
-		animation-duration: 1s;
-		animation-fill-mode: forwards;
-	}
-
-	.l2c {
-		animation-name: l2c;
-		animation-duration: 1s;
-		animation-fill-mode: forwards;
-	}
-
-	.r2c {
-		animation-name: r2c;
-		animation-duration: 1s;
-		animation-fill-mode: forwards;
-	}
-
-	.l2n {
-		animation-name: l2n;
-		animation-duration: 1s;
-		animation-fill-mode: forwards;
-	}
-
-	.n2r {
-		animation-name: n2r;
-		animation-duration: 1s;
-		animation-fill-mode: forwards;
-	}
-
-	.r2n {
-		animation-name: r2n;
-		animation-duration: 1s;
-		animation-fill-mode: forwards;
-	}
-
-	.n2l {
-		animation-name: n2l;
-		animation-duration: 1s;
-		animation-fill-mode: forwards;
-	}
-
-	@keyframes l2n {
-
-		50% {
-			height: 40%;
-			width: 15%;
-			left: 0%;
-			opacity: 0.5;
-			margin-left: 0;
-		}
-
-		to {
-			width: 0;
-			height: 0;
-			left: 0%;
-			opacity: 0;
-			margin-left: 0;
-		}
-	}
-
-	@keyframes l2c {
-		50% {
-			z-index: 0;
-			height: 90%;
-			width: 35%;
-			left: 15%;
-		}
-
-		to {
-			z-index: 1;
-			height: 100%;
-			width: 40%;
-			left: 30%;
-			margin-left: 0;
-		}
-	}
-
-	@keyframes c2l {
-		from {
-			z-index: 1;
-			left: 30%;
-		}
-
-		50% {
-			z-index: 0;
-			height: 90%;
-			width: 35%;
-			left: 15%;
-		}
-
-		to {
-			z-index: 0;
-			left: 0;
-			height: 80%;
-			width: 30%;
-			margin-left: 1%;
-		}
-	}
-
-	@keyframes c2r {
-
-		50% {
-			z-index: 0;
-			height: 90%;
-			width: 35%;
-			left: 55%;
-		}
-
-		to {
-			z-index: 0;
-			left: 70%;
-			height: 80%;
-			width: 30%;
-			margin-left: -1%;
-		}
-	}
-
-	@keyframes r2c {
-		50% {
-			z-index: 0;
-			height: 90%;
-			width: 35%;
-			left: 55%;
-		}
-
-		to {
-			z-index: 1;
-			height: 100%;
-			width: 40%;
-			left: 30%;
-			margin-left: 0;
-		}
-	}
-
-	@keyframes r2n {
-		50% {
-			z-index: 0;
-			height: 40%;
-			width: 15%;
-			left: 85%;
-			opacity: 0.5;
-		}
-
-		to {
-			z-index: 0;
-			height: 0%;
-			width: 0%;
-			left: 100%;
-			margin-left: 0;
-			opacity: 0;
-		}
-	}
-
-	@keyframes n2r {
-		from {
-			opacity: 0;
-		}
-
-		50% {
-			height: 40%;
-			width: 15%;
-			left: 85%;
-			opacity: 0.5;
-			margin-left: 0;
-			z-index: 0;
-		}
-
-		to {
-			height: 80%;
-			width: 30%;
-			z-index: 0;
-			left: 70%;
-			margin-left: -1%;
-			opacity: 1;
-		}
-
-
-	}
-
-	@keyframes n2l {
-		from {
-			opacity: 0;
-		}
-
-		25% {
-			height: 0;
-			width: 0;
-			left: 0%;
-			opacity: 0;
-		}
-
-		50% {
-			height: 40%;
-			width: 15%;
-			left: 0%;
-			z-index: 0;
-			opacity: 0.5;
-		}
-
-
-		to {
-			height: 80%;
-			width: 30%;
-			z-index: 0;
-			left: 0%;
-			margin-left: 1%;
-			opacity: 1;
-		}
-	}
+.loading {
+	right: 0;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	overflow: hidden;
+	position: fixed;
+	z-index: 99999;
 }
 
 // .opt{
@@ -1083,119 +607,4 @@ onUnmounted(() => {
 // 	z-index: 100
 
 // }
-.loader {
-	background-color: #0000009d;
-	backdrop-filter: blur(15px);
-	bottom: 0;
-	left: 0;
-	overflow: hidden;
-	position: fixed;
-	right: 0;
-	top: 0;
-	z-index: 99999;
-
-	.loader-inner {
-		bottom: 0;
-		height: 60px;
-		left: 0;
-		margin: auto;
-		position: absolute;
-		right: 0;
-		top: 0;
-		width: 100px;
-	}
-
-	.loader-line-wrap {
-		animation:
-			spin 2000ms cubic-bezier(.175, .885, .32, 1.275) infinite;
-		box-sizing: border-box;
-		height: 50px;
-		left: 0;
-		overflow: hidden;
-		position: absolute;
-		top: 0;
-		transform-origin: 50% 100%;
-		width: 100px;
-	}
-
-	.loader-line {
-		border: 4px solid transparent;
-		border-radius: 100%;
-		box-sizing: border-box;
-		height: 100px;
-		left: 0;
-		margin: 0 auto;
-		position: absolute;
-		right: 0;
-		top: 0;
-		width: 100px;
-	}
-
-	.loader-line-wrap:nth-child(1) {
-		animation-delay: -50ms;
-	}
-
-	.loader-line-wrap:nth-child(2) {
-		animation-delay: -100ms;
-	}
-
-	.loader-line-wrap:nth-child(3) {
-		animation-delay: -150ms;
-	}
-
-	.loader-line-wrap:nth-child(4) {
-		animation-delay: -200ms;
-	}
-
-	.loader-line-wrap:nth-child(5) {
-		animation-delay: -250ms;
-	}
-
-	.loader-line-wrap:nth-child(1) .loader-line {
-		border-color: hsl(0, 80%, 60%);
-		height: 90px;
-		width: 90px;
-		top: 7px;
-	}
-
-	.loader-line-wrap:nth-child(2) .loader-line {
-		border-color: hsl(60, 80%, 60%);
-		height: 76px;
-		width: 76px;
-		top: 14px;
-	}
-
-	.loader-line-wrap:nth-child(3) .loader-line {
-		border-color: hsl(120, 80%, 60%);
-		height: 62px;
-		width: 62px;
-		top: 21px;
-	}
-
-	.loader-line-wrap:nth-child(4) .loader-line {
-		border-color: hsl(180, 80%, 60%);
-		height: 48px;
-		width: 48px;
-		top: 28px;
-	}
-
-	.loader-line-wrap:nth-child(5) .loader-line {
-		border-color: hsl(240, 80%, 60%);
-		height: 34px;
-		width: 34px;
-		top: 35px;
-	}
-
-	@keyframes spin {
-
-		0%,
-		15% {
-			transform: rotate(0);
-		}
-
-		100% {
-			transform: rotate(360deg);
-		}
-	}
-}
 </style>
