@@ -1,14 +1,29 @@
 <template>
 	<div class="noti">
-		<div class="cont">
-			<img src="../assets/success.svg" alt="">
-			提交成功！
+		<div :class="backc">
+			<img :src="src" alt="">
+			<slot></slot>
 		</div>
 	</div>
 </template>
 
 <script setup>
+import { inject, ref } from 'vue';
 
+let src = ref("")
+let backc =ref("cont")
+
+let type = inject("type")
+
+
+if (type.value == "success") {
+	backc.value =  "cont success"
+	src.value="src/assets/success.svg"
+
+}else if(type.value == "error"){
+	backc.value =  "cont error"
+	src.value = "src/assets/error.svg"
+}
 
 </script>
 
@@ -36,15 +51,22 @@
 	animation-fill-mode: forwards;
 	animation-timing-function: linear;
 
+	.success{
+		color: #12ab15;
+		background-color: rgba(199, 225, 199, 0.70);
+	}
+	.error{
+		color: rgb(200, 46, 46);
+		background-color: rgba(255, 210, 210, 0.7);
+	}
+
 	.cont {
 		width: 80%;
 		min-width: 250px;
 		height: 90%;
 		border-radius: 10px;
-		background-color: rgba(199, 225, 199, 0.70);
 		backdrop-filter: blur(20px);
 		-webkit-backdrop-filter: blur(20px);
-		color: #12ab15;
 		display: flex;
 		align-items: center;
 		justify-content: space-evenly;
@@ -52,7 +74,6 @@
 		font-family: kkt;
 
 	}
-
 	img {
 		width: 50px;
 		height: 50px;
@@ -60,6 +81,5 @@
 		position: absolute;
 		left: 20px;
 	}
-
 }
 </style>

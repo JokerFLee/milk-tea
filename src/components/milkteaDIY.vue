@@ -28,7 +28,7 @@
 	<div class="mask" v-show="mask">
 
 		<div class="flo">
-			<notifi v-show="shownoti">success</notifi>
+			<notifi v-show="shownoti" >{{ msg }}</notifi>
 		</div>
 
 		<div class="cor">
@@ -126,7 +126,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, provide, ref } from "vue";
 import { getDescMilkteaList } from "../utils/milktee/axgetamilktea"
 import { modifymilkteadiy, getdiyinfobyguid } from "../utils/milktee/modifymilkteadiy";
 import notifi from "../tools/notifi.vue";
@@ -137,6 +137,12 @@ let guid = ""
 let diyParams = ref([])
 let diyParamsList = ref([[], [], [], []])
 let shownoti = ref(false)
+
+let type = ref("")
+let msg = ref("")
+
+provide("type",type)
+
 
 function modifythis(e) {
 	guid = e
@@ -168,6 +174,15 @@ function commitModify() {
 	}
 	modifymilkteadiy(tmp).then((e) => {
 		if (e != "error") {
+			type.value = "success"
+			msg.value = "提交成功！"
+			shownoti.value = true
+			setTimeout(() => {
+				shownoti.value = false
+			}, 700);
+		} else {
+			type.value = "error"
+			msg.value = "提交失败！"
 			shownoti.value = true
 			setTimeout(() => {
 				shownoti.value = false
@@ -244,7 +259,7 @@ onMounted(() => {
 				width: auto;
 				height: auto;
 				display: flex;
-				justify-content: center;
+				justify-content: space-between;
 				flex-wrap: wrap;
 				padding-bottom: 2.5%;
 
@@ -389,7 +404,6 @@ onMounted(() => {
 
 		.mask_card {
 			background-color: #eee;
-
 			width: 60%;
 
 			.mask_card_item {
