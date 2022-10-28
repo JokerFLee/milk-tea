@@ -24,6 +24,7 @@
 		</div>
 	</div>
 
+	<loader v-show="loading"></loader>
 
 	<div class="mask" v-show="mask">
 
@@ -130,7 +131,9 @@ import { onMounted, provide, ref } from "vue";
 import { getDescMilkteaList } from "../utils/milktee/axgetamilktea"
 import { modifymilkteadiy, getdiyinfobyguid } from "../utils/milktee/modifymilkteadiy";
 import notifi from "../tools/notifi.vue";
+import loader from "../tools/loader.vue"
 
+let loading = ref (true)
 let main_milktlist = ref([])
 let mask = ref(false)
 let guid = ""
@@ -228,7 +231,13 @@ function cancel() {
 
 onMounted(() => {
 	getDescMilkteaList().then((e) => {
-		main_milktlist.value = e
+		if (e!="error") {
+			main_milktlist.value = e
+			setTimeout(() => {
+				loading.value = false
+			}, 500);
+		}
+		
 	})
 })
 </script>
