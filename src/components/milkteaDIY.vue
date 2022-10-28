@@ -28,7 +28,7 @@
 	<div class="mask" v-show="mask">
 
 		<div class="flo">
-			<notifi v-show="shownoti" >{{ msg }}</notifi>
+			<notifi v-show="shownoti">{{ msg }}</notifi>
 		</div>
 
 		<div class="cor">
@@ -141,7 +141,7 @@ let shownoti = ref(false)
 let type = ref("")
 let msg = ref("")
 
-provide("type",type)
+provide("type", type)
 
 
 function modifythis(e) {
@@ -188,6 +188,7 @@ function commitModify() {
 				shownoti.value = false
 			}, 700);
 		}
+		
 	})
 
 }

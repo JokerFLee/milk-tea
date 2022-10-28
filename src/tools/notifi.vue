@@ -8,22 +8,28 @@
 </template>
 
 <script setup>
-import { inject, ref } from 'vue';
+import { inject, ref, watch } from 'vue';
 
 let src = ref("")
-let backc =ref("cont")
+let backc = ref("cont")
 
-let type = inject("type")
+let type = inject('type')
 
 
-if (type.value == "success") {
-	backc.value =  "cont success"
-	src.value="src/assets/success.svg"
+watch(
+	() => type, () => {
+		if (type.value == "success") {
+			backc.value = "cont success"
+			src.value = "src/assets/success.svg"
+		} else if (type.value == "error") {
+			backc.value = "cont error"
+			src.value = "src/assets/error.svg"
+		}
+	}, { deep: true }
+)
 
-}else if(type.value == "error"){
-	backc.value =  "cont error"
-	src.value = "src/assets/error.svg"
-}
+
+
 
 </script>
 
@@ -39,6 +45,7 @@ if (type.value == "success") {
 		opacity: 0;
 	}
 }
+
 .noti {
 	width: 100%;
 	height: 100%;
@@ -51,11 +58,12 @@ if (type.value == "success") {
 	animation-fill-mode: forwards;
 	animation-timing-function: linear;
 
-	.success{
+	.success {
 		color: #12ab15;
 		background-color: rgba(199, 225, 199, 0.70);
 	}
-	.error{
+
+	.error {
 		color: rgb(200, 46, 46);
 		background-color: rgba(255, 210, 210, 0.7);
 	}
@@ -74,6 +82,7 @@ if (type.value == "success") {
 		font-family: kkt;
 
 	}
+
 	img {
 		width: 50px;
 		height: 50px;
