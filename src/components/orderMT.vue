@@ -19,42 +19,86 @@
 
 					<div class="milktea" v-for="mk in allproducts" ref="scrollHeights">
 
-						<div class="pic">
-							<img :src="mk.picurl">
-							<span class="sp1" v-show="mk.tips != '' && mk.tips != 'null'">{{ mk.tips }}</span>
-							<span class="sp2">{{ (mk.price * mk.discount).toFixed(2) }}</span>
+						<div class="inbox_mt" v-if="mk.soldout == 0" @click="showDetail(mk.guid, mk.name)">
 
-						</div>
-
-						<div class="intro">
-							<div class="realintro">
-								<h3>{{ mk.name }}</h3>
-								<span> {{ mk.intro }}</span>
-							</div>
-							<div class="value">
-								<div class="v1 v-c" v-if="mk.discount == 1">
-									<span>现价：<b>{{ mk.price }}</b></span>
-								</div>
-
-								<div class="v2 v-c" v-else>
-									<span> 原价：<del><b>{{ mk.price }}¥</b></del> </span>
-									<span> 折扣：<b>{{ mk.discount }}</b></span>
-									<span> 现价；<b style="color: green">{{ (mk.price * mk.discount).toFixed(2) }}¥</b></span>
-								</div>
+							<div class="pic">
+								<img :src="mk.picurl">
+								<span class="sp1" v-show="mk.tips != '' && mk.tips != 'null'">{{ mk.tips }}</span>
+								<span class="sp2">{{ (mk.price * mk.discount).toFixed(2) }}</span>
 
 							</div>
+
+							<div class="intro">
+								<div class="realintro">
+									<h3>{{ mk.name }}</h3>
+								</div>
+
+								<div class="value">
+									<div class="intro_min">
+										<span> {{ mk.intro }}</span>
+									</div>
+									<div class="v-c" v-if="mk.discount == 1">
+										<div class="mmb v1 ">
+											<span>现价:<b>{{ mk.price }}￥</b></span>
+										</div>
+
+									</div>
+
+									<div class="v-c" v-else>
+										<div class="mmb v2">
+											<span> 原价:<del><b>{{ mk.price }}¥</b></del> </span>
+											<span> 折扣:<b>{{ mk.discount }}</b></span>
+											<span class="ns"> 现价:<b>{{ (mk.price * mk.discount).toFixed(2) }}¥</b></span>
+										</div>
+									</div>
+
+								</div>
+							</div>
+
 						</div>
 
-						<div class="option" v-if="!mk.soldout">
-							<div class="oks plus" @click="add2car(mk.guid)">+</div>
-							<div class="oks num">{{ orderinfo.get(mk.guid) }}</div>
-							<div class="oks reduce" @click="removeFromCar(mk.guid)">-</div>
-						</div>
-						<div class="option" v-else>
-							<div class="oks" style="color: #f88;">售罄</div>
+						<div class="inbox_mt inmt" v-else>
+							<div class="pic">
+								<img :src="mk.picurl">
+								<span class="sp1" v-show="mk.tips != '' && mk.tips != 'null'">{{ mk.tips }}</span>
+								<span class="sp2">{{ (mk.price * mk.discount).toFixed(2) }}</span>
+
+							</div>
+
+							<div class="intro">
+								<div class="realintro">
+									<h3>{{ mk.name }}</h3>
+								</div>
+
+								<div class="value">
+									<div class="intro_min">
+										<span> {{ mk.intro }}</span>
+									</div>
+									<div class="v-c" v-if="mk.discount == 1">
+										<div class="mmb v1 ">
+											<span>现价:<b>{{ mk.price }}￥</b></span>
+										</div>
+
+									</div>
+
+									<div class="v-c" v-else>
+										<div class="mmb v2">
+											<span> 原价:<del><b>{{ mk.price }}¥</b></del> </span>
+											<span> 折扣:<b>{{ mk.discount }}</b></span>
+											<span class="ns"> 现价:<b>{{ (mk.price * mk.discount).toFixed(2) }}¥</b></span>
+										</div>
+									</div>
+
+								</div>
+							</div>
+							<div class="msk_inbox">
+								售罄
+							</div>
+
 						</div>
 
 					</div>
+
 				</div>
 			</div>
 
@@ -62,13 +106,62 @@
 
 		<div class="price">
 			<div class="tw">
-				<div class="car"></div>
+				<div class="car" @click=""></div>
 				<div class="cny">
 					<div>结算总金额: <span class="span">{{ cny }} </span>¥</div>
 				</div>
 				<div class="submit" @click="submit">结算</div>
 			</div>
 		</div>
+	</div>
+
+	<!-- 详情页 -->
+	<div class="detail_fixed" v-show="detailLayer">
+		<div class="outbox">
+			<div class="container">
+				<div class="mbox">
+					<div class="head">{{ title }}</div>
+					<div class="body">
+
+						<div class="smell common_it" v-show="smell">
+							<p>甜度</p>
+							<div class="mbty">
+								<span v-for="item in smell">{{ item }}</span>
+							</div>
+						</div>
+
+						<div class="temperatur common_it" v-show="temperature">
+							<p>温度</p>
+							<div class="mbty">
+								<span v-for="item in temperature">{{ item }}</span>
+							</div>
+
+						</div>
+
+						<div class="content common_it" v-show="content">
+							<p>加料</p>
+							<div class="mbty">
+								<span v-for="item in content">{{ item }}</span>
+							</div>
+
+						</div>
+
+						<div class="other common_it" v-show="other && other_name">
+							<p> {{ other_name }}</p>
+							<div class="mbty">
+								<span v-for="item in other">{{ item }}</span>
+							</div>
+						</div>
+
+					</div>
+					<div class="footer">
+						<button>确定</button>
+						<button @click="closeDetail">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 	</div>
 
 	<!-- 弹出层 -->
@@ -82,10 +175,21 @@ import { onMounted, onUnmounted, ref } from 'vue';
 
 import { getallseries } from "../utils/series/axgetseries"
 import { getMilkteaCount, getDescMilkteaList } from "../utils/milktee/axgetamilktea"
+import { getdiyinfobyguid } from "../utils/milktee/modifymilkteadiy";
 import loader from "../tools/loader.vue"
 
 let orderMap = new Map()
 let priceMap = new Map()
+
+let detailLayer = ref(false)
+
+let smell = ref("")
+let temperature = ref("")
+let content = ref("")
+let other_name = ref("")
+let other = ref("")
+let title = ref("")
+
 
 let allproducts = ref([])
 let orderinfo = ref(orderMap)
@@ -109,7 +213,6 @@ function initMap() {
 		pricemap.value.set(allproducts.value[index].guid, (allproducts.value[index].price * allproducts.value[index].discount).toFixed(2))
 	}
 }
-
 
 function updateBarStyle(e) {
 	barColorStyle.value = []
@@ -230,9 +333,9 @@ function submit() {
 function itwid() {
 	{
 		let wd = document.body.clientWidth
-		if (wd <= 125 * 4) {
-			nowidth.value = (wd - 125) + "px"
-			noml.value = "125px"
+		if (wd <= 70 * 4) {
+			nowidth.value = (wd - 70) + "px"
+			noml.value = "70px"
 		} else if (wd > 200 * 4) {
 			nowidth.value = (wd - 200) + "px"
 			noml.value = "200px"
@@ -242,6 +345,46 @@ function itwid() {
 		}
 	}
 }
+
+function showDetail(params, name) {
+
+	smell.value = ""
+	temperature.value = ""
+	content.value = ""
+	other_name.value = ""
+	other.value = ""
+
+	getdiyinfobyguid(params).then((ele) => {
+		if (ele.smell != NaN && ele.smell != null && ele.smell != "") {
+			smell.value = ele.smell.split(" ")
+		}
+		if (ele.temperature != NaN && ele.temperature != null && ele.temperature != "") {
+			temperature.value = ele.temperature.split(" ")
+		}
+		if (ele.content != NaN && ele.content != null && ele.content != "") {
+			content.value = ele.content.split(" ")
+		}
+		if (ele.other_name != NaN && ele.other_name != null && ele.other_name != "") {
+			other_name.value = ele.other_name
+		}
+		if (ele.other != NaN && ele.other != null && ele.other != "") {
+			other.value = ele.other.split(" ")
+		}
+	})
+
+	title.value = name
+	detailLayer.value = true
+}
+
+function closeDetail() {
+	detailLayer.value = false
+}
+
+function getDiYByGuid(guid) {
+
+
+}
+
 
 onMounted(() => {
 	window.addEventListener('resize', () => itwid())
@@ -267,7 +410,7 @@ onUnmounted(() => {
 	flex-direction: column;
 	user-select: none;
 	position: relative;
-	background-color: #ededed;
+	background-color: #e6e6e6;
 
 	.last {
 		width: 100%;
@@ -280,7 +423,7 @@ onUnmounted(() => {
 			overflow: hidden;
 			width: 25%;
 			max-width: 200px;
-			min-width: 125px;
+			min-width: 70px;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
@@ -294,7 +437,6 @@ onUnmounted(() => {
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				background: linear-gradient(to right, #eee, #e8e8e8);
 				margin-top: 5px;
 				margin-bottom: 5px;
 				border-radius: 7px;
@@ -355,157 +497,175 @@ onUnmounted(() => {
 					max-height: 120px;
 					margin-top: 10px;
 					margin-bottom: 10px;
-					display: flex;
 					box-shadow: -2px -2px 5px #ffffff, 2px 2px 5px #b4b4b4;
 					border-radius: 10px;
+					overflow: hidden;
 
-
-					.pic {
-						width: auto;
-						min-width: 90px;
-						height: 100%;
-						display: flex;
-						flex-direction: column;
-						flex-wrap: wrap;
-						position: relative;
-						border-right: #d3d3d3 solid 1px;
-						overflow: hidden;
-
-						img {
-							width: 100%;
-							height: 100%;
-							object-fit: cover;
-							border-radius: 10px 0 0 10px;
-						}
-
-						.sp1 {
-							position: absolute;
-
-							padding: 2px;
-							top: 2px;
-							left: 2px;
-							writing-mode: vertical-lr;
-							white-space: nowrap;
-							background-color: #8400ff;
-							border-radius: 7px;
-							font-size: smaller;
-							font-family: kkt;
-							color: white;
-						}
-
-						.sp2 {
-							width: 100%;
-							height: 35px;
-							text-align: center;
-							position: absolute;
-							bottom: 0px;
-							font-family: kkt;
-							display: flex;
-							justify-content: center;
-							align-items: center;
-							backdrop-filter: blur(15px) hue-rotate(10deg);
-						}
-
-						.sp2::after {
-							content: "￥"
-						}
-					}
-
-					.intro {
+					.inbox_mt {
 						width: 100%;
 						height: 100%;
 						display: flex;
-						align-items: center;
-						justify-content: space-around;
-						padding-left: 10px;
-						flex-direction: row;
 
-						.realintro {
-							width: 85%;
+						.pic {
+							width: 90px;
+							min-width: 70px;
 							height: 100%;
 							display: flex;
-							align-items: center;
-							justify-content: center;
 							flex-direction: column;
+							flex-wrap: wrap;
+							position: relative;
+							border-right: #d3d3d3 solid 1px;
+							overflow: hidden;
 
-							h3 {
-								margin: 3px 0 3px 0;
-								font-family: kkt;
+							img {
+								width: 100%;
+								height: 100%;
+								object-fit: cover;
+								border-radius: 10px 0 0 10px;
 							}
 
-							span {
-								display: -webkit-box;
-								-webkit-line-clamp: 2;
-								-webkit-box-orient: vertical;
-								overflow: hidden;
+							.sp1 {
+								position: absolute;
+								padding: 2px;
+								top: 2px;
+								left: 2px;
+								writing-mode: vertical-lr;
+								white-space: nowrap;
+								background-color: #86b4ff;
+								border-radius: 7px;
 								font-size: smaller;
-								font-weight: lighter;
+								font-family: kkt;
+								color: white;
+							}
+
+							.sp2 {
+								width: 100%;
+								height: 35px;
+								text-align: center;
+								position: absolute;
+								bottom: 0px;
+								font-family: kkt;
+								display: flex;
+								justify-content: center;
+								align-items: center;
+								backdrop-filter: blur(15px) hue-rotate(10deg);
+								-webkit-backdrop-filter: blur(15px) hue-rotate(10deg);
+								border-radius: 0 0 0 10px;
+							}
+
+							.sp2::after {
+								content: "￥"
 							}
 						}
 
-						.value {
-							width: 15%;
+						.intro {
+							width: 100%;
 							height: 100%;
+							display: flex;
+							align-items: center;
+							justify-content: space-around;
+							padding-left: 10px;
+							flex-direction: column;
 
-							.v-c {
+							.realintro {
+								width: 100%;
+								min-height: 35px;
+								height: auto;
+								display: flex;
+								align-items: center;
+								justify-content: space-around;
+								flex-direction: column;
+								border-bottom: #c5c5c5 solid 1px;
+
+								h3 {
+									margin: 3px 0 3px 0;
+									font-family: kkt;
+								}
+
+
+							}
+
+							.value {
 								width: 100%;
 								height: 100%;
 								display: flex;
-								flex-direction: column;
-								flex-wrap: nowrap;
-								font-size: smaller;
-							}
-
-							.v1 {
-								display: flex;
-								align-items: flex-start;
-								justify-content: center;
-							}
-
-							.v2 {
-								display: flex;
-								align-items: flex-start;
 								justify-content: space-evenly;
+
+								.intro_min {
+									width: 45%;
+									display: flex;
+									align-items: center;
+									justify-content: center;
+
+									span {
+										display: -webkit-box;
+										-webkit-line-clamp: 4;
+										-webkit-box-orient: vertical;
+										overflow: hidden;
+										font-size: 14px;
+										font-weight: lighter;
+										font-family: kkt;
+									}
+								}
+
+								.v-c {
+									width: 50%;
+									height: 100%;
+									display: flex;
+									align-items: center;
+									justify-content: center;
+
+									.mmb {
+										width: 100%;
+										height: 100%;
+										font-size: 15px;
+										display: flex;
+										flex-direction: column;
+										align-items: center;
+										font-family: kkt;
+
+										.ns {
+											// color: #7c9feb;
+											font-size: 16px;
+										}
+									}
+
+									.v1 {
+										justify-content: center;
+									}
+
+									.v2 {
+										justify-content: space-evenly;
+									}
+
+								}
+
 
 							}
 						}
-
-
-
 					}
 
-					.option {
-						width: 100px;
-						height: 100%;
-						display: flex;
-						flex-direction: row;
-						align-items: center;
-						justify-content: center;
+					.inmt {
+						position: relative;
 
-						.oks {
+						.msk_inbox {
+							position: absolute;
+							top: 0;
+							bottom: 0;
+							right: 0;
+							left: 0;
+							background-color: rgba(0, 0, 0, 0.5);
+							backdrop-filter: blur(3px);
+							-webkit-backdrop-filter: blur(3px);
 							display: flex;
 							align-items: center;
 							justify-content: center;
-							font-size: larger;
+							color: #fff;
+							font-size: 20px;
 							font-weight: bolder;
-						}
-
-						.plus {
-							width: 40%;
-							height: 100%
-						}
-
-						.num {
-							width: 20%;
-							height: 100%;
-						}
-
-						.reduce {
-							width: 40%;
-							height: 100%
+							border-radius: 10px;
 						}
 					}
-
 
 				}
 			}
@@ -583,8 +743,142 @@ onUnmounted(() => {
 				background-color: #000;
 			}
 		}
-
 	}
+}
+
+.detail_fixed {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: #00000090;
+	backdrop-filter: blur(15px);
+	-webkit-backdrop-filter: blur(15px);
+
+	.outbox {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		.container {
+			width: 85%;
+			max-width: 670px;
+			height: 95%;
+			border-radius: 15px;
+			overflow: hidden;
+
+			.mbox {
+				width: 100%;
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				flex-wrap: nowrap;
+				background: #fff;
+
+				.head {
+					height: 35px;
+					width: 100%;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					font-weight: bold;
+					font-size: 19px;
+				}
+
+				.body {
+					height: 100%;
+					width: 100%;
+					background: #eee;
+					border-top-left-radius: 20px;
+					border-top-right-radius: 20px;
+					overflow: auto;
+					flex-wrap: wrap;
+					display: flex;
+					flex-direction: row;
+
+					.common_it {
+						width: 100%;
+						height: max-content;
+						padding: 10px 0px;
+						display: flex;
+						flex-direction: column;
+
+						p {
+							margin: 5px 0 0 0;
+							font-size: 16px;
+							font-weight: bold;
+							text-align: center;
+						}
+
+						.mbty {
+							width: auto;
+							height: 50px;
+							display: flex;
+							flex-direction: row;
+							align-items: center;
+							justify-content: space-evenly;
+							flex-wrap: wrap;
+
+
+							span {
+								flex: 0 0 60px;
+								height: 30px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+								padding: 3px;
+								box-shadow: -2px -2px 3px #fff, 2px 2px 3px #ccc;
+								border-radius: 9px;
+								margin: 3px 2px;
+								overflow: hidden;
+
+							}
+
+							span:hover {
+								background-color: #000;
+								color: #fff;
+							}
+						}
+					}
+				}
+
+				.footer {
+					height: 45px;
+					width: 100%;
+					display: flex;
+					align-items: center;
+					justify-content: space-evenly;
+
+
+					button {
+						width: 50%;
+						height: 100%;
+						font-size: 16px;
+						color: #000;
+						border: none;
+						background-color: #fff;
+					}
+
+					button:hover {
+						background-color: #000000;
+						color: #eee;
+					}
+
+					button:last-child:hover {
+						background-color: #ff0000;
+						color: #eee;
+					}
+
+				}
+			}
+		}
+	}
+
 }
 
 .loading {
