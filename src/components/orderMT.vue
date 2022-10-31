@@ -17,7 +17,7 @@
 			<div class="marea">
 				<div class="detail" @scroll.native="scrollFun" ref="scrollInstance">
 
-					<div class="milktea" v-for="mk in allproducts" ref="scrollHeights">
+					<div class="milktea" v-for="mk in allproducts" ref="scrollHeights" @click="showDetail(mk.guid)">
 
 						<div class="pic">
 							<img :src="mk.picurl">
@@ -29,26 +29,34 @@
 						<div class="intro">
 							<div class="realintro">
 								<h3>{{ mk.name }}</h3>
-								<span> {{ mk.intro }}</span>
 							</div>
+
 							<div class="value">
-								<div class="v1 v-c" v-if="mk.discount == 1">
-									<span>现价：<b>{{ mk.price }}</b></span>
+								<div class="intro_min">
+									<span> {{ mk.intro }}</span>
+								</div>
+								<div class="v-c" v-if="mk.discount == 1">
+									<div class="mmb v1 ">
+										<span>现价:<b>{{ mk.price }}</b></span>
+									</div>
+
 								</div>
 
-								<div class="v2 v-c" v-else>
-									<span> 原价：<del><b>{{ mk.price }}¥</b></del> </span>
-									<span> 折扣：<b>{{ mk.discount }}</b></span>
-									<span> 现价；<b style="color: green">{{ (mk.price * mk.discount).toFixed(2) }}¥</b></span>
+								<div class="v-c" v-else>
+									<div class="mmb v2">
+										<span> 原价:<del><b>{{ mk.price }}¥</b></del> </span>
+										<span> 折扣:<b>{{ mk.discount }}</b></span>
+										<span> 现价:<b style="color: green">{{ (mk.price * mk.discount).toFixed(2) }}¥</b></span>
+									</div>
 								</div>
 
 							</div>
 						</div>
 
 						<div class="option" v-if="!mk.soldout">
-							<div class="oks plus" @click="add2car(mk.guid)">+</div>
+							<div class="oks plus" @click.stop="add2car(mk.guid)"></div>
 							<div class="oks num">{{ orderinfo.get(mk.guid) }}</div>
-							<div class="oks reduce" @click="removeFromCar(mk.guid)">-</div>
+							<div class="oks reduce" @click.stop="removeFromCar(mk.guid)"></div>
 						</div>
 						<div class="option" v-else>
 							<div class="oks" style="color: #f88;">售罄</div>
@@ -71,6 +79,19 @@
 		</div>
 	</div>
 
+	<!-- 详情页 -->
+	<div class="detail_fixed" v-show="detailLayer">
+		<div class="outbox">
+			<div class="container">
+				<div class="mbox">
+					<div class="head"></div>
+					<div class="body"></div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
 	<!-- 弹出层 -->
 	<div class="opt">
 
@@ -82,10 +103,13 @@ import { onMounted, onUnmounted, ref } from 'vue';
 
 import { getallseries } from "../utils/series/axgetseries"
 import { getMilkteaCount, getDescMilkteaList } from "../utils/milktee/axgetamilktea"
+import { getdiyinfobyguid } from "../utils/milktee/modifymilkteadiy";
 import loader from "../tools/loader.vue"
 
 let orderMap = new Map()
 let priceMap = new Map()
+
+let detailLayer = ref(false)
 
 let allproducts = ref([])
 let orderinfo = ref(orderMap)
@@ -109,7 +133,6 @@ function initMap() {
 		pricemap.value.set(allproducts.value[index].guid, (allproducts.value[index].price * allproducts.value[index].discount).toFixed(2))
 	}
 }
-
 
 function updateBarStyle(e) {
 	barColorStyle.value = []
@@ -230,9 +253,9 @@ function submit() {
 function itwid() {
 	{
 		let wd = document.body.clientWidth
-		if (wd <= 125 * 4) {
-			nowidth.value = (wd - 125) + "px"
-			noml.value = "125px"
+		if (wd <= 70 * 4) {
+			nowidth.value = (wd - 70) + "px"
+			noml.value = "70px"
 		} else if (wd > 200 * 4) {
 			nowidth.value = (wd - 200) + "px"
 			noml.value = "200px"
@@ -242,6 +265,18 @@ function itwid() {
 		}
 	}
 }
+
+function showDetail(params) {
+	console.log(params);
+}
+
+function getDiYByGuid(guid) {
+	getdiyinfobyguid(guid).then((ele) => {
+		console.log(ele);
+	})
+
+}
+
 
 onMounted(() => {
 	window.addEventListener('resize', () => itwid())
@@ -267,7 +302,9 @@ onUnmounted(() => {
 	flex-direction: column;
 	user-select: none;
 	position: relative;
-	background-color: #ededed;
+	background-color: #e6e6e6;
+
+
 
 	.last {
 		width: 100%;
@@ -280,7 +317,7 @@ onUnmounted(() => {
 			overflow: hidden;
 			width: 25%;
 			max-width: 200px;
-			min-width: 125px;
+			min-width: 70px;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
@@ -294,7 +331,6 @@ onUnmounted(() => {
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				background: linear-gradient(to right, #eee, #e8e8e8);
 				margin-top: 5px;
 				margin-bottom: 5px;
 				border-radius: 7px;
@@ -359,10 +395,9 @@ onUnmounted(() => {
 					box-shadow: -2px -2px 5px #ffffff, 2px 2px 5px #b4b4b4;
 					border-radius: 10px;
 
-
 					.pic {
-						width: auto;
-						min-width: 90px;
+						width: 90px;
+						min-width: 70px;
 						height: 100%;
 						display: flex;
 						flex-direction: column;
@@ -380,7 +415,6 @@ onUnmounted(() => {
 
 						.sp1 {
 							position: absolute;
-
 							padding: 2px;
 							top: 2px;
 							left: 2px;
@@ -404,6 +438,7 @@ onUnmounted(() => {
 							justify-content: center;
 							align-items: center;
 							backdrop-filter: blur(15px) hue-rotate(10deg);
+							-webkit-backdrop-filter: blur(15px) hue-rotate(10deg);
 						}
 
 						.sp2::after {
@@ -418,69 +453,82 @@ onUnmounted(() => {
 						align-items: center;
 						justify-content: space-around;
 						padding-left: 10px;
-						flex-direction: row;
+						flex-direction: column;
 
 						.realintro {
-							width: 85%;
-							height: 100%;
+							width: 100%;
+							height: auto;
 							display: flex;
 							align-items: center;
-							justify-content: center;
+							justify-content: space-around;
 							flex-direction: column;
+							border-bottom: #f4a460 solid 1px;
 
 							h3 {
 								margin: 3px 0 3px 0;
 								font-family: kkt;
 							}
 
-							span {
-								display: -webkit-box;
-								-webkit-line-clamp: 2;
-								-webkit-box-orient: vertical;
-								overflow: hidden;
-								font-size: smaller;
-								font-weight: lighter;
-							}
+
 						}
 
 						.value {
-							width: 15%;
+							width: 100%;
 							height: 100%;
+							display: flex;
+							justify-content: space-evenly;
+
+							.intro_min {
+								width: 45%;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+
+								span {
+									display: -webkit-box;
+									-webkit-line-clamp: 4;
+									-webkit-box-orient: vertical;
+									overflow: hidden;
+									font-size: smaller;
+									font-weight: lighter;
+								}
+							}
 
 							.v-c {
-								width: 100%;
+								width: 50%;
 								height: 100%;
 								display: flex;
-								flex-direction: column;
-								flex-wrap: nowrap;
-								font-size: smaller;
+								align-items: center;
+								justify-content: center;
+
+								.mmb {
+									width: 100%;
+									height: 100%;
+									font-size: 13px;
+									display: flex;
+									flex-direction: column;
+									align-items: center;
+								}
+
 							}
 
 							.v1 {
-								display: flex;
-								align-items: flex-start;
 								justify-content: center;
 							}
 
 							.v2 {
-								display: flex;
-								align-items: flex-start;
 								justify-content: space-evenly;
-
 							}
 						}
-
-
-
 					}
 
 					.option {
-						width: 100px;
+						width: 90px;
 						height: 100%;
 						display: flex;
 						flex-direction: row;
 						align-items: center;
-						justify-content: center;
+						justify-content: space-evenly;
 
 						.oks {
 							display: flex;
@@ -488,21 +536,38 @@ onUnmounted(() => {
 							justify-content: center;
 							font-size: larger;
 							font-weight: bolder;
+							height: 30px;
 						}
 
 						.plus {
-							width: 40%;
-							height: 100%
+							width: 25px;
+							height: 25px;
+							cursor: pointer;
+							border-radius: 50%;
+							box-shadow: -2px -2px 3px #fff, 2px 2px 3px #ccc;
+							background-image: url(../assets/plus.svg);
+							background-position: center;
+							background-size: contain;
+							background-repeat: no-repeat;
+							
 						}
 
 						.num {
-							width: 20%;
-							height: 100%;
+							margin: 0px 1px;
+							height: auto;
+							
 						}
 
 						.reduce {
-							width: 40%;
-							height: 100%
+							width: 25px;
+							height: 25px;
+							cursor: pointer;
+							border-radius: 50%;
+							box-shadow: -2px -2px 3px #fff, 2px 2px 3px #ccc;
+							background-image: url(../assets/minus.svg);
+							background-position: center;
+							background-size: contain;
+							background-repeat: no-repeat;
 						}
 					}
 
@@ -585,6 +650,59 @@ onUnmounted(() => {
 		}
 
 	}
+}
+
+.detail_fixed {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: #00000090;
+	backdrop-filter: blur(15px);
+	-webkit-backdrop-filter: blur(15px);
+
+	.outbox {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		.container {
+			width: 80%;
+			height: 90%;
+
+			border-radius: 15px;
+			overflow: hidden;
+
+			.mbox {
+				width: 100%;
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				flex-wrap: nowrap;
+				background: #fff;
+
+				.head {
+					height: 100px;
+					width: 100%;
+
+				}
+
+				.body {
+					height: 100%;
+					width: 100%;
+					background: #ccc;
+					border-top-left-radius: 20px;
+					border-top-right-radius: 20px;
+				}
+			}
+		}
+	}
+
 }
 
 .loading {
