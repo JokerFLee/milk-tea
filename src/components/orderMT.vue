@@ -70,7 +70,7 @@
 
 		<div class="price">
 			<div class="tw">
-				<div class="car"></div>
+				<div class="car" @click=""></div>
 				<div class="cny">
 					<div>结算总金额: <span class="span">{{ cny }} </span>¥</div>
 				</div>
@@ -267,6 +267,7 @@ function itwid() {
 }
 
 function showDetail(params) {
+	detailLayer.value = true
 	console.log(params);
 }
 
@@ -303,9 +304,6 @@ onUnmounted(() => {
 	user-select: none;
 	position: relative;
 	background-color: #e6e6e6;
-
-
-
 	.last {
 		width: 100%;
 		height: 100%;
@@ -529,6 +527,7 @@ onUnmounted(() => {
 						flex-direction: row;
 						align-items: center;
 						justify-content: space-evenly;
+						margin-right: 5px;
 
 						.oks {
 							display: flex;

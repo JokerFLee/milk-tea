@@ -1,5 +1,5 @@
 <template>
-	<div class="loader" v-show="loader">
+	<div class="loader" >
 		<div class="loader-inner">
 			<div class="loader-line-wrap">
 				<div class="loader-line"></div>
@@ -21,7 +21,6 @@
 </template>
 
 <script setup>
-
 </script>
 
 <style lang="scss" scoped>
