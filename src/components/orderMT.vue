@@ -126,14 +126,26 @@
 						<div class="smell common_it" v-show="smell">
 							<p>甜度</p>
 							<div class="mbty">
-								<span v-for="item in smell">{{ item }}</span>
+
+								<template v-for="(item, index) in smell">
+									<span v-if="milktea_option[0] == item" class="spanstyle"
+										@click="changeMilkteaOption(0, item)">{{ item }}</span>
+									<span v-else @click="changeMilkteaOption(0, item)">{{ item }}</span>
+								</template>
+
 							</div>
 						</div>
 
 						<div class="temperatur common_it" v-show="temperature">
 							<p>温度</p>
 							<div class="mbty">
-								<span v-for="item in temperature">{{ item }}</span>
+
+								<template v-for="(item, index) in temperature">
+									<span v-if="milktea_option[1] == item" class="spanstyle"
+										@click="changeMilkteaOption(1, item)">{{ item }}</span>
+									<span v-else @click="changeMilkteaOption(1, item)">{{ item }}</span>
+								</template>
+
 							</div>
 
 						</div>
@@ -141,7 +153,13 @@
 						<div class="content common_it" v-show="content">
 							<p>加料</p>
 							<div class="mbty">
-								<span v-for="item in content">{{ item }}</span>
+
+								<template v-for="(item, index) in content">
+									<span v-if="milktea_option[2] == item" class="spanstyle"
+										@click="changeMilkteaOption(2, item)">{{ item }}</span>
+									<span v-else @click="changeMilkteaOption(2, item)">{{ item }}</span>
+								</template>
+
 							</div>
 
 						</div>
@@ -149,13 +167,17 @@
 						<div class="other common_it" v-show="other && other_name">
 							<p> {{ other_name }}</p>
 							<div class="mbty">
-								<span v-for="item in other">{{ item }}</span>
+								<template v-for="(item, index) in other">
+									<span v-if="milktea_option[3] == item" class="spanstyle"
+										@click="changeMilkteaOption(3, item)">{{ item }}</span>
+									<span v-else @click="changeMilkteaOption(3, item)">{{ item }}</span>
+								</template>
 							</div>
 						</div>
 
 					</div>
 					<div class="footer">
-						<button>确定</button>
+						<button @click="submitMilkteaDIY">确定</button>
 						<button @click="closeDetail">取消</button>
 					</div>
 				</div>
@@ -164,7 +186,7 @@
 
 	</div>
 
-	<!-- 弹出层 -->
+	<!-- 结算弹出层 -->
 	<div class="opt">
 
 	</div>
@@ -181,6 +203,10 @@ import loader from "../tools/loader.vue"
 let orderMap = new Map()
 let priceMap = new Map()
 
+let tmpGuid = ""
+
+let SavedMilkteaDIYInfo = ref([])
+
 let detailLayer = ref(false)
 
 let smell = ref("")
@@ -189,6 +215,8 @@ let content = ref("")
 let other_name = ref("")
 let other = ref("")
 let title = ref("")
+
+let milktea_option = ref(["", "", "", ""])
 
 
 let allproducts = ref([])
@@ -207,6 +235,7 @@ let scrollInstance = ref(0)
 
 let loading = ref(true)
 
+// 在加载了所有的奶茶数据后，初始化数据 包括：用户已加入购物车的存储变量。计算折扣后的金额（后续可能会通过api向后端请求，前端浮点数计算不准确容易产生误会）
 function initMap() {
 	for (let index = 0; index < allproducts.value.length; index++) {
 		orderinfo.value.set(allproducts.value[index].guid, 0)
@@ -214,6 +243,7 @@ function initMap() {
 	}
 }
 
+// 更新侧边栏当前的奶茶滑动状态
 function updateBarStyle(e) {
 	barColorStyle.value = []
 	if (e != null) {
@@ -231,6 +261,7 @@ function updateBarStyle(e) {
 	}
 }
 
+// 初始化滑动距离列表，计算每个系列的高度
 function initDistanceList() {
 	let selist = []
 	let tmp = 0
@@ -241,6 +272,7 @@ function initDistanceList() {
 	distanceList.value = selist
 }
 
+// 跳转到 系列 下的第一个产品，并改变侧边栏颜色
 function gotodetail(e) {
 	let ele_height = scrollHeights.value[0].offsetHeight
 	let height = 0
@@ -260,6 +292,7 @@ function gotodetail(e) {
 	}, 400)
 }
 
+// 监听滑动距离，并同时改变侧边栏颜色
 function scrollFun(e) {
 	let moveDistance = e.srcElement.scrollTop//滑动距离
 	let ele_height = scrollHeights.value[0].offsetHeight
@@ -275,6 +308,7 @@ function scrollFun(e) {
 	updateBarStyle(x_tmp.indexOf(moveDistance))
 }
 
+// 初始化页面 获取所有的系列，然后更新状态栏颜色，调用另一个初始化函数：initDistanceList()、排序后所有的的奶茶列表，调用另一个初始化函数：initMap()，以及设置页面的加载动画。
 function initPage() {
 	getallseries().then((e) => {
 		let tmp = []
@@ -296,12 +330,14 @@ function initPage() {
 	})
 }
 
+// 添加奶茶到购物车
 function add2car(e) {
 	orderinfo.value.set(e, orderinfo.value.get(e) + 1)
 	cny.value += pricemap.value.get(e) / 1
 	cny.value = cny.value.toFixed(2) / 1
 }
 
+// 把奶茶从购物车移除
 function removeFromCar(e) {
 	if (orderinfo.value.get(e) > 0) {
 		orderinfo.value.set(e, orderinfo.value.get(e) - 1)
@@ -309,6 +345,7 @@ function removeFromCar(e) {
 	}
 }
 
+// 请求series的数据
 function countOfSeries() {
 	getMilkteaCount().then((e) => {
 		seriesCount.value = e
@@ -346,7 +383,15 @@ function itwid() {
 	}
 }
 
+// 请求接口获取该奶茶可选的口味，同时显示奶茶DIY口味的界面，查询用户是否有已选择的口味
 function showDetail(params, name) {
+	milktea_option.value = ["", "", "", ""]
+
+	SavedMilkteaDIYInfo.value.forEach(element => {
+		if (element.has(params)) {
+			milktea_option.value = element.get(params)
+		}
+	});
 
 	smell.value = ""
 	temperature.value = ""
@@ -371,18 +416,51 @@ function showDetail(params, name) {
 			other.value = ele.other.split(" ")
 		}
 	})
+	tmpGuid = params
 
 	title.value = name
 	detailLayer.value = true
 }
 
-function closeDetail() {
+// 点击奶茶后，选择口味后保存用户的DIY选择
+function changeMilkteaOption(index, p) {
+	if (milktea_option.value[index] != "") {
+		if (milktea_option.value[index] == p) {
+			milktea_option.value[index] = ""
+		} else {
+			milktea_option.value[index] = p
+		}
+	} else {
+		milktea_option.value[index] = p
+	}
+}
+
+// 临时保存用户选择的奶茶DIY口味
+function submitMilkteaDIY() {
+	let ma = new Map();
+	ma.set(tmpGuid,milktea_option.value)
+	
+
+	let zstatus = -1
+	for (let index = 0; index < SavedMilkteaDIYInfo.value.length; index++) {
+		const element = SavedMilkteaDIYInfo.value[index];
+		if(element.has(tmpGuid)){
+			zstatus = index;
+			break
+		}
+	}
+
+	if(zstatus == -1){
+		SavedMilkteaDIYInfo.value.push(ma)
+	}else{
+		SavedMilkteaDIYInfo.value[zstatus] = ma
+	}
 	detailLayer.value = false
 }
 
-function getDiYByGuid(guid) {
-
-
+// 关闭奶茶DIY口味的界面
+function closeDetail() {
+	detailLayer.value = false
 }
 
 
@@ -391,7 +469,6 @@ onMounted(() => {
 	countOfSeries()
 	itwid()
 	initPage()
-
 })
 
 onUnmounted(() => {
@@ -654,7 +731,7 @@ onUnmounted(() => {
 							bottom: 0;
 							right: 0;
 							left: 0;
-							background-color: rgba(0, 0, 0, 0.5);
+							background-color: rgba(0, 0, 0, 0.25);
 							backdrop-filter: blur(3px);
 							-webkit-backdrop-filter: blur(3px);
 							display: flex;
@@ -807,6 +884,7 @@ onUnmounted(() => {
 						padding: 10px 0px;
 						display: flex;
 						flex-direction: column;
+						min-width: 290px;
 
 						p {
 							margin: 5px 0 0 0;
@@ -823,6 +901,7 @@ onUnmounted(() => {
 							align-items: center;
 							justify-content: space-evenly;
 							flex-wrap: wrap;
+							
 
 
 							span {
@@ -836,11 +915,12 @@ onUnmounted(() => {
 								border-radius: 9px;
 								margin: 3px 2px;
 								overflow: hidden;
+								cursor: pointer;
 
 							}
 
-							span:hover {
-								background-color: #000;
+							.spanstyle {
+								background-color: #111;
 								color: #fff;
 							}
 						}
