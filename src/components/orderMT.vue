@@ -128,8 +128,8 @@
 							<div class="mbty">
 
 								<template v-for="(item, index) in smell">
-									<span v-if="milktea_option[0] == item" class="spanstyle"
-										@click="changeMilkteaOption(0, item)">{{ item }}</span>
+									<span v-if="milktea_option[0] == item" class="spanstyle" @click="changeMilkteaOption(0, item)">{{ item
+									}}</span>
 									<span v-else @click="changeMilkteaOption(0, item)">{{ item }}</span>
 								</template>
 
@@ -141,8 +141,8 @@
 							<div class="mbty">
 
 								<template v-for="(item, index) in temperature">
-									<span v-if="milktea_option[1] == item" class="spanstyle"
-										@click="changeMilkteaOption(1, item)">{{ item }}</span>
+									<span v-if="milktea_option[1] == item" class="spanstyle" @click="changeMilkteaOption(1, item)">{{ item
+									}}</span>
 									<span v-else @click="changeMilkteaOption(1, item)">{{ item }}</span>
 								</template>
 
@@ -155,8 +155,8 @@
 							<div class="mbty">
 
 								<template v-for="(item, index) in content">
-									<span v-if="milktea_option[2] == item" class="spanstyle"
-										@click="changeMilkteaOption(2, item)">{{ item }}</span>
+									<span v-if="milktea_option[2] == item" class="spanstyle" @click="changeMilkteaOption(2, item)">{{ item
+									}}</span>
 									<span v-else @click="changeMilkteaOption(2, item)">{{ item }}</span>
 								</template>
 
@@ -168,8 +168,8 @@
 							<p> {{ other_name }}</p>
 							<div class="mbty">
 								<template v-for="(item, index) in other">
-									<span v-if="milktea_option[3] == item" class="spanstyle"
-										@click="changeMilkteaOption(3, item)">{{ item }}</span>
+									<span v-if="milktea_option[3] == item" class="spanstyle" @click="changeMilkteaOption(3, item)">{{ item
+									}}</span>
 									<span v-else @click="changeMilkteaOption(3, item)">{{ item }}</span>
 								</template>
 							</div>
@@ -188,8 +188,18 @@
 
 	<!-- 结算弹出层 -->
 	<div class="opt">
+		<div class="mainbox">
+			<div class="medbox">
+				<div class="close">
 
+				</div>
+				<div class="minbox">
+
+				</div>
+			</div>
+		</div>
 	</div>
+
 </template>
 
 <script setup>
@@ -319,7 +329,7 @@ function initPage() {
 		updateBarStyle(0)
 		setTimeout(() => {
 			initDistanceList()
-		}, 1);
+		}, 100);
 	})
 	getDescMilkteaList().then((e) => {
 		allproducts.value = e
@@ -438,21 +448,21 @@ function changeMilkteaOption(index, p) {
 // 临时保存用户选择的奶茶DIY口味
 function submitMilkteaDIY() {
 	let ma = new Map();
-	ma.set(tmpGuid,milktea_option.value)
-	
+	ma.set(tmpGuid, milktea_option.value)
+
 
 	let zstatus = -1
 	for (let index = 0; index < SavedMilkteaDIYInfo.value.length; index++) {
 		const element = SavedMilkteaDIYInfo.value[index];
-		if(element.has(tmpGuid)){
+		if (element.has(tmpGuid)) {
 			zstatus = index;
 			break
 		}
 	}
 
-	if(zstatus == -1){
+	if (zstatus == -1) {
 		SavedMilkteaDIYInfo.value.push(ma)
-	}else{
+	} else {
 		SavedMilkteaDIYInfo.value[zstatus] = ma
 	}
 	detailLayer.value = false
@@ -901,7 +911,7 @@ onUnmounted(() => {
 							align-items: center;
 							justify-content: space-evenly;
 							flex-wrap: wrap;
-							
+
 
 
 							span {
@@ -971,14 +981,55 @@ onUnmounted(() => {
 	z-index: 99999;
 }
 
-// .opt{
-// 	width: 100%;
-// 	height: 100%;
-// 	position: fixed;
-// 	backdrop-filter: blur(8px);
-// 	top: 0;
-// 	bottom: 0;
-// 	z-index: 100
+.opt {
+	height: 100%;
+	width: 100%;
+	position: fixed;
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	top: 0;
 
-// }
+	z-index: 100;
+
+	.mainbox {
+		width: 100%;
+		height: 100%;
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		.medbox {
+			width: 90%;
+			height: 90%;
+			position: relative;
+
+			.close {
+				width: 30px;
+				height: 30px;
+				border-radius: 50%;
+				box-shadow: 1px 1px 1px #bbb, -1px -1px 1px #fff;
+				position: absolute;
+				top: -15px;
+				right: -15px;
+				background-image: url(../assets/close.svg);
+				background-position: 50% 50%;
+				background-size: cover;
+				background-repeat: no-repeat;
+				background-color: #ddd;
+
+			}
+
+			.minbox {
+				width: 100%;
+				height: 100%;
+				box-shadow: 2px 2px 2px #ccdddc, -2px -2px 2px #fff;
+				border-radius: 20px;
+			}
+		}
+	}
+
+}
+
+
 </style>

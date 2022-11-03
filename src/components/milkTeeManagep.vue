@@ -157,7 +157,7 @@ function getallmilktea() {
 	getmilktealist().then((e) => {
 		setTimeout(() => {
 		loading.value = false
-	}, 500);
+	}, 1000);
 		sdata.value = e
 	})
 }
