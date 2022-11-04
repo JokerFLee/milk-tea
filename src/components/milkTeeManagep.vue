@@ -126,6 +126,9 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { getallseries } from "../utils/series/axgetseries"
 import { getalltips } from "../utils/tips/axgettips"
 import loader from "../tools/loader.vue"
+import nstore from "../store/index"
+
+const n_store = nstore()
 
 let loading = ref(true)
 
@@ -157,7 +160,7 @@ function getallmilktea() {
 	getmilktealist().then((e) => {
 		setTimeout(() => {
 		loading.value = false
-	}, 500);
+	}, n_store.loader_show_time);
 		sdata.value = e
 	})
 }
