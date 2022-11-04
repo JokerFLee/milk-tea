@@ -1,7 +1,7 @@
 # milk-tee
 毕设xxx奶茶管理系统
 
->milk-tee build with Vue3 and Vite 
+>milk-tee build with: **Vue3 Vite Pinia**
 
 so you can run this project with: 
 ```sh

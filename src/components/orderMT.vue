@@ -1,7 +1,9 @@
 <template>
 	<!-- 加载动画 -->
 	<loader class="loading" v-show="loading"></loader>
-
+	<div class="notify" v-show="showit">
+		<notifi>{{ msg }}</notifi>
+	</div>
 	<!-- 页面主体部分 -->
 	<div class="oops">
 
@@ -106,7 +108,7 @@
 
 		<div class="price">
 			<div class="tw">
-				<div class="car" @click=""></div>
+				<div class="car" @click="showMilkTeaCarInfo"></div>
 				<div class="cny">
 					<div>结算总金额: <span class="span">{{ cny }} </span>¥</div>
 				</div>
@@ -128,8 +130,8 @@
 							<div class="mbty">
 
 								<template v-for="(item, index) in smell">
-									<span v-if="milktea_option[0] == item" class="spanstyle"
-										@click="changeMilkteaOption(0, item)">{{ item }}</span>
+									<span v-if="milktea_option[0] == item" class="spanstyle" @click="changeMilkteaOption(0, item)">{{ item
+									}}</span>
 									<span v-else @click="changeMilkteaOption(0, item)">{{ item }}</span>
 								</template>
 
@@ -141,8 +143,8 @@
 							<div class="mbty">
 
 								<template v-for="(item, index) in temperature">
-									<span v-if="milktea_option[1] == item" class="spanstyle"
-										@click="changeMilkteaOption(1, item)">{{ item }}</span>
+									<span v-if="milktea_option[1] == item" class="spanstyle" @click="changeMilkteaOption(1, item)">{{ item
+									}}</span>
 									<span v-else @click="changeMilkteaOption(1, item)">{{ item }}</span>
 								</template>
 
@@ -155,8 +157,8 @@
 							<div class="mbty">
 
 								<template v-for="(item, index) in content">
-									<span v-if="milktea_option[2] == item" class="spanstyle"
-										@click="changeMilkteaOption(2, item)">{{ item }}</span>
+									<span v-if="milktea_option[2] == item" class="spanstyle" @click="changeMilkteaOption(2, item)">{{ item
+									}}</span>
 									<span v-else @click="changeMilkteaOption(2, item)">{{ item }}</span>
 								</template>
 
@@ -168,8 +170,8 @@
 							<p> {{ other_name }}</p>
 							<div class="mbty">
 								<template v-for="(item, index) in other">
-									<span v-if="milktea_option[3] == item" class="spanstyle"
-										@click="changeMilkteaOption(3, item)">{{ item }}</span>
+									<span v-if="milktea_option[3] == item" class="spanstyle" @click="changeMilkteaOption(3, item)">{{ item
+									}}</span>
 									<span v-else @click="changeMilkteaOption(3, item)">{{ item }}</span>
 								</template>
 							</div>
@@ -177,7 +179,9 @@
 
 					</div>
 					<div class="footer">
-						<button @click="submitMilkteaDIY">确定</button>
+						<button @click="submitMilkteaDIY">
+							<div class="icon"></div> 加购
+						</button>
 						<button @click="closeDetail">取消</button>
 					</div>
 				</div>
@@ -187,27 +191,67 @@
 	</div>
 
 	<!-- 结算弹出层 -->
-	<div class="opt">
+	<div class="opt" v-show="carinfo">
+		<div class="mainbox">
+			<div class="medbox">
 
+				<div class="close" @click="closeMilkTeaCarInfo"></div>
+
+				<div class="minbox">
+					<div class="car-item" v-for=" (item, index) in milktea_order">
+
+						<div class="pic">
+							<img :src="item.picurl" alt="">
+						</div>
+
+						<div class="name">
+							<div class="car_name">{{ item.name }}</div>
+							<div class="car_content">
+								<span v-for="it in item.content" v-show="it"> （{{ it }}）</span>
+							</div>
+						</div>
+
+						<div class="price">{{ item.price }}</div>
+
+						<div class="modify">
+							<div class="mbk">
+								<div class="add"></div>
+								<div class="number">{{ item.num }}</div>
+								<div class="reduce"></div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+		</div>
 	</div>
+
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 
 import { getallseries } from "../utils/series/axgetseries"
 import { getMilkteaCount, getDescMilkteaList } from "../utils/milktee/axgetamilktea"
 import { getdiyinfobyguid } from "../utils/milktee/modifymilkteadiy";
 import loader from "../tools/loader.vue"
+import notifi from "../tools/notifi.vue"
 
-let orderMap = new Map()
-let priceMap = new Map()
+import nstore from "../store/index"
+
+const n_store = nstore()
+const gp = ["rgba(71, 111, 255, 0.3)",  "rgba(145, 71, 255, 0.3)", "rgba(255, 71, 218, 0.3)", "rgba(255, 126, 71, 0.3)"]
 
 let tmpGuid = ""
+let color = ref("")
+let time = 100
 
 let SavedMilkteaDIYInfo = ref([])
 
 let detailLayer = ref(false)
+let carinfo = ref(false)
 
 let smell = ref("")
 let temperature = ref("")
@@ -217,11 +261,12 @@ let other = ref("")
 let title = ref("")
 
 let milktea_option = ref(["", "", "", ""])
-
+let milktea_order = ref([])
 
 let allproducts = ref([])
-let orderinfo = ref(orderMap)
-let pricemap = ref(priceMap)
+
+let pricemap = ref([])
+
 let nowidth = ref("100%")
 let noml = ref("25%")
 let cny = ref(0)
@@ -235,11 +280,54 @@ let scrollInstance = ref(0)
 
 let loading = ref(true)
 
-// 在加载了所有的奶茶数据后，初始化数据 包括：用户已加入购物车的存储变量。计算折扣后的金额（后续可能会通过api向后端请求，前端浮点数计算不准确容易产生误会）
+let showit = ref(false)
+let msg = ref("")
+
+// 监听SavedMilkteaDIYInfo，并动态生成 milktea_order的数据
+watch(() => SavedMilkteaDIYInfo, () => {
+	let tmp = []
+	SavedMilkteaDIYInfo.value.forEach(element => {
+		let y = {}
+		const x = element.entries().next().value
+		y.guid = x[0]
+		y.content = x[1]
+		allproducts.value.forEach(ele => {
+			if (ele.guid == x[0]) {
+				y.name = ele.name
+				y.picurl = ele.picurl
+				y.price = ele.price
+			}
+		})
+
+		tmp.push(y)
+	});
+	for (let a = 0; a < tmp.length; a++) {
+		let c = 0
+		const element = tmp[a];
+		for (let b = 0; b < milktea_order.value.length; b++) {
+			const ele = milktea_order.value[b];
+			if (element.guid == ele.guid) {
+				c = b
+				break
+			}
+		}
+		if (c != 0) {
+			tmp[a].num = milktea_order.value[c].num
+		} else {
+			tmp[a].num = 1
+		}
+	}
+	milktea_order.value = tmp
+
+}, { deep: true })
+
+// 在加载了所有的奶茶数据后，初始化数据 
 function initMap() {
 	for (let index = 0; index < allproducts.value.length; index++) {
-		orderinfo.value.set(allproducts.value[index].guid, 0)
-		pricemap.value.set(allproducts.value[index].guid, (allproducts.value[index].price * allproducts.value[index].discount).toFixed(2))
+		let tmp = {}
+		tmp.guid = allproducts.value[index].guid
+		tmp.price = allproducts.value[index].price
+		pricemap.value.push(tmp)
 	}
 }
 
@@ -319,30 +407,23 @@ function initPage() {
 		updateBarStyle(0)
 		setTimeout(() => {
 			initDistanceList()
-		}, 1);
+		}, 100);
 	})
 	getDescMilkteaList().then((e) => {
 		allproducts.value = e
 		initMap()
 		setTimeout(() => {
 			loading.value = false
-		}, 700);
+		}, time);
 	})
 }
 
 // 添加奶茶到购物车
 function add2car(e) {
-	orderinfo.value.set(e, orderinfo.value.get(e) + 1)
-	cny.value += pricemap.value.get(e) / 1
-	cny.value = cny.value.toFixed(2) / 1
 }
 
 // 把奶茶从购物车移除
 function removeFromCar(e) {
-	if (orderinfo.value.get(e) > 0) {
-		orderinfo.value.set(e, orderinfo.value.get(e) - 1)
-		cny.value -= pricemap.value.get(e)
-	}
 }
 
 // 请求series的数据
@@ -355,14 +436,8 @@ function countOfSeries() {
 // 提交订单
 function submit() {
 	let list = []
-	const tmp = orderinfo.value.keys()
-	for (const i of tmp) {
-		if (orderinfo.value.get(i) != 0) {
-			list.push(new Map().set(i, orderinfo.value.get(i)))
-		}
-	}
+
 	console.log(list);
-	initMap()
 	cny.value = 0
 }
 
@@ -435,34 +510,57 @@ function changeMilkteaOption(index, p) {
 	}
 }
 
-// 临时保存用户选择的奶茶DIY口味
-function submitMilkteaDIY() {
-	let ma = new Map();
-	ma.set(tmpGuid,milktea_option.value)
-	
-
-	let zstatus = -1
-	for (let index = 0; index < SavedMilkteaDIYInfo.value.length; index++) {
-		const element = SavedMilkteaDIYInfo.value[index];
-		if(element.has(tmpGuid)){
-			zstatus = index;
-			break
-		}
-	}
-
-	if(zstatus == -1){
-		SavedMilkteaDIYInfo.value.push(ma)
-	}else{
-		SavedMilkteaDIYInfo.value[zstatus] = ma
-	}
-	detailLayer.value = false
-}
-
 // 关闭奶茶DIY口味的界面
 function closeDetail() {
 	detailLayer.value = false
 }
 
+// 临时保存用户选择的奶茶DIY口味
+function submitMilkteaDIY() {
+
+	if (milktea_option.value[0] == "" && milktea_option.value[1] == "" && milktea_option.value[2] == "" && milktea_option.value[3] == "") {
+		showit.value = true
+		msg.value = "请选择以后再加入购物车"
+		n_store.type = "info"
+		setTimeout(() => {
+			showit.value = false
+		}, n_store.showtime);
+		return 0
+	}
+
+	let ma = new Map();
+	ma.set(tmpGuid, milktea_option.value)
+	let zstatus = -1
+	for (let index = 0; index < SavedMilkteaDIYInfo.value.length; index++) {
+		const element = SavedMilkteaDIYInfo.value[index];
+		if (element.has(tmpGuid)) {
+			zstatus = index;
+			break
+		}
+	}
+	if (zstatus == -1) {
+		SavedMilkteaDIYInfo.value.push(ma)
+	} else {
+		SavedMilkteaDIYInfo.value[zstatus] = ma
+	}
+	detailLayer.value = false
+}
+
+function showMilkTeaCarInfo() {
+	
+	function getRandomInt(min, max) {
+		min = Math.ceil(min);
+		max = Math.floor(max);
+		return Math.floor(Math.random() * (max - min)) + min;
+	}
+	const xr=getRandomInt(0,gp.length)
+	color.value = gp[xr]
+	carinfo.value = true
+}
+
+function closeMilkTeaCarInfo() {
+	carinfo.value = false
+}
 
 onMounted(() => {
 	window.addEventListener('resize', () => itwid())
@@ -480,6 +578,22 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
+* {
+	user-select: none;
+}
+
+.notify {
+	position: fixed;
+	top: 20px;
+	right: 10px;
+	width: 40%;
+	min-width: 250px;
+	max-width: 250px;
+	height: 80px;
+	z-index: 1000;
+
+}
+
 .oops {
 	width: 100%;
 	height: 100%;
@@ -563,6 +677,7 @@ onUnmounted(() => {
 				overflow-x: hidden;
 				padding: 0 5px 0 5px;
 				scroll-behavior: smooth;
+
 
 				.milktea:last-child {
 					margin-bottom: 160px;
@@ -778,7 +893,7 @@ onUnmounted(() => {
 				background-size: contain;
 				background-repeat: no-repeat;
 				background-position: 50% 50%;
-
+				cursor: pointer;
 			}
 
 			.cny {
@@ -901,7 +1016,7 @@ onUnmounted(() => {
 							align-items: center;
 							justify-content: space-evenly;
 							flex-wrap: wrap;
-							
+
 
 
 							span {
@@ -942,6 +1057,19 @@ onUnmounted(() => {
 						color: #000;
 						border: none;
 						background-color: #fff;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+
+						.icon {
+							display: inline-block;
+							width: 45px;
+							height: 45px;
+							background-image: url(../assets/shoppingcar.svg);
+							background-position: 50% 50%;
+							background-size: cover;
+							background-repeat: no-repeat;
+						}
 					}
 
 					button:hover {
@@ -971,14 +1099,168 @@ onUnmounted(() => {
 	z-index: 99999;
 }
 
-// .opt{
-// 	width: 100%;
-// 	height: 100%;
-// 	position: fixed;
-// 	backdrop-filter: blur(8px);
-// 	top: 0;
-// 	bottom: 0;
-// 	z-index: 100
+.opt {
+	height: 100%;
+	width: 100%;
+	position: fixed;
+	background-color: v-bind('color');
+	top: 0;
+	z-index: 100;
 
-// }
+	// 
+	.mainbox {
+		width: 100%;
+		height: 100%;
+		position: relative;
+
+		.medbox {
+			width: 90%;
+			height: 90%;
+			position: relative;
+			top: 20px;
+			margin: 0 auto;
+
+			.close {
+				width: 30px;
+				height: 30px;
+				border-radius: 50%;
+				box-shadow: 1px 1px 1px #bbb, -1px -1px 1px #fff;
+				position: absolute;
+				top: -15px;
+				right: -15px;
+				background-color: #ffffff50;
+				background-image: url(../assets/close.svg);
+				background-position: 50% 50%;
+				background-size: cover;
+				background-repeat: no-repeat;
+				cursor: pointer;
+				z-index: 102;
+			}
+
+			.minbox {
+				z-index: 101;
+				width: 100%;
+				height: 100%;
+				box-shadow: 2px 2px 2px #ccdddc, -2px -2px 2px #fff;
+				border-radius: 10px;
+				overflow: auto;
+				backdrop-filter: blur(8px);
+				-webkit-backdrop-filter: blur(8px);
+				background-color: #44444474;
+
+				.car-item {
+					width: 98%;
+					height: 100px;
+					display: flex;
+					flex-direction: row;
+					flex-wrap: nowrap;
+					color: #fff;
+					border-bottom: solid 1px wheat;
+
+
+					.pic {
+						width: auto;
+						height: 100%;
+						overflow: hidden;
+
+						img {
+							height: 100%;
+							max-width: 60px;
+							object-fit: cover;
+
+						}
+					}
+
+					.name {
+						width: 45%;
+						height: 100%;
+						display: flex;
+						flex-direction: column;
+						align-items: center;
+						justify-content: space-evenly;
+
+						.car_name {
+							width: 100%;
+							height: auto;
+							font-size: 17px;
+							font-weight: bold;
+						}
+
+						.car_content {
+							width: 100%;
+							height: auto;
+							font-size: 14px;
+							font-weight: lighter;
+							color: #ddd;
+						}
+
+					}
+
+					.price {
+						width: 10%;
+						height: auto;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						font-weight: bold;
+						font-size: 18px;
+					}
+
+					.price::after {
+						content: "￥";
+					}
+
+					.modify {
+						width: 45%;
+						height: auto;
+
+						.mbk {
+							width: 100%;
+							height: 100%;
+							display: flex;
+							align-items: center;
+							justify-content: space-evenly;
+
+							.add {
+								width: 30px;
+								height: 30px;
+								background-image: url(../assets/plus.svg);
+								background-size: cover;
+								border-radius: 50%;
+								background-color: #aaa;
+								background-position: 50% 50%;
+								cursor: pointer;
+							}
+
+							.add:hover {
+								outline: rgb(253, 253, 253) solid 2px;
+							}
+
+							.reduce:hover {
+								outline: rgb(253, 253, 253) solid 2px;
+							}
+
+							.number {
+								font-weight: bold;
+							}
+
+
+							.reduce {
+								width: 30px;
+								height: 30px;
+								background-image: url(../assets/minus.svg);
+								background-size: cover;
+								border-radius: 50%;
+								background-color: #aaa;
+								background-position: 50% 50%;
+								cursor: pointer;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+}
 </style>
