@@ -106,7 +106,7 @@
 
 		<div class="price">
 			<div class="tw">
-				<div class="car" @click=""></div>
+				<div class="car" @click="showMilkTeaCarInfo"></div>
 				<div class="cny">
 					<div>结算总金额: <span class="span">{{ cny }} </span>¥</div>
 				</div>
@@ -187,14 +187,17 @@
 	</div>
 
 	<!-- 结算弹出层 -->
-	<div class="opt">
+	<div class="opt" v-show="carinfo">
 		<div class="mainbox">
 			<div class="medbox">
-				<div class="close">
 
-				</div>
+				<div class="close" @click="closeMilkTeaCarInfo"></div>
+
 				<div class="minbox">
+					<!-- <div class="car-item" v-for=" (item, index) in SavedMilkteaDIYInfo">
+						{{ item }}
 
+					</div> -->
 				</div>
 			</div>
 		</div>
@@ -203,7 +206,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 
 import { getallseries } from "../utils/series/axgetseries"
 import { getMilkteaCount, getDescMilkteaList } from "../utils/milktee/axgetamilktea"
@@ -215,9 +218,12 @@ let priceMap = new Map()
 
 let tmpGuid = ""
 
+let time = 100
+
 let SavedMilkteaDIYInfo = ref([])
 
 let detailLayer = ref(false)
+let carinfo = ref(false)
 
 let smell = ref("")
 let temperature = ref("")
@@ -227,7 +233,7 @@ let other = ref("")
 let title = ref("")
 
 let milktea_option = ref(["", "", "", ""])
-
+let milktea_order= ref([])
 
 let allproducts = ref([])
 let orderinfo = ref(orderMap)
@@ -244,6 +250,17 @@ let distanceList = ref([])
 let scrollInstance = ref(0)
 
 let loading = ref(true)
+
+watch(() => SavedMilkteaDIYInfo, (o, n) => {
+	SavedMilkteaDIYInfo.value.forEach(element => {
+		const x = element.entries().next().value
+		let tmp={}
+		tmp.id=x[0]
+		tmp.wd=x[1]
+		
+
+	});
+}, { deep: true })
 
 // 在加载了所有的奶茶数据后，初始化数据 包括：用户已加入购物车的存储变量。计算折扣后的金额（后续可能会通过api向后端请求，前端浮点数计算不准确容易产生误会）
 function initMap() {
@@ -336,7 +353,7 @@ function initPage() {
 		initMap()
 		setTimeout(() => {
 			loading.value = false
-		}, 700);
+		}, time);
 	})
 }
 
@@ -445,6 +462,11 @@ function changeMilkteaOption(index, p) {
 	}
 }
 
+// 关闭奶茶DIY口味的界面
+function closeDetail() {
+	detailLayer.value = false
+}
+
 // 临时保存用户选择的奶茶DIY口味
 function submitMilkteaDIY() {
 	let ma = new Map();
@@ -468,11 +490,13 @@ function submitMilkteaDIY() {
 	detailLayer.value = false
 }
 
-// 关闭奶茶DIY口味的界面
-function closeDetail() {
-	detailLayer.value = false
+function showMilkTeaCarInfo() {
+	carinfo.value = true
 }
 
+function closeMilkTeaCarInfo() {
+	carinfo.value = false
+}
 
 onMounted(() => {
 	window.addEventListener('resize', () => itwid())
@@ -788,7 +812,7 @@ onUnmounted(() => {
 				background-size: contain;
 				background-repeat: no-repeat;
 				background-position: 50% 50%;
-
+				cursor: pointer;
 			}
 
 			.cny {
@@ -987,6 +1011,7 @@ onUnmounted(() => {
 	position: fixed;
 	backdrop-filter: blur(8px);
 	-webkit-backdrop-filter: blur(8px);
+	background-color: #44444474;
 	top: 0;
 
 	z-index: 100;
@@ -1012,12 +1037,12 @@ onUnmounted(() => {
 				position: absolute;
 				top: -15px;
 				right: -15px;
+				background-color: #ffffff50;
 				background-image: url(../assets/close.svg);
 				background-position: 50% 50%;
 				background-size: cover;
 				background-repeat: no-repeat;
-				background-color: #ddd;
-
+				cursor: pointer;
 			}
 
 			.minbox {
@@ -1030,6 +1055,4 @@ onUnmounted(() => {
 	}
 
 }
-
-
 </style>

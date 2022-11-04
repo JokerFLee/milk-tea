@@ -235,7 +235,7 @@ onMounted(() => {
 			main_milktlist.value = e
 			setTimeout(() => {
 				loading.value = false
-			}, 500);
+			}, 1500);
 		}
 		
 	})
