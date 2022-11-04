@@ -135,7 +135,7 @@ import loader from "../tools/loader.vue"
 import nstore from "../store/index"
 
 const n_store = nstore();
-let loading = ref (true)
+let loading = ref(true)
 let main_milktlist = ref([])
 let mask = ref(false)
 let guid = ""
@@ -182,7 +182,7 @@ function commitModify() {
 			shownoti.value = true
 			setTimeout(() => {
 				shownoti.value = false
-			},  n_store.showtime);
+			}, n_store.showtime);
 		} else {
 			n_store.type = "error"
 			msg.value = "提交失败！"
@@ -191,7 +191,7 @@ function commitModify() {
 				shownoti.value = false
 			}, n_store.showtime);
 		}
-		
+
 	})
 
 }
@@ -231,13 +231,13 @@ function cancel() {
 
 onMounted(() => {
 	getDescMilkteaList().then((e) => {
-		if (e!="error") {
+		if (e != "error") {
 			main_milktlist.value = e
 			setTimeout(() => {
 				loading.value = false
 			}, n_store.loader_show_time);
 		}
-		
+
 	})
 })
 </script>
@@ -372,14 +372,14 @@ onMounted(() => {
 
 
 	.flo {
-		position: absolute;
+		position: fixed;
 		top: 20px;
-		right: 0;
+		right: 10px;
 		width: 40%;
-		min-width: 150px;
-		max-width: 400px;
+		min-width: 250px;
+		max-width: 300px;
 		height: 80px;
-
+		z-index: 1000;
 
 	}
 

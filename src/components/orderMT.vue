@@ -2,7 +2,7 @@
 	<!-- 加载动画 -->
 	<loader class="loading" v-show="loading"></loader>
 	<div class="notify" v-show="showit">
-		<notifi >{{ msg }}</notifi>
+		<notifi>{{ msg }}</notifi>
 	</div>
 	<!-- 页面主体部分 -->
 	<div class="oops">
@@ -199,8 +199,20 @@
 
 				<div class="minbox">
 					<div class="car-item" v-for=" (item, index) in milktea_order">
-						<div class="name">{{ item.name }}</div>
+
+						<div class="pic">
+							<img :src="item.picurl" alt="">
+						</div>
+
+						<div class="name">
+							<div class="car_name">{{ item.name }}</div>
+							<div class="car_content">
+								<span v-for="it in item.content" v-show="it"> （{{ it }}）</span>
+							</div>
+						</div>
+
 						<div class="price">{{ item.price }}</div>
+
 						<div class="modify">
 							<div class="mbk">
 								<div class="add"></div>
@@ -208,9 +220,11 @@
 								<div class="reduce"></div>
 							</div>
 						</div>
+
 					</div>
 				</div>
 			</div>
+
 		</div>
 	</div>
 
@@ -228,18 +242,16 @@ import notifi from "../tools/notifi.vue"
 import nstore from "../store/index"
 
 const n_store = nstore()
+const gp = ["rgba(71, 111, 255, 0.3)",  "rgba(145, 71, 255, 0.3)", "rgba(255, 71, 218, 0.3)", "rgba(255, 126, 71, 0.3)"]
 
 let tmpGuid = ""
-
+let color = ref("")
 let time = 100
-
 
 let SavedMilkteaDIYInfo = ref([])
 
 let detailLayer = ref(false)
 let carinfo = ref(false)
-
-
 
 let smell = ref("")
 let temperature = ref("")
@@ -252,7 +264,6 @@ let milktea_option = ref(["", "", "", ""])
 let milktea_order = ref([])
 
 let allproducts = ref([])
-
 
 let pricemap = ref([])
 
@@ -270,7 +281,6 @@ let scrollInstance = ref(0)
 let loading = ref(true)
 
 let showit = ref(false)
-let type = ref("")
 let msg = ref("")
 
 // 监听SavedMilkteaDIYInfo，并动态生成 milktea_order的数据
@@ -284,13 +294,11 @@ watch(() => SavedMilkteaDIYInfo, () => {
 		allproducts.value.forEach(ele => {
 			if (ele.guid == x[0]) {
 				y.name = ele.name
+				y.picurl = ele.picurl
+				y.price = ele.price
 			}
 		})
-		pricemap.value.forEach(e => {
-			if (e.guid == x[0]) {
-				y.price = e.price
-			}
-		})
+
 		tmp.push(y)
 	});
 	for (let a = 0; a < tmp.length; a++) {
@@ -513,12 +521,13 @@ function submitMilkteaDIY() {
 	if (milktea_option.value[0] == "" && milktea_option.value[1] == "" && milktea_option.value[2] == "" && milktea_option.value[3] == "") {
 		showit.value = true
 		msg.value = "请选择以后再加入购物车"
-		n_store.type="info"
+		n_store.type = "info"
 		setTimeout(() => {
 			showit.value = false
 		}, n_store.showtime);
 		return 0
 	}
+
 	let ma = new Map();
 	ma.set(tmpGuid, milktea_option.value)
 	let zstatus = -1
@@ -532,16 +541,20 @@ function submitMilkteaDIY() {
 	if (zstatus == -1) {
 		SavedMilkteaDIYInfo.value.push(ma)
 	} else {
-		if (milktea_option.value[0] == "" && milktea_option.value[1] == "" && milktea_option.value[2] == "" && milktea_option.value[3] == "") {
-			SavedMilkteaDIYInfo.value.splice(zstatus, 1)
-		} else {
-			SavedMilkteaDIYInfo.value[zstatus] = ma
-		}
+		SavedMilkteaDIYInfo.value[zstatus] = ma
 	}
 	detailLayer.value = false
 }
 
 function showMilkTeaCarInfo() {
+	
+	function getRandomInt(min, max) {
+		min = Math.ceil(min);
+		max = Math.floor(max);
+		return Math.floor(Math.random() * (max - min)) + min;
+	}
+	const xr=getRandomInt(0,gp.length)
+	color.value = gp[xr]
 	carinfo.value = true
 }
 
@@ -565,13 +578,17 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
+* {
+	user-select: none;
+}
+
 .notify {
-	position: absolute;
+	position: fixed;
 	top: 20px;
-	right: 0;
+	right: 10px;
 	width: 40%;
-	min-width: 150px;
-	max-width: 400px;
+	min-width: 250px;
+	max-width: 250px;
 	height: 80px;
 	z-index: 1000;
 
@@ -1086,25 +1103,22 @@ onUnmounted(() => {
 	height: 100%;
 	width: 100%;
 	position: fixed;
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
-	background-color: #44444474;
+	background-color: v-bind('color');
 	top: 0;
-
 	z-index: 100;
 
+	// 
 	.mainbox {
 		width: 100%;
 		height: 100%;
 		position: relative;
-		display: flex;
-		align-items: center;
-		justify-content: center;
 
 		.medbox {
 			width: 90%;
 			height: 90%;
 			position: relative;
+			top: 20px;
+			margin: 0 auto;
 
 			.close {
 				width: 30px;
@@ -1120,29 +1134,127 @@ onUnmounted(() => {
 				background-size: cover;
 				background-repeat: no-repeat;
 				cursor: pointer;
+				z-index: 102;
 			}
 
 			.minbox {
+				z-index: 101;
 				width: 100%;
 				height: 100%;
 				box-shadow: 2px 2px 2px #ccdddc, -2px -2px 2px #fff;
-				border-radius: 20px;
+				border-radius: 10px;
+				overflow: auto;
+				backdrop-filter: blur(8px);
+				-webkit-backdrop-filter: blur(8px);
+				background-color: #44444474;
 
 				.car-item {
-					width: 90%;
-					height: 90%;
+					width: 98%;
+					height: 100px;
+					display: flex;
+					flex-direction: row;
+					flex-wrap: nowrap;
+					color: #fff;
+					border-bottom: solid 1px wheat;
 
-					.name {}
 
-					.price {}
+					.pic {
+						width: auto;
+						height: 100%;
+						overflow: hidden;
+
+						img {
+							height: 100%;
+							max-width: 60px;
+							object-fit: cover;
+
+						}
+					}
+
+					.name {
+						width: 45%;
+						height: 100%;
+						display: flex;
+						flex-direction: column;
+						align-items: center;
+						justify-content: space-evenly;
+
+						.car_name {
+							width: 100%;
+							height: auto;
+							font-size: 17px;
+							font-weight: bold;
+						}
+
+						.car_content {
+							width: 100%;
+							height: auto;
+							font-size: 14px;
+							font-weight: lighter;
+							color: #ddd;
+						}
+
+					}
+
+					.price {
+						width: 10%;
+						height: auto;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						font-weight: bold;
+						font-size: 18px;
+					}
+
+					.price::after {
+						content: "￥";
+					}
 
 					.modify {
+						width: 45%;
+						height: auto;
+
 						.mbk {
-							.add {}
+							width: 100%;
+							height: 100%;
+							display: flex;
+							align-items: center;
+							justify-content: space-evenly;
 
-							.number {}
+							.add {
+								width: 30px;
+								height: 30px;
+								background-image: url(../assets/plus.svg);
+								background-size: cover;
+								border-radius: 50%;
+								background-color: #aaa;
+								background-position: 50% 50%;
+								cursor: pointer;
+							}
 
-							.reduce {}
+							.add:hover {
+								outline: rgb(253, 253, 253) solid 2px;
+							}
+
+							.reduce:hover {
+								outline: rgb(253, 253, 253) solid 2px;
+							}
+
+							.number {
+								font-weight: bold;
+							}
+
+
+							.reduce {
+								width: 30px;
+								height: 30px;
+								background-image: url(../assets/minus.svg);
+								background-size: cover;
+								border-radius: 50%;
+								background-color: #aaa;
+								background-position: 50% 50%;
+								cursor: pointer;
+							}
 						}
 					}
 				}

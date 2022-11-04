@@ -2,7 +2,9 @@
 	<div class="noti">
 		<div :class="backc">
 			<img :src="src" alt="">
-			<slot></slot>
+			<span>
+				<slot></slot>
+			</span>
 		</div>
 	</div>
 </template>
@@ -21,7 +23,7 @@ watch(
 		if (n_store.type == "success") {
 			backc.value = "cont success"
 			src.value = "src/assets/success.svg"
-		} else if(n_store.type == "error") {
+		} else if (n_store.type == "error") {
 			backc.value = "cont error"
 			src.value = "src/assets/error.svg"
 		}
@@ -43,7 +45,7 @@ watch(
 
 	to {
 		top: -100%;
-		opacity: 0;
+		opacity: 0.1;
 	}
 }
 
@@ -69,24 +71,32 @@ watch(
 		background-color: rgba(255, 210, 210, 0.7);
 	}
 
-	.info{
+	.info {
 		color: #000;
 		background-color: #cbcbcb;
 	}
 
 	.cont {
-		width: 80%;
-		min-width: 250px;
-		height: 90%;
+		width: 100%;
+		height: 100%;
 		border-radius: 10px;
 		backdrop-filter: blur(20px);
 		-webkit-backdrop-filter: blur(20px);
-		display: flex;
-		align-items: center;
-		justify-content: space-evenly;
 		font-weight: bold;
 		font-family: kkt;
+		position: relative;
+		display: flex;
+		align-items: center;
+	}
 
+	span{
+		height: 100%;
+		width: calc(100% - 50px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-left: 50px;
+		
 	}
 
 	img {
@@ -94,7 +104,8 @@ watch(
 		height: 50px;
 		object-fit: cover;
 		position: absolute;
-		left: 20px;
+		left: 2px;
+		
 	}
 }
 </style>
