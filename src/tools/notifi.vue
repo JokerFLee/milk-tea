@@ -8,20 +8,20 @@
 </template>
 
 <script setup>
-import { inject, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
+import nstore from "../store/index"
 
-let src = ref("")
-let backc = ref("cont")
+const n_store = nstore()
 
-let type = inject('type')
-
+let src = ref("src/assets/info.svg")
+let backc = ref("cont info")
 
 watch(
-	() => type, () => {
-		if (type.value == "success") {
+	() => n_store.type, () => {
+		if (n_store.type == "success") {
 			backc.value = "cont success"
 			src.value = "src/assets/success.svg"
-		} else if (type.value == "error") {
+		} else if(n_store.type == "error") {
 			backc.value = "cont error"
 			src.value = "src/assets/error.svg"
 		}
@@ -38,6 +38,7 @@ watch(
 	from {
 		top: 0;
 		opacity: 1;
+
 	}
 
 	to {
@@ -54,7 +55,7 @@ watch(
 	justify-content: center;
 	position: relative;
 	animation-name: lol;
-	animation-duration: 0.7s;
+	animation-duration: v-bind('n_store.animation_duration_time');
 	animation-fill-mode: forwards;
 	animation-timing-function: linear;
 
@@ -66,6 +67,11 @@ watch(
 	.error {
 		color: rgb(200, 46, 46);
 		background-color: rgba(255, 210, 210, 0.7);
+	}
+
+	.info{
+		color: #000;
+		background-color: #cbcbcb;
 	}
 
 	.cont {

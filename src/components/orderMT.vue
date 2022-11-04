@@ -1,7 +1,9 @@
 <template>
 	<!-- 加载动画 -->
 	<loader class="loading" v-show="loading"></loader>
-
+	<div class="notify" v-show="showit">
+		<notifi >{{ msg }}</notifi>
+	</div>
 	<!-- 页面主体部分 -->
 	<div class="oops">
 
@@ -177,7 +179,9 @@
 
 					</div>
 					<div class="footer">
-						<button @click="submitMilkteaDIY">确定</button>
+						<button @click="submitMilkteaDIY">
+							<div class="icon"></div> 加购
+						</button>
 						<button @click="closeDetail">取消</button>
 					</div>
 				</div>
@@ -194,10 +198,17 @@
 				<div class="close" @click="closeMilkTeaCarInfo"></div>
 
 				<div class="minbox">
-					<!-- <div class="car-item" v-for=" (item, index) in SavedMilkteaDIYInfo">
-						{{ item }}
-
-					</div> -->
+					<div class="car-item" v-for=" (item, index) in milktea_order">
+						<div class="name">{{ item.name }}</div>
+						<div class="price">{{ item.price }}</div>
+						<div class="modify">
+							<div class="mbk">
+								<div class="add"></div>
+								<div class="number">{{ item.num }}</div>
+								<div class="reduce"></div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -212,18 +223,23 @@ import { getallseries } from "../utils/series/axgetseries"
 import { getMilkteaCount, getDescMilkteaList } from "../utils/milktee/axgetamilktea"
 import { getdiyinfobyguid } from "../utils/milktee/modifymilkteadiy";
 import loader from "../tools/loader.vue"
+import notifi from "../tools/notifi.vue"
 
-let orderMap = new Map()
-let priceMap = new Map()
+import nstore from "../store/index"
+
+const n_store = nstore()
 
 let tmpGuid = ""
 
 let time = 100
 
+
 let SavedMilkteaDIYInfo = ref([])
 
 let detailLayer = ref(false)
 let carinfo = ref(false)
+
+
 
 let smell = ref("")
 let temperature = ref("")
@@ -233,11 +249,13 @@ let other = ref("")
 let title = ref("")
 
 let milktea_option = ref(["", "", "", ""])
-let milktea_order= ref([])
+let milktea_order = ref([])
 
 let allproducts = ref([])
-let orderinfo = ref(orderMap)
-let pricemap = ref(priceMap)
+
+
+let pricemap = ref([])
+
 let nowidth = ref("100%")
 let noml = ref("25%")
 let cny = ref(0)
@@ -251,22 +269,57 @@ let scrollInstance = ref(0)
 
 let loading = ref(true)
 
-watch(() => SavedMilkteaDIYInfo, (o, n) => {
-	SavedMilkteaDIYInfo.value.forEach(element => {
-		const x = element.entries().next().value
-		let tmp={}
-		tmp.id=x[0]
-		tmp.wd=x[1]
-		
+let showit = ref(false)
+let type = ref("")
+let msg = ref("")
 
+// 监听SavedMilkteaDIYInfo，并动态生成 milktea_order的数据
+watch(() => SavedMilkteaDIYInfo, () => {
+	let tmp = []
+	SavedMilkteaDIYInfo.value.forEach(element => {
+		let y = {}
+		const x = element.entries().next().value
+		y.guid = x[0]
+		y.content = x[1]
+		allproducts.value.forEach(ele => {
+			if (ele.guid == x[0]) {
+				y.name = ele.name
+			}
+		})
+		pricemap.value.forEach(e => {
+			if (e.guid == x[0]) {
+				y.price = e.price
+			}
+		})
+		tmp.push(y)
 	});
+	for (let a = 0; a < tmp.length; a++) {
+		let c = 0
+		const element = tmp[a];
+		for (let b = 0; b < milktea_order.value.length; b++) {
+			const ele = milktea_order.value[b];
+			if (element.guid == ele.guid) {
+				c = b
+				break
+			}
+		}
+		if (c != 0) {
+			tmp[a].num = milktea_order.value[c].num
+		} else {
+			tmp[a].num = 1
+		}
+	}
+	milktea_order.value = tmp
+
 }, { deep: true })
 
-// 在加载了所有的奶茶数据后，初始化数据 包括：用户已加入购物车的存储变量。计算折扣后的金额（后续可能会通过api向后端请求，前端浮点数计算不准确容易产生误会）
+// 在加载了所有的奶茶数据后，初始化数据 
 function initMap() {
 	for (let index = 0; index < allproducts.value.length; index++) {
-		orderinfo.value.set(allproducts.value[index].guid, 0)
-		pricemap.value.set(allproducts.value[index].guid, (allproducts.value[index].price * allproducts.value[index].discount).toFixed(2))
+		let tmp = {}
+		tmp.guid = allproducts.value[index].guid
+		tmp.price = allproducts.value[index].price
+		pricemap.value.push(tmp)
 	}
 }
 
@@ -359,17 +412,10 @@ function initPage() {
 
 // 添加奶茶到购物车
 function add2car(e) {
-	orderinfo.value.set(e, orderinfo.value.get(e) + 1)
-	cny.value += pricemap.value.get(e) / 1
-	cny.value = cny.value.toFixed(2) / 1
 }
 
 // 把奶茶从购物车移除
 function removeFromCar(e) {
-	if (orderinfo.value.get(e) > 0) {
-		orderinfo.value.set(e, orderinfo.value.get(e) - 1)
-		cny.value -= pricemap.value.get(e)
-	}
 }
 
 // 请求series的数据
@@ -382,14 +428,8 @@ function countOfSeries() {
 // 提交订单
 function submit() {
 	let list = []
-	const tmp = orderinfo.value.keys()
-	for (const i of tmp) {
-		if (orderinfo.value.get(i) != 0) {
-			list.push(new Map().set(i, orderinfo.value.get(i)))
-		}
-	}
+
 	console.log(list);
-	initMap()
 	cny.value = 0
 }
 
@@ -469,10 +509,18 @@ function closeDetail() {
 
 // 临时保存用户选择的奶茶DIY口味
 function submitMilkteaDIY() {
+
+	if (milktea_option.value[0] == "" && milktea_option.value[1] == "" && milktea_option.value[2] == "" && milktea_option.value[3] == "") {
+		showit.value = true
+		msg.value = "请选择以后再加入购物车"
+		n_store.type="info"
+		setTimeout(() => {
+			showit.value = false
+		}, n_store.showtime);
+		return 0
+	}
 	let ma = new Map();
 	ma.set(tmpGuid, milktea_option.value)
-
-
 	let zstatus = -1
 	for (let index = 0; index < SavedMilkteaDIYInfo.value.length; index++) {
 		const element = SavedMilkteaDIYInfo.value[index];
@@ -481,11 +529,14 @@ function submitMilkteaDIY() {
 			break
 		}
 	}
-
 	if (zstatus == -1) {
 		SavedMilkteaDIYInfo.value.push(ma)
 	} else {
-		SavedMilkteaDIYInfo.value[zstatus] = ma
+		if (milktea_option.value[0] == "" && milktea_option.value[1] == "" && milktea_option.value[2] == "" && milktea_option.value[3] == "") {
+			SavedMilkteaDIYInfo.value.splice(zstatus, 1)
+		} else {
+			SavedMilkteaDIYInfo.value[zstatus] = ma
+		}
 	}
 	detailLayer.value = false
 }
@@ -514,6 +565,18 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.notify {
+	position: absolute;
+	top: 20px;
+	right: 0;
+	width: 40%;
+	min-width: 150px;
+	max-width: 400px;
+	height: 80px;
+	z-index: 1000;
+
+}
+
 .oops {
 	width: 100%;
 	height: 100%;
@@ -597,6 +660,7 @@ onUnmounted(() => {
 				overflow-x: hidden;
 				padding: 0 5px 0 5px;
 				scroll-behavior: smooth;
+
 
 				.milktea:last-child {
 					margin-bottom: 160px;
@@ -976,6 +1040,19 @@ onUnmounted(() => {
 						color: #000;
 						border: none;
 						background-color: #fff;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+
+						.icon {
+							display: inline-block;
+							width: 45px;
+							height: 45px;
+							background-image: url(../assets/shoppingcar.svg);
+							background-position: 50% 50%;
+							background-size: cover;
+							background-repeat: no-repeat;
+						}
 					}
 
 					button:hover {
@@ -1050,6 +1127,25 @@ onUnmounted(() => {
 				height: 100%;
 				box-shadow: 2px 2px 2px #ccdddc, -2px -2px 2px #fff;
 				border-radius: 20px;
+
+				.car-item {
+					width: 90%;
+					height: 90%;
+
+					.name {}
+
+					.price {}
+
+					.modify {
+						.mbk {
+							.add {}
+
+							.number {}
+
+							.reduce {}
+						}
+					}
+				}
 			}
 		}
 	}

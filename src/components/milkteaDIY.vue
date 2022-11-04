@@ -24,7 +24,7 @@
 		</div>
 	</div>
 
-	<loader v-show="loading"></loader>
+	<loader v-show.lazy="loading"></loader>
 
 	<div class="mask" v-show="mask">
 
@@ -132,19 +132,19 @@ import { getDescMilkteaList } from "../utils/milktee/axgetamilktea"
 import { modifymilkteadiy, getdiyinfobyguid } from "../utils/milktee/modifymilkteadiy";
 import notifi from "../tools/notifi.vue";
 import loader from "../tools/loader.vue"
+import nstore from "../store/index"
 
+const n_store = nstore();
 let loading = ref (true)
 let main_milktlist = ref([])
 let mask = ref(false)
 let guid = ""
 let diyParams = ref([])
 let diyParamsList = ref([[], [], [], []])
+
+
 let shownoti = ref(false)
-
-let type = ref("")
 let msg = ref("")
-
-provide("type", type)
 
 
 function modifythis(e) {
@@ -177,19 +177,19 @@ function commitModify() {
 	}
 	modifymilkteadiy(tmp).then((e) => {
 		if (e != "error") {
-			type.value = "success"
+			n_store.type = "success"
 			msg.value = "提交成功！"
 			shownoti.value = true
 			setTimeout(() => {
 				shownoti.value = false
-			}, 700);
+			},  n_store.showtime);
 		} else {
-			type.value = "error"
+			n_store.type = "error"
 			msg.value = "提交失败！"
 			shownoti.value = true
 			setTimeout(() => {
 				shownoti.value = false
-			}, 700);
+			}, n_store.showtime);
 		}
 		
 	})
@@ -235,7 +235,7 @@ onMounted(() => {
 			main_milktlist.value = e
 			setTimeout(() => {
 				loading.value = false
-			}, 1500);
+			}, n_store.loader_show_time);
 		}
 		
 	})
