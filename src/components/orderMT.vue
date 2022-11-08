@@ -110,7 +110,7 @@
 			<div class="tw">
 				<div class="car" @click="showMilkTeaCarInfo"></div>
 				<div class="cny">
-					<div>结算总金额: <span class="span">{{ cny }} </span>¥</div>
+					<div>结算总金额: <span class="span">{{ money }} </span>¥</div>
 				</div>
 				<div class="submit" @click="submit">结算</div>
 			</div>
@@ -196,8 +196,11 @@
 			<div class="medbox">
 
 				<div class="close" @click="closeMilkTeaCarInfo"></div>
-
+				<div class="xbox_head">
+					购物车
+				</div>
 				<div class="minbox">
+
 					<div class="car-item" v-for=" (item, index) in milktea_order">
 
 						<div class="pic">
@@ -211,17 +214,19 @@
 							</div>
 						</div>
 
-						<div class="price">{{ item.price }}</div>
+						<div class="price">{{ (item.price * item.discount).toFixed(2) }} </div>
 
 						<div class="modify">
 							<div class="mbk">
-								<div class="add"></div>
+								<div class="add" @click="carAddNum(item)"></div>
 								<div class="number">{{ item.num }}</div>
-								<div class="reduce"></div>
+								<div class="reduce" @click="carReduceNum(item)"></div>
 							</div>
 						</div>
 
 					</div>
+
+
 				</div>
 			</div>
 
@@ -234,7 +239,7 @@
 import { onMounted, onUnmounted, ref, watch } from 'vue';
 
 import { getallseries } from "../utils/series/axgetseries"
-import { getMilkteaCount, getDescMilkteaList } from "../utils/milktee/axgetamilktea"
+import { getMilkteaCount, getDescMilkteaList, getMilkteaPriceCount } from "../utils/milktee/axgetamilktea"
 import { getdiyinfobyguid } from "../utils/milktee/modifymilkteadiy";
 import loader from "../tools/loader.vue"
 import notifi from "../tools/notifi.vue"
@@ -242,11 +247,16 @@ import notifi from "../tools/notifi.vue"
 import nstore from "../store/index"
 
 const n_store = nstore()
-const gp = ["rgba(71, 111, 255, 0.3)",  "rgba(145, 71, 255, 0.3)", "rgba(255, 71, 218, 0.3)", "rgba(255, 126, 71, 0.3)"]
+const gp = ["rgba(71, 111, 255, 0.3)", "rgba(145, 71, 255, 0.3)", "rgba(255, 71, 218, 0.3)", "rgba(255, 126, 71, 0.3)"]
 
 let tmpGuid = ""
 let color = ref("")
 let time = 100
+
+let orderID = ""
+
+let zindex_price = ref(200)
+
 
 let SavedMilkteaDIYInfo = ref([])
 
@@ -283,6 +293,8 @@ let loading = ref(true)
 let showit = ref(false)
 let msg = ref("")
 
+let money = ref(0)
+
 // 监听SavedMilkteaDIYInfo，并动态生成 milktea_order的数据
 watch(() => SavedMilkteaDIYInfo, () => {
 	let tmp = []
@@ -296,6 +308,7 @@ watch(() => SavedMilkteaDIYInfo, () => {
 				y.name = ele.name
 				y.picurl = ele.picurl
 				y.price = ele.price
+				y.discount = ele.discount
 			}
 		})
 
@@ -319,6 +332,11 @@ watch(() => SavedMilkteaDIYInfo, () => {
 	}
 	milktea_order.value = tmp
 
+}, { deep: true })
+
+// 监听milktea_order，动态显示价格
+watch(() => milktea_order, () => {
+	calculatePrice()
 }, { deep: true })
 
 // 在加载了所有的奶茶数据后，初始化数据 
@@ -418,14 +436,6 @@ function initPage() {
 	})
 }
 
-// 添加奶茶到购物车
-function add2car(e) {
-}
-
-// 把奶茶从购物车移除
-function removeFromCar(e) {
-}
-
 // 请求series的数据
 function countOfSeries() {
 	getMilkteaCount().then((e) => {
@@ -435,10 +445,7 @@ function countOfSeries() {
 
 // 提交订单
 function submit() {
-	let list = []
 
-	console.log(list);
-	cny.value = 0
 }
 
 // 监听侧边栏宽度。
@@ -460,6 +467,7 @@ function itwid() {
 
 // 请求接口获取该奶茶可选的口味，同时显示奶茶DIY口味的界面，查询用户是否有已选择的口味
 function showDetail(params, name) {
+	zindex_price.value = 0
 	milktea_option.value = ["", "", "", ""]
 
 	SavedMilkteaDIYInfo.value.forEach(element => {
@@ -512,12 +520,13 @@ function changeMilkteaOption(index, p) {
 
 // 关闭奶茶DIY口味的界面
 function closeDetail() {
+	zindex_price.value = 200
 	detailLayer.value = false
 }
 
 // 临时保存用户选择的奶茶DIY口味
 function submitMilkteaDIY() {
-
+	zindex_price.value = 200
 	if (milktea_option.value[0] == "" && milktea_option.value[1] == "" && milktea_option.value[2] == "" && milktea_option.value[3] == "") {
 		showit.value = true
 		msg.value = "请选择以后再加入购物车"
@@ -546,20 +555,72 @@ function submitMilkteaDIY() {
 	detailLayer.value = false
 }
 
+// 显示购物车中的内容
 function showMilkTeaCarInfo() {
-	
+
 	function getRandomInt(min, max) {
 		min = Math.ceil(min);
 		max = Math.floor(max);
 		return Math.floor(Math.random() * (max - min)) + min;
 	}
-	const xr=getRandomInt(0,gp.length)
-	color.value = gp[xr]
-	carinfo.value = true
+
+	if (carinfo.value == true) {
+		carinfo.value = false
+	} else {
+		const xr = getRandomInt(0, gp.length)
+		color.value = gp[xr]
+		carinfo.value = true
+	}
+
+
+
 }
 
+// 计算价格
+function calculatePrice() {
+	let tmp = []
+	milktea_order.value.forEach((e) => {
+		let x = {}
+		x.guid = e.guid
+		x.number = e.num
+		tmp.push(x)
+	})
+	getMilkteaPriceCount(tmp).then((e) => {
+		if (e !== "-1") {
+			money.value = e
+		}
+	})
+}
+
+// 关闭购物车显示页面
 function closeMilkTeaCarInfo() {
 	carinfo.value = false
+}
+
+// 增加购物车中的奶茶数量
+function carAddNum(params) {
+	params.num += 1
+}
+
+// 减少购物车中奶茶数量
+function carReduceNum(params) {
+	if (params.num == 1) {
+		let gp = []
+		console.log(SavedMilkteaDIYInfo.value);
+		SavedMilkteaDIYInfo.value.forEach((e) => {
+			let mp = new Map()
+			const x = e.entries().next().value
+			if (x[0] != params.guid) {
+				mp.set(x[0], x[1])
+				gp.push(mp)
+			}
+		})
+		SavedMilkteaDIYInfo.value = gp
+		console.log(SavedMilkteaDIYInfo.value);
+	} else {
+		params.num -= 1
+	}
+
 }
 
 onMounted(() => {
@@ -865,6 +926,7 @@ onUnmounted(() => {
 	}
 
 	.price {
+		z-index: v-bind(zindex_price);
 		position: absolute;
 		bottom: 5px;
 		width: 100%;
@@ -933,7 +995,13 @@ onUnmounted(() => {
 				font-weight: bolder;
 				font-size: large;
 				background-color: #000;
+
 			}
+
+			.submit:hover {
+				cursor: pointer;
+			}
+
 		}
 	}
 }
@@ -1107,7 +1175,6 @@ onUnmounted(() => {
 	top: 0;
 	z-index: 100;
 
-	// 
 	.mainbox {
 		width: 100%;
 		height: 100%;
@@ -1115,20 +1182,25 @@ onUnmounted(() => {
 
 		.medbox {
 			width: 90%;
-			height: 90%;
+			height: calc(100% - 85px);
 			position: relative;
 			top: 20px;
 			margin: 0 auto;
+			backdrop-filter: blur(8px);
+			-webkit-backdrop-filter: blur(8px);
+			background-color: #44444474;
+			border-radius: 18px;
+
 
 			.close {
-				width: 30px;
-				height: 30px;
+				width: 25px;
+				height: 25px;
 				border-radius: 50%;
 				box-shadow: 1px 1px 1px #bbb, -1px -1px 1px #fff;
 				position: absolute;
-				top: -15px;
-				right: -15px;
-				background-color: #ffffff50;
+				top: -5px;
+				right: -5px;
+				background-color: #ffffffaa;
 				background-image: url(../assets/close.svg);
 				background-position: 50% 50%;
 				background-size: cover;
@@ -1137,25 +1209,35 @@ onUnmounted(() => {
 				z-index: 102;
 			}
 
+			.xbox_head {
+				width: 100%;
+				height: 8%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: large;
+				font-weight: bold;
+				color: #fff;
+			}
+
 			.minbox {
 				z-index: 101;
 				width: 100%;
-				height: 100%;
-				box-shadow: 2px 2px 2px #ccdddc, -2px -2px 2px #fff;
-				border-radius: 10px;
+				height: 92%;
 				overflow: auto;
-				backdrop-filter: blur(8px);
-				-webkit-backdrop-filter: blur(8px);
-				background-color: #44444474;
-
+				border-radius: 18px;
+				border-top: sandybrown solid 1px ;
 				.car-item {
 					width: 98%;
 					height: 100px;
 					display: flex;
 					flex-direction: row;
 					flex-wrap: nowrap;
+					flex-direction: row;
+					justify-content: space-evenly;
 					color: #fff;
 					border-bottom: solid 1px wheat;
+					margin: 0 auto;
 
 
 					.pic {
@@ -1211,7 +1293,8 @@ onUnmounted(() => {
 					}
 
 					.modify {
-						width: 45%;
+						width: 40%;
+						max-width: 300px;
 						height: auto;
 
 						.mbk {
@@ -1257,6 +1340,10 @@ onUnmounted(() => {
 							}
 						}
 					}
+				}
+
+				.car-item:last-child {
+					border-bottom: none;
 				}
 			}
 		}
