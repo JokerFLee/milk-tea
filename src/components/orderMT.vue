@@ -110,7 +110,7 @@
 			<div class="tw">
 				<div class="car" @click="showMilkTeaCarInfo"></div>
 				<div class="cny">
-					<div>结算总金额: <span class="span">{{ money }} </span>¥</div>
+					<div>总金额:<span class="span">{{ money }} </span>¥</div>
 				</div>
 				<div class="submit" @click="submit">结算</div>
 			</div>
@@ -201,30 +201,40 @@
 				</div>
 				<div class="minbox">
 
-					<div class="car-item" v-for=" (item, index) in milktea_order">
+					<template v-if="milktea_order.length == 0">
 
-						<div class="pic">
-							<img :src="item.picurl" alt="">
-						</div>
+						<div class="no_item">这里空空如也!</div>
 
-						<div class="name">
-							<div class="car_name">{{ item.name }}</div>
-							<div class="car_content">
-								<span v-for="it in item.content" v-show="it"> （{{ it }}）</span>
+					</template>
+
+					<template v-else>
+						<div class="car-item" v-for=" (item, index) in milktea_order">
+
+							<div class="pic">
+								<img :src="item.picurl" alt="">
 							</div>
-						</div>
 
-						<div class="price">{{ (item.price * item.discount).toFixed(2) }} </div>
-
-						<div class="modify">
-							<div class="mbk">
-								<div class="add" @click="carAddNum(item)"></div>
-								<div class="number">{{ item.num }}</div>
-								<div class="reduce" @click="carReduceNum(item)"></div>
+							<div class="name">
+								<div class="car_name">{{ item.name }}</div>
+								<div class="car_content">
+									<span v-for="it in item.content" v-show="it"> （{{ it }}）</span>
+								</div>
 							</div>
-						</div>
 
-					</div>
+							<div class="price">{{ (item.price * item.discount).toFixed(2) }} </div>
+
+							<div class="modify">
+								<div class="mbk">
+									<div class="add" @click="carAddNum(item)"></div>
+									<div class="number">{{ item.num }}</div>
+									<div class="reduce" @click="carReduceNum(item)"></div>
+								</div>
+							</div>
+
+						</div>
+					</template>
+
+
 
 
 				</div>
@@ -949,13 +959,14 @@ onUnmounted(() => {
 			.car {
 				position: absolute;
 				left: 0;
-				width: 120px;
+				width: 80px;
 				height: 100%;
 				background: url("../assets/shoppingcar.svg");
 				background-size: contain;
 				background-repeat: no-repeat;
 				background-position: 50% 50%;
 				cursor: pointer;
+				border-right: #ccc solid 1px;
 			}
 
 			.cny {
@@ -984,7 +995,7 @@ onUnmounted(() => {
 			}
 
 			.submit {
-				width: 120px;
+				width: 80px;
 				height: 100%;
 				position: absolute;
 				right: 0px;
@@ -1226,7 +1237,25 @@ onUnmounted(() => {
 				height: 92%;
 				overflow: auto;
 				border-radius: 18px;
-				border-top: sandybrown solid 1px ;
+				border-top: sandybrown solid 1px;
+
+				.no_item {
+					width: 100%;
+					height: 100%;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					background-image: url(../assets/noContentHere.svg);
+					background-repeat: no-repeat;
+					background-position: 50% 50%;
+					background-size: contain;
+					background-attachment: fixed;
+					color: #eee;
+					font-size: 25px;
+					font-family: kkt;
+					font-weight: bolder;
+				}
+
 				.car-item {
 					width: 98%;
 					height: 100px;
@@ -1238,6 +1267,7 @@ onUnmounted(() => {
 					color: #fff;
 					border-bottom: solid 1px wheat;
 					margin: 0 auto;
+
 
 
 					.pic {
