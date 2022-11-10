@@ -196,14 +196,20 @@
 			<div class="medbox">
 
 				<div class="close" @click="closeMilkTeaCarInfo"></div>
+
 				<div class="xbox_head">
 					购物车
 				</div>
+
 				<div class="minbox">
 
 					<template v-if="milktea_order.length == 0">
 
-						<div class="no_item">这里空空如也!</div>
+						<div class="no_item">
+							<div class="n">
+								这里空空如也!
+							</div>
+						</div>
 
 					</template>
 
@@ -238,6 +244,11 @@
 
 
 				</div>
+
+				<div class="cheapcode" v-if="milktea_order.length != 0">
+					优惠码: <input type="text" v-model="cheapcode">
+				</div>
+
 			</div>
 
 		</div>
@@ -259,8 +270,9 @@ import nstore from "../store/index"
 const n_store = nstore()
 const gp = ["rgba(71, 111, 255, 0.3)", "rgba(145, 71, 255, 0.3)", "rgba(255, 71, 218, 0.3)", "rgba(255, 126, 71, 0.3)"]
 
+let cheapcode = ref("")
+
 let tmpGuid = ""
-let color = ref("")
 let time = 100
 
 let orderID = ""
@@ -567,23 +579,11 @@ function submitMilkteaDIY() {
 
 // 显示购物车中的内容
 function showMilkTeaCarInfo() {
-
-	function getRandomInt(min, max) {
-		min = Math.ceil(min);
-		max = Math.floor(max);
-		return Math.floor(Math.random() * (max - min)) + min;
-	}
-
 	if (carinfo.value == true) {
 		carinfo.value = false
 	} else {
-		const xr = getRandomInt(0, gp.length)
-		color.value = gp[xr]
 		carinfo.value = true
 	}
-
-
-
 }
 
 // 计算价格
@@ -1182,7 +1182,7 @@ onUnmounted(() => {
 	height: 100%;
 	width: 100%;
 	position: fixed;
-	background-color: v-bind('color');
+	background-color: rgba(0, 0, 0, 0.2);
 	top: 0;
 	z-index: 100;
 
@@ -1234,10 +1234,11 @@ onUnmounted(() => {
 			.minbox {
 				z-index: 101;
 				width: 100%;
-				height: 92%;
+				height: calc(92% - 50px);
 				overflow: auto;
 				border-radius: 18px;
-				border-top: sandybrown solid 1px;
+				border-top: rgb(100, 100, 100) solid 2px;
+				position: relative;
 
 				.no_item {
 					width: 100%;
@@ -1254,6 +1255,13 @@ onUnmounted(() => {
 					font-size: 25px;
 					font-family: kkt;
 					font-weight: bolder;
+					position: relative;
+
+					.n {
+						position: absolute;
+						bottom: 0px;
+
+					}
 				}
 
 				.car-item {
@@ -1374,6 +1382,42 @@ onUnmounted(() => {
 
 				.car-item:last-child {
 					border-bottom: none;
+				}
+			}
+
+			.cheapcode {
+				position: absolute;
+				width: 100%;
+				height: 50px;
+				border-bottom-left-radius: 18px;
+				border-bottom-right-radius: 18px;
+				bottom: 0px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: #eee;
+				font-weight: bold;
+
+				input {
+					text-align: center;
+					height: 30px;
+					width: auto;
+					margin-left: 3px;
+					border: none;
+					border-radius: 7px;
+					padding: 0;
+					padding: 0 5px;
+					font-weight: bold;
+					font-size: 15px;
+					color: goldenrod;
+					backdrop-filter: blur(1px);
+					-webkit-backdrop-filter: blur(1px);
+					background-color: rgba(255, 255, 255, 0.07);
+				}
+
+				input:focus {
+					box-shadow: 1px 1px 2px #aaa, -1px -1px 2px #aaa;
+					outline-width: 0px;
 				}
 			}
 		}
