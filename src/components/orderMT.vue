@@ -191,8 +191,8 @@
 	</div>
 
 	<!-- 结算弹出层 -->
-	<div class="opt" v-show="carinfo">
-		<div class="mainbox">
+	<div class="opt" v-show="carinfo"  >
+		<div class="mainbox" >
 			<div class="medbox">
 
 				<div class="close" @click="closeMilkTeaCarInfo"></div>
@@ -240,14 +240,24 @@
 						</div>
 					</template>
 
-
-
-
 				</div>
 
-				<div class="cheapcode" v-if="milktea_order.length != 0">
-					优惠码: <input type="text" v-model="cheapcode">
-				</div>
+				<template v-if="milktea_order.length != 0">
+
+					<template v-if="codeShow == false">
+						<div class="cheapcode">
+							<span @click="codeShow=!codeShow">您有优惠码？</span>
+						</div>
+					</template>
+					
+					<template v-else>
+						<div class="cheapcode">
+							优惠码: <input type="text" v-model.trim="cheapcode">
+						</div>
+					</template>
+
+				</template>
+
 
 			</div>
 
@@ -268,9 +278,10 @@ import notifi from "../tools/notifi.vue"
 import nstore from "../store/index"
 
 const n_store = nstore()
-const gp = ["rgba(71, 111, 255, 0.3)", "rgba(145, 71, 255, 0.3)", "rgba(255, 71, 218, 0.3)", "rgba(255, 126, 71, 0.3)"]
 
 let cheapcode = ref("")
+
+let codeShow = ref(false)
 
 let tmpGuid = ""
 let time = 100
@@ -579,6 +590,9 @@ function submitMilkteaDIY() {
 
 // 显示购物车中的内容
 function showMilkTeaCarInfo() {
+	if ( cheapcode.value == "" || cheapcode.value == null ) {
+		codeShow.value = false
+	}
 	if (carinfo.value == true) {
 		carinfo.value = false
 	} else {
@@ -1397,6 +1411,12 @@ onUnmounted(() => {
 				justify-content: center;
 				color: #eee;
 				font-weight: bold;
+				span{
+					color: #fff;
+					font-weight: normal;
+					cursor: pointer;
+					text-decoration: underline #444;
+				}
 
 				input {
 					text-align: center;
