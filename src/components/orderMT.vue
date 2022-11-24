@@ -478,7 +478,7 @@ function countOfSeries() {
 
 // 提交订单
 function submit() {
-
+	// 传输milktea_order.value给后端，来获取订单的数据
 }
 
 // 监听侧边栏宽度。
