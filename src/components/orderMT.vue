@@ -273,7 +273,6 @@ import { getallseries } from "../utils/series/axgetseries"
 import { getMilkteaCount, getDescMilkteaList, getMilkteaPriceCount } from "../utils/milktee/axgetamilktea"
 import { getdiyinfobyguid } from "../utils/milktee/modifymilkteadiy";
 import {uploadOrderInfo} from "../utils/orderinfo/generateOrder"
-import {getOrderByOuid} from "../utils/orderinfo/getOrderByOuid"
 import loader from "../tools/loader.vue"
 import notifi from "../tools/notifi.vue"
 
@@ -482,10 +481,8 @@ function countOfSeries() {
 function submit() {
 	// 传输milktea_order.value给后端，来获取订单的数据po 
 	uploadOrderInfo(milktea_order.value).then((ouid)=>{
+		n_store.ouid = ouid
 		console.log(ouid);
-		getOrderByOuid(ouid).then((e)=>{
-			console.log(e);
-		})
 	})
 }
 

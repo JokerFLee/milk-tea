@@ -5,17 +5,18 @@
 				<h3>支付平台</h3>
 			</div>
 			<div class="pay_body">
-				
-				<div class="pay_body_title">
 
+				<div class="pay_body_title">
+					{{orderinfo.ouid}}
 				</div>
 
 				<div class="pay_body_price">
-
+					{{orderinfo.money}}
 				</div>
 
 				<div class="pay_body_qrcode">
-
+					<div class="wechat"></div>
+					<div class="alipay"></div>
 				</div>
 
 				<div class="pay_body_payfor">
@@ -32,7 +33,20 @@
 </template>
 
 <script setup>
+import { getOrderByOuid } from "../utils/orderinfo/getOrderByOuid"
+import nstore from "../store/index"
+import { onMounted, ref } from "vue";
 
+const n_store = nstore()
+
+let orderinfo = ref("")
+let content = ref(JSON.parse(orderinfo.value.content))
+
+onMounted(() => {
+	getOrderByOuid(n_store.ouid).then((e) => {
+		orderinfo.value = e
+	})
+})
 
 </script>
 
