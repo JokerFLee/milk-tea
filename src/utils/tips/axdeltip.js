@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { getbaseurl } from "../baseurl";
 
 function deltip(e) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/deltips",
+		url: getbaseurl()+"deltips",
 		method: "get",
 		params: {
 			tuid: e

@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { getbaseurl } from "../baseurl";
 
 function getalltips() {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/gettips",
+		url: getbaseurl()+"gettips",
 		method: "get",
 	}).then(res => {
 		return res.data
@@ -12,7 +13,7 @@ function getalltips() {
 
 function getatipbyname(tip) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/checktip",
+		url: getbaseurl+"checktip",
 		method: "get",
 		params: {
 			tip: tip

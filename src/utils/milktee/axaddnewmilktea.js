@@ -1,7 +1,9 @@
 import axios from 'axios';
+import { getbaseurl } from "../baseurl";
+
 export default function axmtpost(data) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/addmilktea",
+		url: getbaseurl()+"addmilktea",
 		method:"post",
 		data: data
 	}).then(res => {

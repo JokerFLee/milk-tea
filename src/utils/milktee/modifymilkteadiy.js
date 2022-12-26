@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { getbaseurl } from "../baseurl";
 
 function modifymilkteadiy(params) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/modifymilkteadiyparams",
+		url: getbaseurl()+"modifymilkteadiyparams",
 		method: "post",
 		data:params,
 	}).then(res => {
@@ -13,7 +14,7 @@ function modifymilkteadiy(params) {
 
 function getdiyinfobyguid(guid) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/getdiytea",
+		url: getbaseurl()+"getdiytea",
 		method: "post",
 		params:{
 			guid:guid

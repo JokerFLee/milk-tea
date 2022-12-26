@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { getbaseurl } from "../baseurl";
 
 function getOrderByOuid(ouid) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/getorderinfobyouid",
+		url: getbaseurl()+"getorderinfobyouid",
 		method: "get",
 		params:{
 			ouid:ouid

@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { getbaseurl } from "../baseurl";
 
 function getallseries() {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/getallseries",
+		url: getbaseurl()+"getallseries",
 		method: "get",
 	}).then(res => {
 		return res.data
@@ -12,7 +13,7 @@ function getallseries() {
 
 function getseriesbyname(e) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/checkseries",
+		url: getbaseurl()+"checkseries",
 		method: "get",
 		params: {
 			seriesname: e

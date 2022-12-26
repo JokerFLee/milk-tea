@@ -7,7 +7,8 @@ export default defineStore('main',{
 			showtime:2000,
 			animation_duration_time:"2s",
 			loader_show_time:100,
-			ouid:""
+			ouid:"",
+			
 		}
 	}
 })

@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { getbaseurl } from "../baseurl";
 
 export default function addtip(e) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/addtips",
+		url: getbaseurl()+"addtips",
 		method: "get",
 		params: {
 			tip: e
