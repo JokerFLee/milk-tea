@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { getbaseurl } from "../baseurl";
 
 export default function updateMilkteaByGuid(mt) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/updatemilktea",
+		url: getbaseurl()+"updatemilktea",
 		method: "post",
 		data:mt
 	}).then(res => {

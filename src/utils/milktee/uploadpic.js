@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { getbaseurl } from "../baseurl";
 
 export default function uploadpic(e) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/uploadpic",
+		url: getbaseurl()+"uploadpic",
 		method: "post",
 		headers: {
 			'Content-Type': 'multipart/form-data'

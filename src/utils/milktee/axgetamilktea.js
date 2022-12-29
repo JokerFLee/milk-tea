@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { getbaseurl } from "../baseurl";
 
 function getmilktealist(token) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/getmilktealist",
+		url: getbaseurl()+"getmilktealist",
 		method: "get",
 		params: {
 			token: token,
@@ -15,7 +16,7 @@ function getmilktealist(token) {
 
 function getMilkteaByName(name) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/checkmilkteaexist",
+		url: getbaseurl()+"checkmilkteaexist",
 		method: "get",
 		params: {
 			name: name,
@@ -29,7 +30,7 @@ function getMilkteaByName(name) {
 
 function getMilkteaByGuid(guid) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/getmilkteabyid",
+		url: getbaseurl()+"getmilkteabyid",
 		method: "get",
 		params: {
 			guid: guid,
@@ -43,7 +44,7 @@ function getMilkteaByGuid(guid) {
 
 function getMilkteaCount() {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/getmilkteacount",
+		url: getbaseurl()+"getmilkteacount",
 		method: "get",
 	}).then(res => {
 		return res.data
@@ -53,7 +54,7 @@ function getMilkteaCount() {
 
 function getDescMilkteaList() {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/getdescmilktealist",
+		url: getbaseurl()+"getdescmilktealist",
 		method: "get",
 	}).then(res => {
 		return res.data
@@ -63,7 +64,7 @@ function getDescMilkteaList() {
 
 function getMilkteaPriceCount(data) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/getMilkteaPriceCount",
+		url: getbaseurl()+"getMilkteaPriceCount",
 		method: "post",
 		data:data
 	}).then(res => {
@@ -72,5 +73,17 @@ function getMilkteaPriceCount(data) {
 	return ax
 }
 
+function getMilkteaPriceCountWithCheapCode(data,cheapCode) {
+	const ax = axios({
+		url: getbaseurl()+"getMilkteaPriceCountwithcheapcode",
+		method: "post",
+		data:data,
+		params:cheapCode
+	}).then(res => {
+		return res.data
+	})
+	return ax
+}
 
-export {getmilktealist,getMilkteaByGuid,getMilkteaByName,getDescMilkteaList,getMilkteaCount,getMilkteaPriceCount}
+
+export {getmilktealist,getMilkteaByGuid,getMilkteaByName,getDescMilkteaList,getMilkteaCount,getMilkteaPriceCount,getMilkteaPriceCountWithCheapCode}

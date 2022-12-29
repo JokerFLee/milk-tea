@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { getbaseurl } from "../baseurl";
 
 export default function deletemilkteabyguid(e) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/delmilktea",
+		url: getbaseurl()+"delmilktea",
 		method: "get",
 		params: {
 			guid: e,

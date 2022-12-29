@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { getbaseurl } from "../baseurl";
 
 function uploadOrderInfo(data) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/generateorder",
+		url: getbaseurl()+"generateorder",
 		method: "post",
 		data:data
 	}).then(res => {
