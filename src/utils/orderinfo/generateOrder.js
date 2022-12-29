@@ -1,15 +1,15 @@
 import axios from 'axios';
 import { getbaseurl } from "../baseurl";
 
-export default function deletemilkteabyguid(e) {
+function uploadOrderInfo(data) {
 	const ax = axios({
-		url: getbaseurl()+"delmilktea",
-		method: "get",
-		params: {
-			guid: e,
-		}
+		url: getbaseurl()+"generateorder",
+		method: "post",
+		data:data
 	}).then(res => {
 		return res.data
 	})
 	return ax
 }
+
+export {uploadOrderInfo}

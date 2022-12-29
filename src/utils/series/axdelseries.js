@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { getbaseurl } from "../baseurl";
 
 export default function delseries(e) {
 	const ax = axios({
-		url: "http://mt.ip.jokeme.top:6280/delseries",
+		url: getbaseurl()+"delseries",
 		method: "get",
 		params: {
 			suid : e
