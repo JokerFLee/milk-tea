@@ -73,5 +73,17 @@ function getMilkteaPriceCount(data) {
 	return ax
 }
 
+function getMilkteaPriceCountWithCheapCode(data,cheapCode) {
+	const ax = axios({
+		url: getbaseurl()+"getMilkteaPriceCountwithcheapcode",
+		method: "post",
+		data:data,
+		params:cheapCode
+	}).then(res => {
+		return res.data
+	})
+	return ax
+}
 
-export {getmilktealist,getMilkteaByGuid,getMilkteaByName,getDescMilkteaList,getMilkteaCount,getMilkteaPriceCount}
+
+export {getmilktealist,getMilkteaByGuid,getMilkteaByName,getDescMilkteaList,getMilkteaCount,getMilkteaPriceCount,getMilkteaPriceCountWithCheapCode}

@@ -191,8 +191,8 @@
 	</div>
 
 	<!-- 结算弹出层 -->
-	<div class="opt" v-show="carinfo"  >
-		<div class="mainbox" >
+	<div class="opt" v-show="carinfo">
+		<div class="mainbox">
 			<div class="medbox">
 
 				<div class="close" @click="closeMilkTeaCarInfo"></div>
@@ -246,10 +246,10 @@
 
 					<template v-if="codeShow == false">
 						<div class="cheapcode">
-							<span @click="codeShow=!codeShow">您有优惠码？</span>
+							<span @click="codeShow = !codeShow">您有优惠码？</span>
 						</div>
 					</template>
-					
+
 					<template v-else>
 						<div class="cheapcode">
 							优惠码: <input type="text" v-model.trim="cheapcode">
@@ -270,9 +270,9 @@
 import { onMounted, onUnmounted, ref, watch } from 'vue';
 
 import { getallseries } from "../utils/series/axgetseries"
-import { getMilkteaCount, getDescMilkteaList, getMilkteaPriceCount } from "../utils/milktee/axgetamilktea"
+import { getMilkteaCount, getDescMilkteaList, getMilkteaPriceCount, getMilkteaPriceCountWithCheapCode } from "../utils/milktee/axgetamilktea"
 import { getdiyinfobyguid } from "../utils/milktee/modifymilkteadiy";
-import {uploadOrderInfo} from "../utils/orderinfo/generateOrder"
+import { uploadOrderInfo } from "../utils/orderinfo/generateOrder"
 import loader from "../tools/loader.vue"
 import notifi from "../tools/notifi.vue"
 
@@ -480,9 +480,15 @@ function countOfSeries() {
 // 提交订单
 function submit() {
 	// 传输milktea_order.value给后端，来获取订单的数据po 
-	uploadOrderInfo(milktea_order.value).then((ouid)=>{
+	milktea_order.value = null
+	milktea_option.value = null
+	carinfo.value = null
+	cheapcode.value = null
+	money.value = null
+	SavedMilkteaDIYInfo.value = null
+
+	uploadOrderInfo(milktea_order.value).then((ouid) => {
 		n_store.ouid = ouid
-		console.log(ouid);
 	})
 }
 
@@ -595,7 +601,7 @@ function submitMilkteaDIY() {
 
 // 显示购物车中的内容
 function showMilkTeaCarInfo() {
-	if ( cheapcode.value == "" || cheapcode.value == null ) {
+	if (cheapcode.value == "" || cheapcode.value == null) {
 		codeShow.value = false
 	}
 	if (carinfo.value == true) {
@@ -614,11 +620,20 @@ function calculatePrice() {
 		x.number = e.num
 		tmp.push(x)
 	})
-	getMilkteaPriceCount(tmp).then((e) => {
-		if (e !== "-1") {
-			money.value = e
-		}
-	})
+	if (cheapcode.value != "" || cheapcode.value != null) {
+		getMilkteaPriceCountWithCheapCode(tmp, cheapcode.value).then((e) => {
+			if (e !== "-1") {
+				money.value = e
+			}
+		})
+	} else {
+		getMilkteaPriceCount(tmp).then((e) => {
+			if (e !== "-1") {
+				money.value = e
+			}
+		})
+	}
+
 }
 
 // 关闭购物车显示页面
@@ -635,7 +650,6 @@ function carAddNum(params) {
 function carReduceNum(params) {
 	if (params.num == 1) {
 		let gp = []
-		console.log(SavedMilkteaDIYInfo.value);
 		SavedMilkteaDIYInfo.value.forEach((e) => {
 			let mp = new Map()
 			const x = e.entries().next().value
@@ -645,7 +659,6 @@ function carReduceNum(params) {
 			}
 		})
 		SavedMilkteaDIYInfo.value = gp
-		console.log(SavedMilkteaDIYInfo.value);
 	} else {
 		params.num -= 1
 	}
@@ -662,8 +675,6 @@ onMounted(() => {
 onUnmounted(() => {
 	window.removeEventListener('resize', () => itwid())
 })
-
-
 
 </script>
 
@@ -1416,7 +1427,8 @@ onUnmounted(() => {
 				justify-content: center;
 				color: #eee;
 				font-weight: bold;
-				span{
+
+				span {
 					color: #fff;
 					font-weight: normal;
 					cursor: pointer;
