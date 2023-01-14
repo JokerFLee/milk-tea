@@ -126,8 +126,8 @@
 			</div>
 
 
-			<div class="op2div">
-				<router-view></router-view>
+			<div class="op2div" >
+				<router-view v-if="will_show_router"></router-view>
 			</div>
 		</div>
 
@@ -136,41 +136,20 @@
 </template>
 
 <script setup>
-import { onMounted, ref, } from 'vue';
+import { onMounted, ref, watch} from 'vue';
+import nstore from "./store/index"
 
-
-let statement = ref([false, true, false, false, false])
+let statement = ref([true, false, false, false, false])
 let sideshow = ref(true);
-let xxx = ref("李明");
+let xxx = ref("TestUser")
+let will_show_router= ref(true)
+const n_store = nstore()
 
-
-function reque(url, method) {
-
-	const kx = axios({
-		url: url,
-		method: method,
-		params: {
-			fi: "ok",
-			sec: "23"
-		}
-	}).then(res => {
-		let sv = res.data
-		return sv
-	})
-	return kx
-}
-
-function kfc(url, method) {
-	reque("src/assets/test.json", "get").then(//因为axios是异步加载的,所以在返回值后面再套一个then,
-		//表示执行完前异步操作以后再执行本次异步操作,就可以获取到正确的值了,而非 **Promise {<pending>}**
-		(e) => {
-			// console.log(e);
-		}
-	);
-}
+watch(()=>will_show_router,()=>{
+	will_show_router.value = n_store.show_router
+})
 
 function ismobile() {
-
 	if (document.body.clientWidth < 1920) {
 		// default 1440
 		sideshow.value = false
@@ -182,9 +161,6 @@ function willshow(e) {
 	statement.value = [false]
 	statement.value[e] = tp
 }
-
-
-
 
 onMounted(() => {
 	ismobile()
