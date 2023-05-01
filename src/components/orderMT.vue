@@ -130,7 +130,8 @@
 							<div class="mbty">
 
 								<template v-for="(item, index) in smell">
-									<span v-if="milktea_option[0] == item" class="spanstyle" @click="changeMilkteaOption(0, item)">{{ item
+									<span v-if="milktea_option[0] == item" class="spanstyle" @click="changeMilkteaOption(0, item)">{{
+										item
 									}}</span>
 									<span v-else @click="changeMilkteaOption(0, item)">{{ item }}</span>
 								</template>
@@ -143,7 +144,8 @@
 							<div class="mbty">
 
 								<template v-for="(item, index) in temperature">
-									<span v-if="milktea_option[1] == item" class="spanstyle" @click="changeMilkteaOption(1, item)">{{ item
+									<span v-if="milktea_option[1] == item" class="spanstyle" @click="changeMilkteaOption(1, item)">{{
+										item
 									}}</span>
 									<span v-else @click="changeMilkteaOption(1, item)">{{ item }}</span>
 								</template>
@@ -157,7 +159,8 @@
 							<div class="mbty">
 
 								<template v-for="(item, index) in content">
-									<span v-if="milktea_option[2] == item" class="spanstyle" @click="changeMilkteaOption(2, item)">{{ item
+									<span v-if="milktea_option[2] == item" class="spanstyle" @click="changeMilkteaOption(2, item)">{{
+										item
 									}}</span>
 									<span v-else @click="changeMilkteaOption(2, item)">{{ item }}</span>
 								</template>
@@ -170,7 +173,8 @@
 							<p> {{ other_name }}</p>
 							<div class="mbty">
 								<template v-for="(item, index) in other">
-									<span v-if="milktea_option[3] == item" class="spanstyle" @click="changeMilkteaOption(3, item)">{{ item
+									<span v-if="milktea_option[3] == item" class="spanstyle" @click="changeMilkteaOption(3, item)">{{
+										item
 									}}</span>
 									<span v-else @click="changeMilkteaOption(3, item)">{{ item }}</span>
 								</template>
@@ -479,17 +483,19 @@ function countOfSeries() {
 
 // 提交订单
 function submit() {
-	// 传输milktea_order.value给后端，来获取订单的数据po 
-	milktea_order.value = null
-	milktea_option.value = null
-	carinfo.value = null
-	cheapcode.value = null
-	money.value = null
-	SavedMilkteaDIYInfo.value = null
-
 	uploadOrderInfo(milktea_order.value).then((ouid) => {
 		n_store.ouid = ouid
+		setCookie("ouid",ouid)
+		console.log(getCookie("ouid"));
+		removeCookie("ouid")
+		console.log(getCookie("ouid"));
+		n_store.show_router = false
+
+		setTimeout(()=>{
+			n_store.show_router = true
+		},1000)
 	})
+
 }
 
 // 监听侧边栏宽度。
@@ -620,16 +626,17 @@ function calculatePrice() {
 		x.number = e.num
 		tmp.push(x)
 	})
-	if (cheapcode.value != "" || cheapcode.value != null) {
+	
+	if (cheapcode.value != "" ) {
 		getMilkteaPriceCountWithCheapCode(tmp, cheapcode.value).then((e) => {
-			if (e !== "-1") {
-				money.value = e
+			if (e.data !== "-1") {
+				money.value = e.data
 			}
 		})
 	} else {
 		getMilkteaPriceCount(tmp).then((e) => {
-			if (e !== "-1") {
-				money.value = e
+			if (e.data !== "-1") {
+				money.value = e.data
 			}
 		})
 	}
@@ -664,6 +671,32 @@ function carReduceNum(params) {
 	}
 
 }
+
+// 设置/修改 cookies 
+function setCookie(key, value) {
+	document.cookie = key + "=" + value + ";"
+}
+
+// 读取cookies
+function getCookie(key) {
+	const cookies = document.cookie.split(";")
+	for (let a = 0; a < cookies.length; a++) {
+		const ele = cookies[a];
+		for (let b = 0; b < ele.length; b++) {
+			const elem = ele[b].split("=");
+			if (elem[0] == key) {
+				return elem[1]
+			}
+		}
+	}
+
+}
+
+// 删除cookies
+function removeCookie(key) {
+	document.cookie = key + "=;max-age=0"
+}
+
 
 onMounted(() => {
 	window.addEventListener('resize', () => itwid())
